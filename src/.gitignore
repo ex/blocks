@@ -1,0 +1,6 @@
+
+# Ignore svn files
+.svn/
+
+# Ignore git-ignore :D
+.gitignore

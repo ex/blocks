@@ -37,7 +37,7 @@
 #define NEXT_TETROMINO_X    (-7)
 #define NEXT_TETROMINO_Y    (15)
 
-/* Time (in miliseconds) between falling moves */
+/* Initial time delay (in miliseconds) between falling moves */
 #define INI_DELAY_FALL  (1000)
 
 /* Tetromino definitions */

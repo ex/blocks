@@ -20,7 +20,7 @@
 /* Use video hardware and double buffering */
 #define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
 
-/* Define here the platform dependent structure */
+/* Here we define the platform dependent data structure */
 typedef struct StcPlatform {
     SDL_Surface* screen;
     SDL_Surface* bmpTiles;

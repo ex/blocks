@@ -2,7 +2,7 @@
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
 /*   Simple pure SDL implementation. (No sound, no fonts)                     */
-/*   We use SDL for rendering the game state, reading user input and timers.  */
+/*   We use SDL for rendering the game state, reading user input and timing.  */
 /*                                                                            */
 /*   Copyright (C) 2008 Laurens Rodriguez Oscanoa                             */
 /*   This code is licensed under the MIT license:                             */
@@ -14,40 +14,48 @@
 
 #ifdef STC_USE_SIMPLE_SDL
 
-long getSystemTime() {
+/* Return the current system time in milliseconds */
+long platformGetSystemTime() {
     return SDL_GetTicks();
 }
 
-void gameReadInput(StcGame *game) {
-    SDL_Event Event;
+/* Read input device and notify game */
+void platformReadInput(StcGame *game) {
+    SDL_Event event;
 
     /* Grab events in the queue */
-    while (SDL_PollEvent(&Event)) {
-        switch (Event.type) {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
         /* On quit game */
         case SDL_QUIT:
             game->errorCode = GAME_ERROR_USER_QUITS;
             break;
         /* On key pressed */
         case SDL_KEYDOWN:
-            switch(Event.key.keysym.sym) {
+            switch(event.key.keysym.sym) {
             case SDLK_ESCAPE:
                 game->errorCode = GAME_ERROR_USER_QUITS;
                 break;
             case SDLK_DOWN:
-                moveTetramino(game, 0, 1);
+                game->events |= EVENT_MOVE_DOWN;
                 break;
             case SDLK_UP:
-                rotateTetramino(game, 1);
+                game->events |= EVENT_ROTATE_CW;
                 break;
             case SDLK_LEFT:
-                moveTetramino(game, -1, 0);
+                game->events |= EVENT_MOVE_LEFT;
                 break;
             case SDLK_RIGHT:
-                moveTetramino(game, 1, 0);
+                game->events |= EVENT_MOVE_RIGHT;
                 break;
             case SDLK_SPACE:
-                dropTetramino(game);
+                game->events |= EVENT_DROP;
+                break;
+            case SDLK_r:
+                game->events |= EVENT_RESTART;
+                break;
+            case SDLK_F1:
+                game->events |= EVENT_PAUSE;
                 break;
             }
             break;
@@ -72,30 +80,36 @@ static void drawTile(StcGame *game, int x, int y, int tile) {
 /*
  * Render the state of the game using platform functions
  */
-void gameRender(StcGame *game) {
-    int x, y;
+void platformRenderGame(StcGame *game) {
+    int i, j;
 
     /* Draw background */
     SDL_BlitSurface(game->platform->bmpBack, NULL, game->platform->screen, NULL);
 
     /* Draw preview block */
-    for (x = 0; x < 4; ++x)
-        for (y = 0; y < 4; ++y)
-            if (game->nextBlock.cells[x][y] != EMPTY_CELL)
-                drawTile(game, game->nextBlock.x + x, game->nextBlock.y + y, game->nextBlock.cells[x][y]);
-
-    /* Draw the map */
-    for (x = 0; x < BOARD_WIDTH; ++x)
-        for (y = 0; y < BOARD_HEIGHT; ++y)
-            if (game->map[x][y] != EMPTY_CELL)
-                drawTile(game, x, y, game->map[x][y]);
-
+    for (i = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j) {
+            if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
+                drawTile(game, game->nextBlock.x + i, game->nextBlock.y + j, game->nextBlock.cells[i][j]);
+            }
+        }
+    }
+    /* Draw the cells in the board */
+    for (i = 0; i < BOARD_WIDTH; ++i) {
+        for (j = 0; j < BOARD_HEIGHT; ++j) {
+            if (game->map[i][j] != EMPTY_CELL) {
+                drawTile(game, i, j, game->map[i][j]);
+            }
+        }
+    }
     /* Draw falling tetromino */
-    for (x = 0; x<4; ++x)
-        for(y=0; y<4; ++y)
-            if (game->fallingBlock.cells[x][y] != EMPTY_CELL)
-                drawTile(game, game->fallingBlock.x+x, game->fallingBlock.y+y, game->fallingBlock.cells[x][y]);
-
+    for (i = 0; i<4; ++i) {
+        for(j=0; j<4; ++j) {
+            if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
+                drawTile(game, game->fallingBlock.x + i, game->fallingBlock.y + j, game->fallingBlock.cells[i][j]);
+            }
+        }
+    }
     /* Swap video buffers */
     SDL_Flip(game->platform->screen);
 }
@@ -114,7 +128,7 @@ void platformEnd(StcGame *game) {
 }
 
 /*
- * Initialices platform, if there are no problems returns GAME_ERROR_NONE.
+ * Initializes platform, if there are no problems returns GAME_ERROR_NONE.
  */
 int platformInit(StcGame *game) {
 
@@ -122,11 +136,6 @@ int platformInit(StcGame *game) {
     game->platform = (StcPlatform *) malloc(sizeof(StcPlatform));
     if (game->platform == NULL) {
         return GAME_ERROR_NO_MEMORY;
-    }
-    else {
-        game->platform->screen = (SDL_Surface *) malloc(sizeof(SDL_Surface *));
-        game->platform->bmpTiles = (SDL_Surface *) malloc(sizeof(SDL_Surface *));
-        game->platform->bmpBack = (SDL_Surface *) malloc(sizeof(SDL_Surface *));
     }
 
     /* Start video system */
@@ -136,7 +145,8 @@ int platformInit(StcGame *game) {
 
     /* Create game video surface */
     game->platform->screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                              SCREEN_BIT_DEPTH, SCREEN_VIDEO_MODE);
+            SCREEN_BIT_DEPTH, SCREEN_VIDEO_MODE);
+
     if (!game->platform->screen) {
         return GAME_ERROR_NO_VIDEO;
     }

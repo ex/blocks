@@ -30,8 +30,8 @@
 #define BOARD_Y         (4)
 
 /* Preview tetromino position */
-#define PREVIEW_X       (96)
-#define PREVIEW_Y       (184)
+#define PREVIEW_X       (112)
+#define PREVIEW_Y       (210)
 
 /* Score position and length on screen */
 #define SCORE_X         (72)
@@ -82,11 +82,11 @@
 #define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
 
 /* Here we define the platform dependent data structure */
-typedef struct StcPlatform {
+struct StcPlatform {
     SDL_Surface* screen;
     SDL_Surface* bmpTiles;
     SDL_Surface* bmpBack;
     SDL_Surface* bmpNumbers;
-} StcPlatform;
+};
 
 #endif /* STC_USE_SIMPLE_SDL */

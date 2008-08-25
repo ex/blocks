@@ -88,7 +88,10 @@ static void startGame(StcGame *game) {
     /* Initialize game data */
     game->errorCode = GAME_ERROR_NONE;
     game->systemTime = platformGetSystemTime();
+    game->lastFallTime = game->systemTime;
     game->isOver = 0;
+    game->isPaused = 0;
+    game->showPreview = 1;
     game->events = EVENT_NONE;
     game->delay = INI_DELAY_FALL;
     /* Initialize game statistics */
@@ -366,31 +369,49 @@ void gameUpdate(StcGame *game) {
         }
     }
     else {
-        /* Process events */
-        if (game->events != EVENT_NONE) {
-            if (game->events & EVENT_DROP) {
-                dropTetramino(game);
-            }
-            if (game->events & EVENT_ROTATE_CW) {
-                rotateTetramino(game, 1);
-            }
-            if (game->events & EVENT_MOVE_RIGHT) {
-                moveTetramino(game, 1, 0);
-            }
-            else if (game->events & EVENT_MOVE_LEFT) {
-                moveTetramino(game, -1, 0);
-            }
-            if (game->events & EVENT_MOVE_DOWN) {
-                moveTetramino(game, 0, 1);
-            }
+        sysTime = platformGetSystemTime();
+        
+        /* Always handle pause event */
+        if (game->events & EVENT_PAUSE) {
+            game->isPaused = !game->isPaused;
             game->events = EVENT_NONE;
         }
-        /* Check if it's time to move downwards the falling tetromino */
-        sysTime = platformGetSystemTime();
-        if (sysTime - game->systemTime >= game->delay) {
-            moveTetramino(game, 0, 1);
-            game->systemTime = sysTime;
+
+        /* Check if the game is paused */
+        if (game->isPaused) {
+            /* We achieve the effect of pausing the game
+             * adding the last frame duration to lastFallTime */
+            game->lastFallTime += (sysTime - game->systemTime);
         }
+        else {
+            if (game->events != EVENT_NONE) {
+                if (game->events & EVENT_SHOW_NEXT) {
+                    game->showPreview = !game->showPreview;
+                }
+                if (game->events & EVENT_DROP) {
+                    dropTetramino(game);
+                }
+                if (game->events & EVENT_ROTATE_CW) {
+                    rotateTetramino(game, 1);
+                }
+                if (game->events & EVENT_MOVE_RIGHT) {
+                    moveTetramino(game, 1, 0);
+                }
+                else if (game->events & EVENT_MOVE_LEFT) {
+                    moveTetramino(game, -1, 0);
+                }
+                if (game->events & EVENT_MOVE_DOWN) {
+                    moveTetramino(game, 0, 1);
+                }
+                game->events = EVENT_NONE;
+            }
+            /* Check if it's time to move downwards the falling tetromino */
+            if (sysTime - game->lastFallTime >= game->delay) {
+                moveTetramino(game, 0, 1);
+                game->lastFallTime = sysTime;
+            }
+        }
+        game->systemTime = sysTime;
     }
     /* Draw game state */
     platformRenderGame(game);

@@ -36,26 +36,33 @@ void platformReadInput(StcGame *game) {
             case SDLK_ESCAPE:
                 game->errorCode = GAME_ERROR_USER_QUITS;
                 break;
+            case SDLK_s:
             case SDLK_DOWN:
                 game->events |= EVENT_MOVE_DOWN;
                 break;
+            case SDLK_w:
             case SDLK_UP:
                 game->events |= EVENT_ROTATE_CW;
                 break;
+            case SDLK_a:
             case SDLK_LEFT:
                 game->events |= EVENT_MOVE_LEFT;
                 break;
+            case SDLK_d:
             case SDLK_RIGHT:
                 game->events |= EVENT_MOVE_RIGHT;
                 break;
             case SDLK_SPACE:
                 game->events |= EVENT_DROP;
                 break;
-            case SDLK_r:
+            case SDLK_F5:
                 game->events |= EVENT_RESTART;
                 break;
             case SDLK_F1:
                 game->events |= EVENT_PAUSE;
+                break;
+            case SDLK_F2:
+                game->events |= EVENT_SHOW_NEXT;
                 break;
             }
             break;
@@ -107,11 +114,13 @@ void platformRenderGame(StcGame *game) {
     SDL_BlitSurface(game->platform->bmpBack, NULL, game->platform->screen, NULL);
 
     /* Draw preview block */
-    for (i = 0; i < 4; ++i) {
-        for (j = 0; j < 4; ++j) {
-            if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
-                drawTile(game, PREVIEW_X + (TILE_SIZE * i),
-                        PREVIEW_Y + (TILE_SIZE * j), game->nextBlock.cells[i][j]);
+    if (game->showPreview) {
+        for (i = 0; i < 4; ++i) {
+            for (j = 0; j < 4; ++j) {
+                if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
+                    drawTile(game, PREVIEW_X + (TILE_SIZE * i),
+                            PREVIEW_Y + (TILE_SIZE * j), game->nextBlock.cells[i][j]);
+                }
             }
         }
     }
@@ -135,20 +144,21 @@ void platformRenderGame(StcGame *game) {
         }
     }
     /* Draw game statistic data */
-    drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
-    drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
-    drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
+    if (!game->isPaused) {
+        drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
+        drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
+        drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
 
-    drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
-    drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
-    drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
-    drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
-    drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
-    drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
-    drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
+        drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
+        drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
+        drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
+        drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
+        drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
+        drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
+        drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
 
-    drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
-
+        drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
+    }
     /* Swap video buffers */
     SDL_Flip(game->platform->screen);
 }

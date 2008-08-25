@@ -36,6 +36,7 @@
 #define EVENT_DROP          (1 << 6)
 #define EVENT_PAUSE         (1 << 7)
 #define EVENT_RESTART       (1 << 8)
+#define EVENT_SHOW_NEXT     (1 << 9)    /* toggle show next tetromino */
 
 
 /* Tetromino definitions (used as indexes: must be between 0-6)
@@ -96,6 +97,9 @@ typedef struct StcGame {
     long systemTime;            /* system time in miliseconds   */
     int delay;          /* delay time for falling tetrominoes   */
     int isOver;         /* 1 if the game is over, 0 otherwise   */
+    int isPaused;       /* 1 if the game is paused, 0 otherwise */
+    int showPreview;    /* 1 if we must show preview tetramino  */
+    long lastFallTime;  /* last time the game moved the falling tetromino */
 
     /*
      * Game events are stored in bits in this variable.

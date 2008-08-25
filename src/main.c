@@ -39,7 +39,8 @@ int main(int argc, char *argv[]) {
     /* Check if we got a valid game */
     if (game) {
         /* We got a valid game, therefore start the game */
-        if (gameInit(game) == GAME_ERROR_NONE) {
+        errorCode = gameInit(game);
+        if (errorCode == GAME_ERROR_NONE) {
 
             /* Loop until some error happens or the user quits */
             while (game->errorCode == GAME_ERROR_NONE) {
@@ -55,8 +56,6 @@ int main(int argc, char *argv[]) {
         /*  Return to the system */
         return errorCode;
     }
-    else {
-        /* The game was not created */
-        return GAME_ERROR_NO_MEMORY;
-    }
+    /* If we get here the game was not created */
+    return GAME_ERROR_NO_MEMORY;
 }

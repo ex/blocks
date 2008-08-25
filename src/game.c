@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game logic implementation.                                               */
 /*                                                                            */
-/*   Copyright (C) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -78,26 +78,7 @@ static void setTetramino(int indexTetramino, StcTetramino *tetramino) {
         tetramino->cells[2][1] = COLOR_ORANGE;
         break;
     }
-}
-
-/* Create a new falling tetramino */
-static void createTetromino(StcGame *game) {
-    int i,j;
-
-    /* Reset position of falling tetromino */
-    game->fallingBlock.x = (BOARD_WIDTH / 2) - 2;
-    game->fallingBlock.y = 0;
-
-    /* Use preview tetromino as falling tetromino */
-    for (i = 0; i < 4; ++i) {
-        for (j = 0; j < 4; ++j) {
-            game->fallingBlock.cells[i][j] = game->nextBlock.cells[i][j];
-        }
-    }
-    game->fallingBlock .size = game->nextBlock.size;
-
-    /* Create next preview tetromino */
-    setTetramino(rand() % 7, &game->nextBlock);
+    tetramino->type = indexTetramino;
 }
 
 /*  Start a new game */
@@ -109,6 +90,7 @@ static void startGame(StcGame *game) {
     game->systemTime = platformGetSystemTime();
     game->isOver = 0;
     game->events = EVENT_NONE;
+    game->delay = INI_DELAY_FALL;
     /* Initialize game statistics */
     game->stats.score = 0;
     game->stats.lines = 0;
@@ -126,13 +108,11 @@ static void startGame(StcGame *game) {
 
     /* Initialize falling tetromino */
     setTetramino(rand() % 7, &game->fallingBlock);
-    game->fallingBlock.x = (BOARD_WIDTH / 2) - 2;
+    game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
     game->fallingBlock.y = 0;
 
     /* Initialize preview tetromino */
     setTetramino(rand() % 7, &game->nextBlock);
-    game->nextBlock.x = NEXT_TETROMINO_X;
-    game->nextBlock.y = NEXT_TETROMINO_Y;
 }
 
 /* Create new game object */
@@ -174,7 +154,7 @@ void rotateTetramino(StcGame *game, int clockwise) {
     int rotated[4][4];  /* temporary array to hold rotated cells */
 
     /* If TETRAMINO_O is falling return immediately */
-    if (game->fallingBlock.size == 2) {
+    if (game->fallingBlock.type == TETROMINO_O) {
         return; /* rotation doesn't require any changes */
     }
 
@@ -191,7 +171,7 @@ void rotateTetramino(StcGame *game, int clockwise) {
             }
         }
     }
-    /* Check collision of the temporary array with map borders */
+    /* Check collision of the temporary array */
     for (i = 0; i < game->fallingBlock.size; ++i) {
         for (j = 0; j < game->fallingBlock.size; ++j) {
             if (rotated[i][j] != EMPTY_CELL) {
@@ -243,11 +223,44 @@ static int checkCollision(StcGame *game, int dx, int dy) {
     return 0;
 }
 
+/* Game scoring: http://www.tetrisconcept.com/wiki/index.php/Scoring */
+static void onFilledRows(StcGame *game, int filledRows) {
+    /* Update total number of filled rows */
+    game->stats.lines += filledRows;
+
+    /* Increase score accordingly to the number of filled rows */
+    switch (filledRows) {
+    case 1:
+        game->stats.score += (SCORE_1_FILLED_ROW * (game->stats.level + 1));
+        break;
+    case 2:
+        game->stats.score += (SCORE_2_FILLED_ROW * (game->stats.level + 1));
+        break;
+    case 3:
+        game->stats.score += (SCORE_3_FILLED_ROW * (game->stats.level + 1));
+        break;
+    case 4:
+        game->stats.score += (SCORE_4_FILLED_ROW * (game->stats.level + 1));
+        break;
+    default:
+        game->errorCode = GAME_ERROR_ASSERT;    /* This can't happen */
+    }
+    /* Check if we need to update level */
+    if (game->stats.lines >= FILLED_ROWS_FOR_LEVEL_UP * (game->stats.level + 1)) {
+        game->stats.level++;
+
+        /* Increase speed for falling tetrominoes */
+        game->delay *= DELAY_FACTOR_FOR_LEVEL_UP;
+    }
+}
+
 /*
  * Move tetramino in direction especified by (x, y) (in tile units)
-  */
+ * This function detects if there are filled rows or if the move 
+ * lands a falling tetromino, also checks for game over condition.
+ */
 static void moveTetramino(StcGame *game, int x, int y) {
-    int i, j, hasFullRow;
+    int i, j, hasFullRow, numFilledRows;
     
     /* Check if the move would create a collision */
     if (checkCollision(game, x, y)) {
@@ -256,8 +269,7 @@ static void moveTetramino(StcGame *game, int x, int y) {
             /* Check if collision occur when the falling 
              * tetromino is in the 1st or 2nd row */
             if (game->fallingBlock.y <= 1) {
-                /* If this happens the game is over */
-                game->isOver = 1;
+                game->isOver = 1;   /* if this happens the game is over */
             }
             else {
                 /* The falling tetromino has reached the bottom, 
@@ -270,7 +282,9 @@ static void moveTetramino(StcGame *game, int x, int y) {
                         }
                     }
                 }
-                /* Check if the landing tetromino has created a full row */
+
+                /* Check if the landing tetromino has created full rows */
+                numFilledRows = 0;
                 for (j = 1; j < BOARD_HEIGHT; ++j) {
                     hasFullRow = 1;
                     for (i = 0; i < BOARD_WIDTH; ++i) {
@@ -287,13 +301,38 @@ static void moveTetramino(StcGame *game, int x, int y) {
                                 game->map[x][y] = game->map[x][y - 1];
                             }
                         }
+                        numFilledRows++;    /* increase filled row counter */
                     }
                 }
-                createTetromino(game);
+
+                /* Update game statistics */
+                if (numFilledRows) {
+                    onFilledRows(game, numFilledRows);
+                }
+                game->stats.totalPieces++;
+                game->stats.pieces[game->fallingBlock.type]++;
+                
+                /* Use preview tetromino as falling tetromino.
+                 * Copy preview tetramino for falling tetramino */
+                for (i = 0; i < 4; ++i) {
+                    for (j = 0; j < 4; ++j) {
+                        game->fallingBlock.cells[i][j] = game->nextBlock.cells[i][j];
+                    }
+                }
+                game->fallingBlock.size = game->nextBlock.size;
+                game->fallingBlock.type = game->nextBlock.type;
+
+                /* Reset position */
+                game->fallingBlock.y = 0;
+                game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
+
+                /* Create next preview tetromino */
+                setTetramino(rand() % 7, &game->nextBlock);
             }
         }
     }
     else {
+        /* There are no collisions, just move the tetramino */
         game->fallingBlock.x += x;
         game->fallingBlock.y += y;
     }
@@ -301,7 +340,8 @@ static void moveTetramino(StcGame *game, int x, int y) {
 
 /* Hard drop */
 static void dropTetramino(StcGame *game) {
-   int y = 1;
+   int y;
+   y = 1;
    /* Calculate number of cells to drop */
    while (!checkCollision(game, 0, y)) {
        y++;
@@ -345,14 +385,13 @@ void gameUpdate(StcGame *game) {
             }
             game->events = EVENT_NONE;
         }
-
+        /* Check if it's time to move downwards the falling tetromino */
         sysTime = platformGetSystemTime();
-        if (sysTime - game->systemTime >= INI_DELAY_FALL) {
+        if (sysTime - game->systemTime >= game->delay) {
             moveTetramino(game, 0, 1);
             game->systemTime = sysTime;
         }
     }
-
     /* Draw game state */
     platformRenderGame(game);
 }

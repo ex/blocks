@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game functions.                                                          */
 /*                                                                            */
-/*   Copyright (C) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -17,12 +17,12 @@
  * Game error codes
  */
 #define GAME_ERROR_NONE         (0)     /* Everything is OK, oh wonders!      */
-#define GAME_ERROR_NO_MEMORY    (1)     /* Not enough memory                  */
-#define GAME_ERROR_NO_VIDEO     (2)     /* Video system was not initialized   */
-#define GAME_ERROR_NO_IMAGES    (3)     /* Problem loading the image files    */
-#define GAME_ERROR_USER_QUITS   (10)    /* If the user quits... :D            */
+#define GAME_ERROR_USER_QUITS   (1)     /* The user quits (bored?), our fail  */
+#define GAME_ERROR_NO_MEMORY    (-1)    /* Not enough memory                  */
+#define GAME_ERROR_NO_VIDEO     (-2)    /* Video system was not initialized   */
+#define GAME_ERROR_NO_IMAGES    (-3)    /* Problem loading the image files    */
+#define GAME_ERROR_ASSERT       (-100)  /* Something went very very wrong...  */
 
-#define EMPTY_CELL  (-1)    /* This value used for empty tiles */
 
 /* 
  * Game events
@@ -37,6 +37,32 @@
 #define EVENT_PAUSE         (1 << 7)
 #define EVENT_RESTART       (1 << 8)
 
+
+/* Tetromino definitions (used as indexes: must be between 0-6)
+ * http://www.tetrisconcept.com/wiki/index.php/Tetromino */
+#define TETROMINO_I     (0)
+#define TETROMINO_O     (1)
+#define TETROMINO_T     (2)
+#define TETROMINO_S     (3)
+#define TETROMINO_Z     (4)
+#define TETROMINO_J     (5)
+#define TETROMINO_L     (6)
+
+
+/* Tetromino color indexes (used as indexes: must be between 0-7) */
+#define COLOR_CYAN      (1)
+#define COLOR_RED       (2)
+#define COLOR_BLUE      (3)
+#define COLOR_ORANGE    (4)
+#define COLOR_GREEN     (5)
+#define COLOR_YELLOW    (6)
+#define COLOR_PURPLE    (7)
+#define COLOR_WHITE     (0)     /* Used for effects (if any) */
+
+/* This value used for empty tiles */
+#define EMPTY_CELL  (-1)    
+
+
 /*
  * Data structure that holds information about our tetramino blocks
  */
@@ -45,6 +71,7 @@ typedef struct StcTetramino {
     int x;
     int y;
     int size;
+    int type;
 } StcTetramino;
 
 /*
@@ -67,6 +94,7 @@ typedef struct StcGame {
     StcPlatform *platform;      /* platform hidden data         */
     int errorCode;              /* game error code              */
     long systemTime;            /* system time in miliseconds   */
+    int delay;          /* delay time for falling tetrominoes   */
     int isOver;         /* 1 if the game is over, 0 otherwise   */
 
     /*

@@ -4,7 +4,7 @@
 /*   Simple pure SDL implementation. (No sound, no fonts)                     */
 /*   We use SDL for rendering the game state, reading user input and timing.  */
 /*                                                                            */
-/*   Copyright (C) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -63,18 +63,38 @@ void platformReadInput(StcGame *game) {
     }
 }
 
-/* Draws a tile from a tetromino */
+/* Draw a tile from a tetromino */
 static void drawTile(StcGame *game, int x, int y, int tile) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
-    recDestine.x = (TILE_SIZE * x) + BOARD_X;
-    recDestine.y = (TILE_SIZE * y) + BOARD_Y;
-    recSource.x = tile*TILE_SIZE;
+    recDestine.x = x;
+    recDestine.y = y;
+    recSource.x = TILE_SIZE * tile;
     recSource.y = 0;
     recSource.w = TILE_SIZE;
     recSource.h = TILE_SIZE;
     SDL_BlitSurface(game->platform->bmpTiles, &recSource, game->platform->screen, &recDestine);
+}
+
+/* Draw a number on the given position */
+static void drawNumber(StcGame *game, int x, int y, long number, int length, int color) {
+    SDL_Rect recDestine;
+    SDL_Rect recSource;
+    int pos;
+
+    recSource.y = NUMBER_HEIGHT * color;
+    recSource.w = NUMBER_WIDTH;
+    recSource.h = NUMBER_HEIGHT;
+    recDestine.y = y;
+
+    pos = 0;
+    do {
+        recDestine.x = x + NUMBER_WIDTH * (length - pos);
+        recSource.x = NUMBER_WIDTH * (number % 10);
+        SDL_BlitSurface(game->platform->bmpNumbers, &recSource, game->platform->screen, &recDestine);
+        number /= 10;
+    } while (++pos < length);
 }
 
 /*
@@ -90,7 +110,8 @@ void platformRenderGame(StcGame *game) {
     for (i = 0; i < 4; ++i) {
         for (j = 0; j < 4; ++j) {
             if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
-                drawTile(game, game->nextBlock.x + i, game->nextBlock.y + j, game->nextBlock.cells[i][j]);
+                drawTile(game, PREVIEW_X + (TILE_SIZE * i),
+                        PREVIEW_Y + (TILE_SIZE * j), game->nextBlock.cells[i][j]);
             }
         }
     }
@@ -98,18 +119,36 @@ void platformRenderGame(StcGame *game) {
     for (i = 0; i < BOARD_WIDTH; ++i) {
         for (j = 0; j < BOARD_HEIGHT; ++j) {
             if (game->map[i][j] != EMPTY_CELL) {
-                drawTile(game, i, j, game->map[i][j]);
+                drawTile(game, BOARD_X + (TILE_SIZE * i),
+                        BOARD_Y + (TILE_SIZE * j), game->map[i][j]);
             }
         }
     }
     /* Draw falling tetromino */
     for (i = 0; i<4; ++i) {
-        for(j=0; j<4; ++j) {
+        for (j = 0; j < 4; ++j) {
             if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                drawTile(game, game->fallingBlock.x + i, game->fallingBlock.y + j, game->fallingBlock.cells[i][j]);
+                drawTile(game, BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)), 
+                        BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)), 
+                        game->fallingBlock.cells[i][j]);
             }
         }
     }
+    /* Draw game statistic data */
+    drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
+    drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
+    drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
+
+    drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
+    drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
+    drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
+    drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
+    drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
+    drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
+    drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
+
+    drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
+
     /* Swap video buffers */
     SDL_Flip(game->platform->screen);
 }
@@ -122,6 +161,7 @@ void platformEnd(StcGame *game) {
     SDL_FreeSurface(game->platform->screen);
     SDL_FreeSurface(game->platform->bmpTiles);
     SDL_FreeSurface(game->platform->bmpBack);
+    SDL_FreeSurface(game->platform->bmpNumbers);
 
     /* Shut down SDL */
     SDL_Quit();
@@ -155,9 +195,11 @@ int platformInit(StcGame *game) {
     SDL_WM_SetCaption(GAME_NAME, GAME_NAME);
 
     /* Load images for blocks and background */
-    game->platform->bmpTiles = SDL_LoadBMP("sdl/blocks.bmp");
-    game->platform->bmpBack = SDL_LoadBMP("sdl/back.bmp");
-    if (!game->platform->bmpTiles || !game->platform->bmpBack) {
+    game->platform->bmpTiles = SDL_LoadBMP(BMP_TILE_BLOCKS);
+    game->platform->bmpBack = SDL_LoadBMP(BMP_BACKGROUND);
+    game->platform->bmpNumbers = SDL_LoadBMP(BMP_NUMBERS);
+
+    if (!game->platform->bmpTiles || !game->platform->bmpBack || !game->platform->bmpNumbers) {
         return GAME_ERROR_NO_IMAGES;
     }
 

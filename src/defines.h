@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game parameters and definitions.                                         */
 /*                                                                            */
-/*   Copyright (C) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -11,53 +11,30 @@
 #ifndef STC_SRC_DEFINES_H_
 #define STC_SRC_DEFINES_H_
 
-#define STC_USE_SIMPLE_SDL  /* Use simple SDL for drawing and controlling */
+/* Here we define the platform to use */
+#define STC_USE_SIMPLE_SDL  /* Using basic SDL, no additional libraries */
 
-/*
- * Game parameters
- */
+/* Application name */
 #define GAME_NAME       "STC: simple tetris clone"
 
-/* Screen size (in pixels) */
-#define SCREEN_WIDTH    (480)
-#define SCREEN_HEIGHT   (272)
-
-/* Size of square tile (in pixels) */
-#define TILE_SIZE       (12)
-
-/* Board size (in tiles) */
+/* Playfield size (in tiles) */
 #define BOARD_WIDTH     (10)
 #define BOARD_HEIGHT    (22)
-
-/* Board up-left corner coordinates (in pixels) */
-#define BOARD_X         (180)
-#define BOARD_Y         (4)
-
-/* Preview tetromino position (in tiles with respect to the board) */
-#define NEXT_TETROMINO_X    (-7)
-#define NEXT_TETROMINO_Y    (15)
 
 /* Initial time delay (in miliseconds) between falling moves */
 #define INI_DELAY_FALL  (1000)
 
-/* Tetromino definitions */
-/* http://www.tetrisconcept.com/wiki/index.php/Tetromino */
-#define TETROMINO_I     (0)
-#define TETROMINO_O     (1)
-#define TETROMINO_T     (2)
-#define TETROMINO_S     (3)
-#define TETROMINO_Z     (4)
-#define TETROMINO_J     (5)
-#define TETROMINO_L     (6)
+/* Score points given by filled rows
+ * http://www.tetrisconcept.com/wiki/index.php/Scoring */
+#define SCORE_1_FILLED_ROW  (40)
+#define SCORE_2_FILLED_ROW  (100)
+#define SCORE_3_FILLED_ROW  (300)
+#define SCORE_4_FILLED_ROW  (1200)
 
-/* Tetromino color indexes */
-#define COLOR_CYAN      (1)
-#define COLOR_RED       (2)
-#define COLOR_BLUE      (3)
-#define COLOR_ORANGE    (4)
-#define COLOR_GREEN     (5)
-#define COLOR_YELLOW    (6)
-#define COLOR_PURPLE    (7)
-#define COLOR_WHITE     (0)     /* Used for effects (if any) */
+/* Number of filled rows required to increase the game level */
+#define FILLED_ROWS_FOR_LEVEL_UP    (10)
+
+/* The falling delay is multiplied by this factor with every level up */
+#define DELAY_FACTOR_FOR_LEVEL_UP   (0.9f)
 
 #endif /* STC_SRC_DEFINES_H_ */

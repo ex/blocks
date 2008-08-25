@@ -107,7 +107,7 @@ static void startGame(StcGame *game) {
     srand(game->systemTime);
 
     /* Initialize game tile map */
-    setMatrixCells(&game->map[0][0], BOARD_WIDTH, BOARD_HEIGHT + 1, EMPTY_CELL);
+    setMatrixCells(&game->map[0][0], BOARD_WIDTH, BOARD_HEIGHT, EMPTY_CELL);
 
     /* Initialize falling tetromino */
     setTetramino(rand() % 7, &game->fallingBlock);
@@ -179,8 +179,8 @@ void rotateTetramino(StcGame *game, int clockwise) {
         for (j = 0; j < game->fallingBlock.size; ++j) {
             if (rotated[i][j] != EMPTY_CELL) {
                 /* Check collision with left, right or bottom borders of the map */
-                if ((game->fallingBlock.x + i < 0) || (game->fallingBlock.x + i > BOARD_WIDTH - 1)
-                        || (game->fallingBlock.y + j > BOARD_HEIGHT - 1)) {
+                if ((game->fallingBlock.x + i < 0) || (game->fallingBlock.x + i >= BOARD_WIDTH)
+                        || (game->fallingBlock.y + j >= BOARD_HEIGHT)) {
                     return; /* there was collision therefore return */
                 }
                 /* Check collision with existing cells in the map */
@@ -212,8 +212,8 @@ static int checkCollision(StcGame *game, int dx, int dy) {
         for (j = 0; j < game->fallingBlock.size; ++j) {
             if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
                 /* Check the tetramino would be inside the left, right and bottom borders */
-                if ((newx + i < 0) || (newx + i > BOARD_WIDTH - 1)
-                    || (newy + j > BOARD_HEIGHT - 1)) {
+                if ((newx + i < 0) || (newx + i >= BOARD_WIDTH)
+                    || (newy + j >= BOARD_HEIGHT)) {
                     return 1;
                 }
                 /* Check the tetromino won't collide with existing cells in the map */

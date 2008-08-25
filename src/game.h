@@ -88,7 +88,7 @@ typedef struct StcGame {
     /*
      * Matrix that holds the cells (tilemap)
      */
-    int map[BOARD_WIDTH][BOARD_HEIGHT + 1];
+    int map[BOARD_WIDTH][BOARD_HEIGHT];
 
     StcTetramino nextBlock;     /* next tetromino               */
     StcTetramino fallingBlock;  /* current falling tetromino    */

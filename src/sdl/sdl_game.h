@@ -1,9 +1,9 @@
 /* ========================================================================== */
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
-/*   Declarations for simple pure SDL implementation.                         */
+/*   Constants and definitions for simple pure SDL implementation.            */
 /*                                                                            */
-/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2009 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -81,12 +81,23 @@
 /* Use video hardware and double buffering */
 #define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
 
+/* Delayed autoshift initial delay */
+#define DAS_DELAY_TIMER     (200)
+
+/* Delayed autoshift timer for left and right moves */
+#define DAS_MOVE_TIMER      (40)
+
 /* Here we define the platform dependent data structure */
 struct StcPlatform {
     SDL_Surface* screen;
     SDL_Surface* bmpTiles;
     SDL_Surface* bmpBack;
     SDL_Surface* bmpNumbers;
+
+    /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
+    int delayLeft;
+    int delayRight;
+    int lastTime;
 };
 
 #endif /* STC_USE_SIMPLE_SDL */

@@ -1,9 +1,9 @@
 /* ========================================================================== */
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
-/*   A very simple tetris clone.                                              */
+/*   A simple tetris clone.                                                   */
 /*                                                                            */
-/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2009 Laurens Rodriguez Oscanoa.                            */
 /*                                                                            */
 /*   Permission is hereby granted, free of charge, to any person              */
 /*   obtaining a copy of this software and associated documentation           */
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     StcGame *game;
     int errorCode;
 
-    /* Create a new game */
+    /* Create new game */
     game = createGame();
 
     /* Check if we got a valid game */
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
             errorCode = game->errorCode;
             gameEnd(game);
         }
-        /* Liberate resources used by our game */
+        /* Free resources used by our game */
         deleteGame(game);
 
         /*  Return to the system */

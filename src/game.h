@@ -1,9 +1,9 @@
 /* ========================================================================== */
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
-/*   Game functions.                                                          */
+/*   Game constants and definitions.                                          */
 /*                                                                            */
-/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2009 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -23,7 +23,6 @@
 #define GAME_ERROR_NO_IMAGES    (-3)    /* Problem loading the image files    */
 #define GAME_ERROR_ASSERT       (-100)  /* Something went very very wrong...  */
 
-
 /* 
  * Game events
  */
@@ -37,10 +36,17 @@
 #define EVENT_PAUSE         (1 << 7)
 #define EVENT_RESTART       (1 << 8)
 #define EVENT_SHOW_NEXT     (1 << 9)    /* toggle show next tetromino */
+#define EVENT_SHOW_SHADOW   (1 << 10)   /* toggle show shadow */
 
+/* Number of tetromino types */
+#define TETROMINO_TYPES (7)
 
-/* Tetromino definitions (used as indexes: must be between 0-6)
- * http://www.tetrisconcept.com/wiki/index.php/Tetromino */
+/* We are going to store the tetromino cells in a square matrix */
+/* of this size (this is the size of the biggest tetromino)     */
+#define TETROMINO_SIZE (4)
+
+/* Tetromino definitions (used as indexes: must be between 0 - [TETROMINO_TYPES - 1])
+ * http://tetris.wikia.com/wiki/Tetromino */
 #define TETROMINO_I     (0)
 #define TETROMINO_O     (1)
 #define TETROMINO_T     (2)
@@ -49,8 +55,7 @@
 #define TETROMINO_J     (5)
 #define TETROMINO_L     (6)
 
-
-/* Tetromino color indexes (used as indexes: must be between 0-7) */
+/* Tetromino color indexes (must be between 0 - TETROMINO_TYPES) */
 #define COLOR_CYAN      (1)
 #define COLOR_RED       (2)
 #define COLOR_BLUE      (3)
@@ -63,17 +68,16 @@
 /* This value used for empty tiles */
 #define EMPTY_CELL  (-1)    
 
-
 /*
- * Data structure that holds information about our tetramino blocks
+ * Data structure that holds information about our tetromino blocks
  */
-typedef struct StcTetramino {
+typedef struct StcTetromino {
     int cells[4][4];
     int x;
     int y;
     int size;
     int type;
-} StcTetramino;
+} StcTetromino;
 
 /*
  * Data structure that is going to hold platform dependent
@@ -90,16 +94,23 @@ typedef struct StcGame {
      */
     int map[BOARD_WIDTH][BOARD_HEIGHT];
 
-    StcTetramino nextBlock;     /* next tetromino               */
-    StcTetramino fallingBlock;  /* current falling tetromino    */
+    StcTetromino nextBlock;     /* next tetromino               */
+    StcTetromino fallingBlock;  /* current falling tetromino    */
     StcPlatform *platform;      /* platform hidden data         */
     int errorCode;              /* game error code              */
-    long systemTime;            /* system time in miliseconds   */
+    long systemTime;            /* system time in milliseconds  */
     int delay;          /* delay time for falling tetrominoes   */
     int isOver;         /* 1 if the game is over, 0 otherwise   */
     int isPaused;       /* 1 if the game is paused, 0 otherwise */
-    int showPreview;    /* 1 if we must show preview tetramino  */
+    int showPreview;    /* 1 if we must show preview tetromino  */
     long lastFallTime;  /* last time the game moved the falling tetromino */
+    int stateChanged;   /* 1 if game state changed, 0 otherwise */
+    int scoreChanged;   /* 1 if game score changed, 0 otherwise */
+
+#ifdef STC_SHOW_GHOST_PIECE
+    int showShadow;     /* 1 if we must show ghost shadow       */
+    int shadowGap;      /* height gap between shadow and falling tetromino */
+#endif
 
     /*
      * Game events are stored in bits in this variable.
@@ -113,9 +124,9 @@ typedef struct StcGame {
     struct {
         long score;         /* user score for current game      */
         int lines;          /* total number of lines cleared    */
-        int totalPieces;    /* total number of tetraminoes used */
-        int pieces[7];      /* number of tetraminoes per type   */
+        int totalPieces;    /* total number of tetrominoes used */
         int level;          /* current game level               */
+        int pieces[TETROMINO_TYPES];    /* number of tetrominoes per type */
     } stats;
 } StcGame;
 

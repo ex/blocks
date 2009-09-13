@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game logic implementation.                                               */
 /*                                                                            */
-/*   Copyright (c) 2008 Laurens Rodriguez Oscanoa                             */
+/*   Copyright (c) 2009 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include "defines.h"
 #include "game.h"
+
+static void onTetrominoMoved(StcGame *game);
 
 /* Set matrix elements to indicated value */
 static void setMatrixCells(int *matrix, int width, int height, int value) {
@@ -23,62 +25,62 @@ static void setMatrixCells(int *matrix, int width, int height, int value) {
 }
 
 /* Initialize tetromino cells for every tipe of tetromino */
-static void setTetramino(int indexTetramino, StcTetramino *tetramino) {
+static void setTetromino(int indexTetromino, StcTetromino *tetromino) {
 
     /* Initialize tetromino cells to empty cells */
-    setMatrixCells(&tetramino->cells[0][0], 4, 4, EMPTY_CELL);
+    setMatrixCells(&tetromino->cells[0][0], TETROMINO_SIZE, TETROMINO_SIZE, EMPTY_CELL);
 
     /* Almost all the blocks have size 3 */
-    tetramino->size = 3;
+    tetromino->size = TETROMINO_SIZE - 1;
 
-    /* Initial configuration from: http://www.tetrisconcept.com/wiki/index.php/SRS */
-    switch (indexTetramino) {
+    /* Initial configuration from: http://tetris.wikia.com/wiki/SRS */
+    switch (indexTetromino) {
     case TETROMINO_I:
-        tetramino->cells[0][1] = COLOR_CYAN;
-        tetramino->cells[1][1] = COLOR_CYAN;
-        tetramino->cells[2][1] = COLOR_CYAN;
-        tetramino->cells[3][1] = COLOR_CYAN;
-        tetramino->size = 4;
+        tetromino->cells[0][1] = COLOR_CYAN;
+        tetromino->cells[1][1] = COLOR_CYAN;
+        tetromino->cells[2][1] = COLOR_CYAN;
+        tetromino->cells[3][1] = COLOR_CYAN;
+        tetromino->size = TETROMINO_SIZE;
         break;
     case TETROMINO_O:
-        tetramino->cells[0][0] = COLOR_YELLOW;
-        tetramino->cells[0][1] = COLOR_YELLOW;
-        tetramino->cells[1][0] = COLOR_YELLOW;
-        tetramino->cells[1][1] = COLOR_YELLOW;
-        tetramino->size = 2;
+        tetromino->cells[0][0] = COLOR_YELLOW;
+        tetromino->cells[0][1] = COLOR_YELLOW;
+        tetromino->cells[1][0] = COLOR_YELLOW;
+        tetromino->cells[1][1] = COLOR_YELLOW;
+        tetromino->size = TETROMINO_SIZE - 2;
         break;
     case TETROMINO_T:
-        tetramino->cells[0][1] = COLOR_PURPLE;
-        tetramino->cells[1][0] = COLOR_PURPLE;
-        tetramino->cells[1][1] = COLOR_PURPLE;
-        tetramino->cells[2][1] = COLOR_PURPLE;
+        tetromino->cells[0][1] = COLOR_PURPLE;
+        tetromino->cells[1][0] = COLOR_PURPLE;
+        tetromino->cells[1][1] = COLOR_PURPLE;
+        tetromino->cells[2][1] = COLOR_PURPLE;
         break;
     case TETROMINO_S:
-        tetramino->cells[0][1] = COLOR_GREEN;
-        tetramino->cells[1][0] = COLOR_GREEN;
-        tetramino->cells[1][1] = COLOR_GREEN;
-        tetramino->cells[2][0] = COLOR_GREEN;
+        tetromino->cells[0][1] = COLOR_GREEN;
+        tetromino->cells[1][0] = COLOR_GREEN;
+        tetromino->cells[1][1] = COLOR_GREEN;
+        tetromino->cells[2][0] = COLOR_GREEN;
         break;
     case TETROMINO_Z:
-        tetramino->cells[0][0] = COLOR_RED;
-        tetramino->cells[1][0] = COLOR_RED;
-        tetramino->cells[1][1] = COLOR_RED;
-        tetramino->cells[2][1] = COLOR_RED;
+        tetromino->cells[0][0] = COLOR_RED;
+        tetromino->cells[1][0] = COLOR_RED;
+        tetromino->cells[1][1] = COLOR_RED;
+        tetromino->cells[2][1] = COLOR_RED;
         break;
     case TETROMINO_J:
-        tetramino->cells[0][0] = COLOR_BLUE;
-        tetramino->cells[0][1] = COLOR_BLUE;
-        tetramino->cells[1][1] = COLOR_BLUE;
-        tetramino->cells[2][1] = COLOR_BLUE;
+        tetromino->cells[0][0] = COLOR_BLUE;
+        tetromino->cells[0][1] = COLOR_BLUE;
+        tetromino->cells[1][1] = COLOR_BLUE;
+        tetromino->cells[2][1] = COLOR_BLUE;
         break;
     case TETROMINO_L:
-        tetramino->cells[0][1] = COLOR_ORANGE;
-        tetramino->cells[1][1] = COLOR_ORANGE;
-        tetramino->cells[2][0] = COLOR_ORANGE;
-        tetramino->cells[2][1] = COLOR_ORANGE;
+        tetromino->cells[0][1] = COLOR_ORANGE;
+        tetromino->cells[1][1] = COLOR_ORANGE;
+        tetromino->cells[2][0] = COLOR_ORANGE;
+        tetromino->cells[2][1] = COLOR_ORANGE;
         break;
     }
-    tetramino->type = indexTetramino;
+    tetromino->type = indexTetromino;
 }
 
 /*  Start a new game */
@@ -93,29 +95,37 @@ static void startGame(StcGame *game) {
     game->isPaused = 0;
     game->showPreview = 1;
     game->events = EVENT_NONE;
-    game->delay = INI_DELAY_FALL;
+    game->delay = INIT_DELAY_FALL;
+#ifdef STC_SHOW_GHOST_PIECE
+    game->showShadow = 1;
+#endif
+
     /* Initialize game statistics */
     game->stats.score = 0;
     game->stats.lines = 0;
     game->stats.totalPieces = 0;
     game->stats.level = 0;
-    for (i = 0; i < 7; ++i) {
+    for (i = 0; i < TETROMINO_TYPES; ++i) {
         game->stats.pieces[i] = 0;
     }
 
-    /* Initialize rand generator */
+    /* Initialize random generator */
     srand(game->systemTime);
 
     /* Initialize game tile map */
     setMatrixCells(&game->map[0][0], BOARD_WIDTH, BOARD_HEIGHT, EMPTY_CELL);
 
     /* Initialize falling tetromino */
-    setTetramino(rand() % 7, &game->fallingBlock);
+    setTetromino(rand() % TETROMINO_TYPES, &game->fallingBlock);
     game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
     game->fallingBlock.y = 0;
 
     /* Initialize preview tetromino */
-    setTetramino(rand() % 7, &game->nextBlock);
+    setTetromino(rand() % TETROMINO_TYPES, &game->nextBlock);
+
+    /* Initialize events */
+    onTetrominoMoved(game);
+    game->scoreChanged = 1;
 }
 
 /* Create new game object */
@@ -150,19 +160,19 @@ void deleteGame(StcGame *game) {
 
 /*
  * Rotate falling tetromino. If there are no collisions when the 
- * tetromino is rotated this modifies the tetramino's cell buffer.
+ * tetromino is rotated this modifies the tetromino's cell buffer.
  */
-void rotateTetramino(StcGame *game, int clockwise) {
+void rotateTetromino(StcGame *game, int clockwise) {
     int i, j;
-    int rotated[4][4];  /* temporary array to hold rotated cells */
+    int rotated[TETROMINO_SIZE][TETROMINO_SIZE];  /* temporary array to hold rotated cells */
 
-    /* If TETRAMINO_O is falling return immediately */
+    /* If TETROMINO_O is falling return immediately */
     if (game->fallingBlock.type == TETROMINO_O) {
         return; /* rotation doesn't require any changes */
     }
 
     /* Initialize rotated cells to blank */
-    setMatrixCells(&rotated[0][0], 4, 4, EMPTY_CELL);
+    setMatrixCells(&rotated[0][0], TETROMINO_SIZE, TETROMINO_SIZE, EMPTY_CELL);
 
     /* Copy rotated cells to the temporary array */
     for (i = 0; i < game->fallingBlock.size; ++i) {
@@ -190,12 +200,13 @@ void rotateTetramino(StcGame *game, int clockwise) {
             }
         }
     }
-    /* There are no collisions, replace tetramino cells with rotated cells */
-    for (i = 0; i < 4; ++i) {
-        for (j = 0; j < 4; ++j) {
+    /* There are no collisions, replace tetromino cells with rotated cells */
+    for (i = 0; i < TETROMINO_SIZE; ++i) {
+        for (j = 0; j < TETROMINO_SIZE; ++j) {
             game->fallingBlock.cells[i][j] = rotated[i][j];
         }
     }
+    onTetrominoMoved(game);
 }
 
 /*
@@ -211,7 +222,7 @@ static int checkCollision(StcGame *game, int dx, int dy) {
     for (i = 0; i < game->fallingBlock.size; ++i) {
         for (j = 0; j < game->fallingBlock.size; ++j) {
             if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                /* Check the tetramino would be inside the left, right and bottom borders */
+                /* Check the tetromino would be inside the left, right and bottom borders */
                 if ((newx + i < 0) || (newx + i >= BOARD_WIDTH)
                     || (newy + j >= BOARD_HEIGHT)) {
                     return 1;
@@ -226,7 +237,7 @@ static int checkCollision(StcGame *game, int dx, int dy) {
     return 0;
 }
 
-/* Game scoring: http://www.tetrisconcept.com/wiki/index.php/Scoring */
+/* Game scoring: http://tetris.wikia.com/wiki/Scoring */
 static void onFilledRows(StcGame *game, int filledRows) {
     /* Update total number of filled rows */
     game->stats.lines += filledRows;
@@ -253,16 +264,16 @@ static void onFilledRows(StcGame *game, int filledRows) {
         game->stats.level++;
 
         /* Increase speed for falling tetrominoes */
-        game->delay *= DELAY_FACTOR_FOR_LEVEL_UP;
+        game->delay = (int)(game->delay * DELAY_FACTOR_FOR_LEVEL_UP);
     }
 }
 
 /*
- * Move tetramino in direction especified by (x, y) (in tile units)
+ * Move tetromino in direction especified by (x, y) (in tile units)
  * This function detects if there are filled rows or if the move 
  * lands a falling tetromino, also checks for game over condition.
  */
-static void moveTetramino(StcGame *game, int x, int y) {
+static void moveTetromino(StcGame *game, int x, int y) {
     int i, j, hasFullRow, numFilledRows;
     
     /* Check if the move would create a collision */
@@ -316,9 +327,9 @@ static void moveTetramino(StcGame *game, int x, int y) {
                 game->stats.pieces[game->fallingBlock.type]++;
                 
                 /* Use preview tetromino as falling tetromino.
-                 * Copy preview tetramino for falling tetramino */
-                for (i = 0; i < 4; ++i) {
-                    for (j = 0; j < 4; ++j) {
+                 * Copy preview tetromino for falling tetromino */
+                for (i = 0; i < TETROMINO_SIZE; ++i) {
+                    for (j = 0; j < TETROMINO_SIZE; ++j) {
                         game->fallingBlock.cells[i][j] = game->nextBlock.cells[i][j];
                     }
                 }
@@ -330,26 +341,43 @@ static void moveTetramino(StcGame *game, int x, int y) {
                 game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
 
                 /* Create next preview tetromino */
-                setTetramino(rand() % 7, &game->nextBlock);
+                setTetromino(rand() % TETROMINO_TYPES, &game->nextBlock);
             }
         }
     }
     else {
-        /* There are no collisions, just move the tetramino */
+        /* There are no collisions, just move the tetromino */
         game->fallingBlock.x += x;
         game->fallingBlock.y += y;
     }
+    onTetrominoMoved(game);
 }
 
 /* Hard drop */
-static void dropTetramino(StcGame *game) {
-   int y;
-   y = 1;
-   /* Calculate number of cells to drop */
-   while (!checkCollision(game, 0, y)) {
-       y++;
-   }
-   moveTetramino(game, 0, y - 1);
+static void dropTetromino(StcGame *game) {
+#ifdef STC_SHOW_GHOST_PIECE
+    moveTetromino(game, 0, game->shadowGap);
+    moveTetromino(game, 0, 1); /* Force lock */
+
+    /* Update score */
+    if (game->showShadow) {
+        game->stats.score += (long)(SCORE_DROP_WITH_SHADOW_FACTOR * SCORE_2_FILLED_ROW * (game->stats.level + 1));
+    }
+    else {
+        game->stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (game->stats.level + 1));
+    }
+    game->scoreChanged = 1;
+#else
+    int y = 0;
+    /* Calculate number of cells to drop */
+    while (!checkCollision(game, 0, ++y));
+    moveTetromino(game, 0, y - 1);
+    moveTetromino(game, 0, 1); /* Force lock */
+
+    /* Update score */
+    game->stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (game->stats.level + 1));
+    game->scoreChanged = 1;
+#endif
 }
 
 /*
@@ -388,26 +416,36 @@ void gameUpdate(StcGame *game) {
                 if (game->events & EVENT_SHOW_NEXT) {
                     game->showPreview = !game->showPreview;
                 }
+#ifdef STC_SHOW_GHOST_PIECE
+                if (game->events & EVENT_SHOW_SHADOW) {
+                    game->showShadow = !game->showShadow;
+                    game->stateChanged = 1;
+                }
+#endif
                 if (game->events & EVENT_DROP) {
-                    dropTetramino(game);
+                    dropTetromino(game);
                 }
                 if (game->events & EVENT_ROTATE_CW) {
-                    rotateTetramino(game, 1);
+                    rotateTetromino(game, 1);
                 }
                 if (game->events & EVENT_MOVE_RIGHT) {
-                    moveTetramino(game, 1, 0);
+                    moveTetromino(game, 1, 0);
                 }
                 else if (game->events & EVENT_MOVE_LEFT) {
-                    moveTetramino(game, -1, 0);
+                    moveTetromino(game, -1, 0);
                 }
                 if (game->events & EVENT_MOVE_DOWN) {
-                    moveTetramino(game, 0, 1);
+                    /* Update score if the user accelerates downfall */
+                    game->stats.score += (long)(SCORE_MOVE_DOWN_FACTOR * (SCORE_2_FILLED_ROW * (game->stats.level + 1)));
+                    game->scoreChanged = 1;
+
+                    moveTetromino(game, 0, 1);
                 }
                 game->events = EVENT_NONE;
             }
             /* Check if it's time to move downwards the falling tetromino */
             if (sysTime - game->lastFallTime >= game->delay) {
-                moveTetramino(game, 0, 1);
+                moveTetromino(game, 0, 1);
                 game->lastFallTime = sysTime;
             }
         }
@@ -417,3 +455,13 @@ void gameUpdate(StcGame *game) {
     platformRenderGame(game);
 }
 
+/* This event is called when the falling tetromino is moved */
+static void onTetrominoMoved(StcGame *game) {
+#ifdef STC_SHOW_GHOST_PIECE
+    int y = 0;
+    /* Calculate number of cells where shadow tetromino would be */
+    while (!checkCollision(game, 0, ++y));
+    game->shadowGap = y - 1;
+#endif
+    game->stateChanged = 1;
+}

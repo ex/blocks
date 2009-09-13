@@ -325,6 +325,7 @@ static void moveTetromino(StcGame *game, int x, int y) {
                 }
                 game->stats.totalPieces++;
                 game->stats.pieces[game->fallingBlock.type]++;
+                game->scoreChanged = 1;
                 
                 /* Use preview tetromino as falling tetromino.
                  * Copy preview tetromino for falling tetromino */
@@ -339,6 +340,7 @@ static void moveTetromino(StcGame *game, int x, int y) {
                 /* Reset position */
                 game->fallingBlock.y = 0;
                 game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
+                onTetrominoMoved(game);
 
                 /* Create next preview tetromino */
                 setTetromino(rand() % TETROMINO_TYPES, &game->nextBlock);
@@ -415,6 +417,7 @@ void gameUpdate(StcGame *game) {
             if (game->events != EVENT_NONE) {
                 if (game->events & EVENT_SHOW_NEXT) {
                     game->showPreview = !game->showPreview;
+                    game->stateChanged = 1;
                 }
 #ifdef STC_SHOW_GHOST_PIECE
                 if (game->events & EVENT_SHOW_SHADOW) {

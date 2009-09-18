@@ -72,7 +72,7 @@
  * Data structure that holds information about our tetromino blocks
  */
 typedef struct StcTetromino {
-    int cells[4][4];
+    int cells[TETROMINO_SIZE][TETROMINO_SIZE];
     int x;
     int y;
     int size;

@@ -97,6 +97,7 @@ struct StcPlatform {
     /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
     int delayLeft;
     int delayRight;
+    int delayDown;
     int lastTime;
 };
 

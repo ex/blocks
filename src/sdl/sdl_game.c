@@ -54,6 +54,7 @@ int platformInit(StcGame *game) {
     game->platform->lastTime = SDL_GetTicks();
     game->platform->delayLeft = -1;
     game->platform->delayRight = -1;
+    game->platform->delayDown = -1;
 
     return GAME_ERROR_NONE;
 };
@@ -84,6 +85,7 @@ void platformReadInput(StcGame *game) {
             case SDLK_s:
             case SDLK_DOWN:
                 game->events |= EVENT_MOVE_DOWN;
+                game->platform->delayDown = DAS_DELAY_TIMER;
                 break;
             case SDLK_w:
             case SDLK_UP:
@@ -123,6 +125,10 @@ void platformReadInput(StcGame *game) {
         /* On key released */
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
+            case SDLK_s:
+            case SDLK_DOWN:
+                game->platform->delayDown = -1;
+                break;
             case SDLK_a:
             case SDLK_LEFT:
                 game->platform->delayLeft = -1;
@@ -142,6 +148,13 @@ void platformReadInput(StcGame *game) {
     /* Process delayed autoshift */
     timeNow = SDL_GetTicks();
     timeDelta = timeNow - game->platform->lastTime;
+    if (game->platform->delayDown > 0) {
+        game->platform->delayDown -= timeDelta;
+        if (game->platform->delayDown <= 0) {
+            game->platform->delayDown = DAS_MOVE_TIMER;
+            game->events |= EVENT_MOVE_DOWN;
+        }
+    }
     if (game->platform->delayLeft > 0) {
         game->platform->delayLeft -= timeDelta;
         if (game->platform->delayLeft <= 0) {

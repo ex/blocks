@@ -8,9 +8,8 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-#include <stdlib.h>
-#include "defines.h"
 #include "game.h"
+#include <stdlib.h>
 
 static void onTetrominoMoved(StcGame *game);
 

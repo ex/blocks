@@ -268,7 +268,7 @@ static void onFilledRows(StcGame *game, int filledRows) {
 }
 
 /*
- * Move tetromino in direction especified by (x, y) (in tile units)
+ * Move tetromino in the direction especified by (x, y) (in tile units)
  * This function detects if there are filled rows or if the move 
  * lands a falling tetromino, also checks for game over condition.
  */
@@ -279,8 +279,8 @@ static void moveTetromino(StcGame *game, int x, int y) {
     if (checkCollision(game, x, y)) {
         /* In case of collision check if move was downwards (y == 1) */
         if (y == 1) {
-            /* Check if collision occur when the falling 
-             * tetromino is in the 1st or 2nd row */
+            /* Check if collision occurs when the falling 
+             * tetromino is on the 1st or 2nd row */
             if (game->fallingBlock.y <= 1) {
                 game->isOver = 1;   /* if this happens the game is over */
             }

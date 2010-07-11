@@ -23,7 +23,7 @@ static void setMatrixCells(int *matrix, int width, int height, int value) {
     }
 }
 
-/* Initialize tetromino cells for every tipe of tetromino */
+/* Initialize tetromino cells for every type of tetromino */
 static void setTetromino(int indexTetromino, StcTetromino *tetromino) {
 
     /* Initialize tetromino cells to empty cells */
@@ -268,7 +268,7 @@ static void onFilledRows(StcGame *game, int filledRows) {
 }
 
 /*
- * Move tetromino in the direction especified by (x, y) (in tile units)
+ * Move tetromino in the direction specified by (x, y) (in tile units)
  * This function detects if there are filled rows or if the move 
  * lands a falling tetromino, also checks for game over condition.
  */

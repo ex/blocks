@@ -27,35 +27,34 @@
 /*   OTHER DEALINGS IN THE SOFTWARE.                                          */
 /* -------------------------------------------------------------------------- */
 
-#include "game.h"
+#include <stdlib.h>
+#include "game.hpp"
+#include "sdl/sdl_game.hpp"
 
 int main(int argc, char *argv[]) {
-    StcGame *game;
-    int errorCode;
+    // Create new game.
+    StcGame *game = new StcGame();
 
-    /* Create new game */
-    game = createGame();
-
-    /* Check if we got a valid game */
-    if (game) {
-        /* We got a valid game, therefore start the game */
-        errorCode = gameInit(game);
+    // Check if we got a valid game.
+    if (game != NULL) {
+        // We got a valid game, therefore start the game.
+        int errorCode = game->init(new StcPlatformSdl());
         if (errorCode == GAME_ERROR_NONE) {
 
-            /* Loop until some error happens or the user quits */
+            // Loop until some error happens or the user quits.
             while (game->errorCode == GAME_ERROR_NONE) {
-                gameUpdate(game);
+                game->update();
             }
-            /* Save error code and end game */
+            // Save error code and end game.
             errorCode = game->errorCode;
-            gameEnd(game);
+            game->end();
         }
-        /* Free resources used by our game */
-        deleteGame(game);
+        // Free resources used by our game.
+        delete game;
 
-        /*  Return to the system */
+        // Return to the system.
         return errorCode;
     }
-    /* If we get here the game was not created */
+    // If we get here the game was not created.
     return GAME_ERROR_NO_MEMORY;
 }

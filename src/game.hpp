@@ -8,8 +8,8 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-#ifndef STC_SRC_GAME_H_
-#define STC_SRC_GAME_H_
+#ifndef STC_SRC_GAME_HPP_
+#define STC_SRC_GAME_HPP_
 
 #include "defines.h"
 
@@ -68,19 +68,31 @@
 /* This value used for empty tiles */
 #define EMPTY_CELL  (-1)    
 
+class StcGame;
 /*
- * Data structure that is going to hold platform dependent
- * information about our game. It's defined in the platform header.
+ * External interface for platform implementation.
  */
-typedef struct StcPlatform StcPlatform;
+class StcPlatform {
+  public:
+    virtual int init() = 0;
+    virtual void end() = 0;
+
+    /* Read input device and notify game */
+    virtual void readInput(StcGame *gameInstance) = 0;
+
+    /* Render the state of the game */
+    virtual void renderGame(StcGame *gameInstance) = 0;
+
+    /* Return the current system time in milliseconds */
+    virtual long getSystemTime() = 0;
+};
 
 /*
- * Data structure that holds information about our game *object*
+ * Main game class.
  */
-typedef struct StcGame {
-    /*
-     * Data structure that holds information about our tetromino blocks
-     */
+class StcGame {
+  public:
+    // Data structure that holds information about our tetromino blocks.
     struct StcTetromino {
         int cells[TETROMINO_SIZE][TETROMINO_SIZE];
         int x;
@@ -89,9 +101,7 @@ typedef struct StcGame {
         int type;
     };
 
-    /*
-     * Statistic data
-     */
+    // Statistic data.
     struct {
         long score;         /* user score for current game      */
         int lines;          /* total number of lines cleared    */
@@ -114,8 +124,8 @@ typedef struct StcGame {
     /*
      * Public properties.
      */
-    struct StcTetromino nextBlock;     /* next tetromino               */
-    struct StcTetromino fallingBlock;  /* current falling tetromino    */
+    StcTetromino nextBlock;     /* next tetromino               */
+    StcTetromino fallingBlock;  /* current falling tetromino    */
     int errorCode;              /* game error code              */
     int isPaused;       /* 1 if the game is paused, 0 otherwise */
     int showPreview;    /* 1 if we must show preview tetromino  */
@@ -123,11 +133,18 @@ typedef struct StcGame {
     int showShadow;     /* 1 if we must show ghost shadow       */
     int shadowGap;      /* height gap between shadow and falling tetromino */
 #endif
+    /*
+     * Public methods.
+     */
+    int init(StcPlatform *targetPlatform);
+    void end();
+    void update();
 
+  private:
     /*
      * Private properties.
      */
-    StcPlatform *platform;      /* platform hidden data         */
+    StcPlatform *platform;      /* platform interface           */
     long systemTime;            /* system time in milliseconds  */
     int delay;          /* delay time for falling tetrominoes   */
     int isOver;         /* 1 if the game is over, 0 otherwise   */
@@ -135,39 +152,18 @@ typedef struct StcGame {
     int stateChanged;   /* 1 if game state changed, 0 otherwise */
     int scoreChanged;   /* 1 if game score changed, 0 otherwise */
 
-} StcGame;
-
-/*
- * Creates a game and returns a pointer to a valid game object
- * or a NULL pointer in case of error.
- */
-StcGame *createGame();
-
-/*
- * Release resources used by the game.
- */
-void deleteGame(StcGame *pGame);
-
-/*
- * Main game functions
- */
-int gameInit(StcGame *gameInstance);
-void gameEnd(StcGame *gameInstance);
-void gameUpdate(StcGame *gameInstance);
-
-/*
- * External interface for platform implementation
- */
-extern int platformInit(StcGame *gameInstance);
-extern void platformEnd(StcGame *gameInstance);
-
-/* Read input device and notify game */
-extern void platformReadInput(StcGame *gameInstance);
-
-/* Render the state of the game */
-extern void platformRenderGame(StcGame *gameInstance);
-
-/* Return the current system time in milliseconds */
-extern long platformGetSystemTime();
+    /*
+     * Internal methods.
+     */
+    void setMatrixCells(int *matrix, int width, int height, int value);
+    void setTetromino(int indexTetromino, StcTetromino *tetromino);
+    void start();
+    void rotateTetromino(int clockwise);
+    int checkCollision(int dx, int dy);
+    void onFilledRows(int filledRows);
+    void moveTetromino(int x, int y);
+    void dropTetromino();
+    void onTetrominoMoved();
+};
 
 #endif /* STC_SRC_GAME_H_ */

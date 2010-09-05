@@ -9,64 +9,57 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-#include "sdl_game.h"
+#include "sdl_game.hpp"
 #include <stdlib.h>
+#include <SDL_image.h>
 
 #ifdef STC_USE_SIMPLE_SDL
 
 /*
  * Initializes platform, if there are no problems returns GAME_ERROR_NONE.
  */
-int platformInit(StcGame *game) {
-
-    /* First we initialize the platform data */
-    game->platform = (StcPlatform *) malloc(sizeof(StcPlatform));
-    if (game->platform == NULL) {
-        return GAME_ERROR_NO_MEMORY;
-    }
-
+int StcPlatformSdl::init() {
     /* Start video system */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         return GAME_ERROR_NO_VIDEO;
     }
 
     /* Create game video surface */
-    game->platform->screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 
-                                              SCREEN_BIT_DEPTH,
-                                              SCREEN_VIDEO_MODE);
-    if (game->platform->screen == NULL) {
+    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 
+                              SCREEN_BIT_DEPTH,
+                              SCREEN_VIDEO_MODE);
+    if (screen == NULL) {
         return GAME_ERROR_NO_VIDEO;
     }
 
     /* Set window caption */
-    SDL_WM_SetCaption(GAME_NAME " (ANSI C)", GAME_NAME);
+    SDL_WM_SetCaption(GAME_NAME " (C++)", GAME_NAME);
 
     /* Load images for blocks and background */
-    game->platform->bmpTiles = SDL_LoadBMP(BMP_TILE_BLOCKS);
-    game->platform->bmpBack = SDL_LoadBMP(BMP_BACKGROUND);
-    game->platform->bmpNumbers = SDL_LoadBMP(BMP_NUMBERS);
+    bmpTiles = IMG_Load(BMP_TILE_BLOCKS);
+    bmpBack = IMG_Load(BMP_BACKGROUND);
+    bmpNumbers = IMG_Load(BMP_NUMBERS);
 
-    if (game->platform->bmpTiles == NULL || game->platform->bmpBack == NULL
-                                         || game->platform->bmpNumbers == NULL) {
+    if (bmpTiles == NULL || bmpBack == NULL || bmpNumbers == NULL) {
         return GAME_ERROR_NO_IMAGES;
     }
 
     /* Initialize delayed autoshift */
-    game->platform->lastTime = SDL_GetTicks();
-    game->platform->delayLeft = -1;
-    game->platform->delayRight = -1;
-    game->platform->delayDown = -1;
+    lastTime = SDL_GetTicks();
+    delayLeft = -1;
+    delayRight = -1;
+    delayDown = -1;
 
     return GAME_ERROR_NONE;
 };
 
 /* Return the current system time in milliseconds */
-long platformGetSystemTime() {
+long StcPlatformSdl::getSystemTime() {
     return SDL_GetTicks();
 }
 
 /* Read input device and notify game */
-void platformReadInput(StcGame *game) {
+void StcPlatformSdl::readInput(StcGame *game) {
     long timeNow, timeDelta;
     SDL_Event event;
 
@@ -86,7 +79,7 @@ void platformReadInput(StcGame *game) {
             case SDLK_s:
             case SDLK_DOWN:
                 game->events |= EVENT_MOVE_DOWN;
-                game->platform->delayDown = DAS_DELAY_TIMER;
+                delayDown = DAS_DELAY_TIMER;
                 break;
             case SDLK_w:
             case SDLK_UP:
@@ -95,12 +88,12 @@ void platformReadInput(StcGame *game) {
             case SDLK_a:
             case SDLK_LEFT:
                 game->events |= EVENT_MOVE_LEFT;
-                game->platform->delayLeft = DAS_DELAY_TIMER;
+                delayLeft = DAS_DELAY_TIMER;
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
                 game->events |= EVENT_MOVE_RIGHT;
-                game->platform->delayRight = DAS_DELAY_TIMER;
+                delayRight = DAS_DELAY_TIMER;
                 break;
             case SDLK_SPACE:
                 game->events |= EVENT_DROP;
@@ -128,15 +121,15 @@ void platformReadInput(StcGame *game) {
             switch (event.key.keysym.sym) {
             case SDLK_s:
             case SDLK_DOWN:
-                game->platform->delayDown = -1;
+                delayDown = -1;
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                game->platform->delayLeft = -1;
+                delayLeft = -1;
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                game->platform->delayRight = -1;
+                delayRight = -1;
                 break;
             default:
                 break;
@@ -148,61 +141,60 @@ void platformReadInput(StcGame *game) {
 
     /* Process delayed autoshift */
     timeNow = SDL_GetTicks();
-    timeDelta = timeNow - game->platform->lastTime;
-    if (game->platform->delayDown > 0) {
-        game->platform->delayDown -= timeDelta;
-        if (game->platform->delayDown <= 0) {
-            game->platform->delayDown = DAS_MOVE_TIMER;
+    timeDelta = timeNow - lastTime;
+    if (delayDown > 0) {
+        delayDown -= timeDelta;
+        if (delayDown <= 0) {
+            delayDown = DAS_MOVE_TIMER;
             game->events |= EVENT_MOVE_DOWN;
         }
     }
-    if (game->platform->delayLeft > 0) {
-        game->platform->delayLeft -= timeDelta;
-        if (game->platform->delayLeft <= 0) {
-            game->platform->delayLeft = DAS_MOVE_TIMER;
+    if (delayLeft > 0) {
+        delayLeft -= timeDelta;
+        if (delayLeft <= 0) {
+            delayLeft = DAS_MOVE_TIMER;
             game->events |= EVENT_MOVE_LEFT;
         }
     }
-    else if (game->platform->delayRight > 0) {
-        game->platform->delayRight -= timeDelta;
-        if (game->platform->delayRight <= 0) {
-            game->platform->delayRight = DAS_MOVE_TIMER;
+    else if (delayRight > 0) {
+        delayRight -= timeDelta;
+        if (delayRight <= 0) {
+            delayRight = DAS_MOVE_TIMER;
             game->events |= EVENT_MOVE_RIGHT;
         }
     }
-    game->platform->lastTime = timeNow;
+    lastTime = timeNow;
 }
 
 /* Draw a tile from a tetromino */
-static void drawTile(StcGame *game, int x, int y, int tile) {
+void StcPlatformSdl::drawTile(StcGame *game, int x, int y, int tile, int shadow) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
     recDestine.x = x;
     recDestine.y = y;
     recSource.x = TILE_SIZE * tile;
-    recSource.y = 0;
-    recSource.w = TILE_SIZE;
-    recSource.h = TILE_SIZE;
-    SDL_BlitSurface(game->platform->bmpTiles, &recSource, game->platform->screen, &recDestine);
+    recSource.y = (TILE_SIZE + 1) * shadow;
+    recSource.w = TILE_SIZE + 1;
+    recSource.h = TILE_SIZE + 1;
+    SDL_BlitSurface(bmpTiles, &recSource, screen, &recDestine);
 }
 
 /* Draw a number on the given position */
-static void drawNumber(StcGame *game, int x, int y, long number, int length, int color) {
+void StcPlatformSdl::drawNumber(StcGame *game, int x, int y, long number, int length, int color) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
-    int pos;
 
     recSource.y = NUMBER_HEIGHT * color;
     recSource.w = NUMBER_WIDTH;
     recSource.h = NUMBER_HEIGHT;
     recDestine.y = y;
 
-    pos = 0;
+    int pos = 0;
     do {
         recDestine.x = x + NUMBER_WIDTH * (length - pos);
         recSource.x = NUMBER_WIDTH * (Sint16)(number % 10);
-        SDL_BlitSurface(game->platform->bmpNumbers, &recSource, game->platform->screen, &recDestine);
+        SDL_BlitSurface(bmpNumbers, &recSource, screen, &recDestine);
         number /= 10;
     } while (++pos < length);
 }
@@ -210,11 +202,11 @@ static void drawNumber(StcGame *game, int x, int y, long number, int length, int
 /*
  * Render the state of the game using platform functions
  */
-void platformRenderGame(StcGame *game) {
+void StcPlatformSdl::renderGame(StcGame *game) {
     int i, j;
 
     /* Draw background */
-    SDL_BlitSurface(game->platform->bmpBack, NULL, game->platform->screen, NULL);
+    SDL_BlitSurface(bmpBack, NULL, screen, NULL);
 
     /* Draw preview block */
     if (game->showPreview) {
@@ -238,7 +230,7 @@ void platformRenderGame(StcGame *game) {
                     drawTile(game,
                              BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
                              BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + game->shadowGap + j)),
-                             game->fallingBlock.cells[i][j] + TETROMINO_TYPES + 1);
+                             game->fallingBlock.cells[i][j], 1);
                 }
             }
         }
@@ -283,7 +275,7 @@ void platformRenderGame(StcGame *game) {
         drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
     }
     /* Swap video buffers */
-    SDL_Flip(game->platform->screen);
+    SDL_Flip(screen);
 
     /* Resting game */
     SDL_Delay(DAS_MOVE_TIMER);
@@ -292,12 +284,12 @@ void platformRenderGame(StcGame *game) {
 /*
  * Release platform allocated resources
  */
-void platformEnd(StcGame *game) {
+void StcPlatformSdl::end() {
     /* Free all the created surfaces */
-    SDL_FreeSurface(game->platform->screen);
-    SDL_FreeSurface(game->platform->bmpTiles);
-    SDL_FreeSurface(game->platform->bmpBack);
-    SDL_FreeSurface(game->platform->bmpNumbers);
+    SDL_FreeSurface(screen);
+    SDL_FreeSurface(bmpTiles);
+    SDL_FreeSurface(bmpBack);
+    SDL_FreeSurface(bmpNumbers);
 
     /* Shut down SDL */
     SDL_Quit();

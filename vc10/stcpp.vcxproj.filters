@@ -10,24 +10,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\game.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\sdl\sdl_game.h">
-      <Filter>sdl</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\defines.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sdl\sdl_game.hpp">
+      <Filter>sdl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\game.c">
+    <ClCompile Include="..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\main.c">
+    <ClCompile Include="..\src\game.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sdl\sdl_game.c">
+    <ClCompile Include="..\src\sdl\sdl_game.cpp">
       <Filter>sdl</Filter>
     </ClCompile>
   </ItemGroup>

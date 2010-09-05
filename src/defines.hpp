@@ -9,7 +9,7 @@
 /*                                                                            */
 /*   STC_SHOW_GHOST_PIECE:      define this for showing the shadow piece.     */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2009 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */

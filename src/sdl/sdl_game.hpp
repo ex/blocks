@@ -8,7 +8,7 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-#include "../game.h"
+#include "../game.hpp"
 
 #ifdef STC_USE_SIMPLE_SDL
 
@@ -71,9 +71,9 @@
 /* 
  * Image files
  */ 
-#define BMP_TILE_BLOCKS     "sdl/blocks.bmp"
-#define BMP_BACKGROUND      "sdl/back.bmp"
-#define BMP_NUMBERS         "sdl/numbers.bmp"
+#define BMP_TILE_BLOCKS     "sdl/blocks.png"
+#define BMP_BACKGROUND      "sdl/back.png"
+#define BMP_NUMBERS         "sdl/numbers.png"
 
 /* Use 32 bits per pixel */
 #define SCREEN_BIT_DEPTH        (32)
@@ -87,8 +87,22 @@
 /* Delayed autoshift timer for left and right moves */
 #define DAS_MOVE_TIMER      (40)
 
-/* Here we define the platform dependent data structure */
-struct StcPlatform {
+/* Here we define the platform dependent implementation */
+class StcPlatformSdl : public StcPlatform {
+  public:
+    virtual int init();
+    virtual void end();
+
+    /* Read input device and notify game */
+    virtual void readInput(StcGame *gameInstance);
+
+    /* Render the state of the game */
+    virtual void renderGame(StcGame *gameInstance);
+
+    /* Return the current system time in milliseconds */
+    virtual long getSystemTime();
+
+  private:
     SDL_Surface* screen;
     SDL_Surface* bmpTiles;
     SDL_Surface* bmpBack;
@@ -99,6 +113,9 @@ struct StcPlatform {
     int delayRight;
     int delayDown;
     int lastTime;
+
+    void drawTile(StcGame *game, int x, int y, int tile, int shadow = 0);
+    void drawNumber(StcGame *game, int x, int y, long number, int length, int color);
 };
 
 #endif /* STC_USE_SIMPLE_SDL */

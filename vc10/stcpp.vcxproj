@@ -11,9 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{399DF1F0-92D1-42B3-9B1B-4C068A0AFBE5}</ProjectGuid>
+    <ProjectGuid>{399DF1F0-92D1-42B3-9B1B-4C068A0AFBE4}</ProjectGuid>
     <RootNamespace>stc</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>stc++</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -75,6 +76,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>msvcrt</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,17 +103,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\defines.h" />
-    <ClInclude Include="..\src\game.h" />
-    <ClInclude Include="..\src\sdl\sdl_game.h" />
+    <ClInclude Include="..\src\game.hpp" />
+    <ClInclude Include="..\src\sdl\sdl_game.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\game.c" />
-    <ClCompile Include="..\src\main.c" />
-    <ClCompile Include="..\src\sdl\sdl_game.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\src\game.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\src\sdl\sdl_game.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

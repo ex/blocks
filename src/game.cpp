@@ -80,7 +80,7 @@ void StcGame::setTetromino(int indexTetromino, StcTetromino *tetromino) {
     tetromino->type = indexTetromino;
 }
 
-/*  Start a new game */
+/* Start a new game */
 void StcGame::start() {
     int i;
 
@@ -144,6 +144,8 @@ int StcGame::init(StcPlatform *targetPlatform) {
 void StcGame::end() {
     /* Free platform resources */
     platform->end();
+    delete platform;
+    platform = NULL;
 }
 
 /*
@@ -172,6 +174,53 @@ void StcGame::rotateTetromino(int clockwise) {
             }
         }
     }
+#ifdef STC_WALL_KICK_ENABLED
+    int wallDisplace = 0;
+
+    /* Check collision with left wall */
+    if (fallingBlock.x < 0) {
+        for (i = 0; (wallDisplace == 0) && (i < -fallingBlock.x); ++i) {
+            for (j = 0; j < fallingBlock.size; ++j) {
+                if (rotated[i][j] != EMPTY_CELL) {
+                    wallDisplace = i - fallingBlock.x;
+                    break;
+                }
+            }
+        }
+    }
+    /* Or check collision with right wall */
+    else if (fallingBlock.x > BOARD_WIDTH - fallingBlock.size) {
+        i = fallingBlock.size - 1; 
+        for (; (wallDisplace == 0) && (i >= BOARD_WIDTH - fallingBlock.x); --i) {
+            for (j = 0; j < fallingBlock.size; ++j) {
+                if (rotated[i][j] != EMPTY_CELL) {
+                    wallDisplace = -fallingBlock.x - i + BOARD_WIDTH - 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    /* Check collision with board floor and other cells on board */
+    for (i = 0; i < fallingBlock.size; ++i) {
+        for (j = 0; j < fallingBlock.size; ++j) {
+            if (rotated[i][j] != EMPTY_CELL) {
+                /* Check collision with bottom border of the map */
+                if (fallingBlock.y + j >= BOARD_HEIGHT) {
+                    return; /* there was collision therefore return */
+                }
+                /* Check collision with existing cells in the map */
+                if (map[i + fallingBlock.x + wallDisplace][j + fallingBlock.y] != EMPTY_CELL) {
+                    return; /* there was collision therefore return */
+                }
+            }
+        }
+    }
+    /* Move the falling piece if there was wall collision and it's a legal move */
+    if (wallDisplace != 0) {
+        fallingBlock.x += wallDisplace;
+    }
+#else
     /* Check collision of the temporary array */
     for (i = 0; i < fallingBlock.size; ++i) {
         for (j = 0; j < fallingBlock.size; ++j) {
@@ -188,6 +237,7 @@ void StcGame::rotateTetromino(int clockwise) {
             }
         }
     }
+#endif
     /* There are no collisions, replace tetromino cells with rotated cells */
     for (i = 0; i < TETROMINO_SIZE; ++i) {
         for (j = 0; j < TETROMINO_SIZE; ++j) {

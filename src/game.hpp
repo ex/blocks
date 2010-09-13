@@ -47,12 +47,54 @@
 
 /* Tetromino definitions (used as indexes: must be between 0 - [TETROMINO_TYPES - 1])
  * http://tetris.wikia.com/wiki/Tetromino */
+/* 
+    ....
+    ****
+    ....
+    ....
+*/
 #define TETROMINO_I     (0)
+/* 
+    **..
+    **..
+    ....
+    ....
+*/
 #define TETROMINO_O     (1)
+/* 
+    .*..
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_T     (2)
+/* 
+    .**.
+    **..
+    ....
+    ....
+*/
 #define TETROMINO_S     (3)
+/* 
+    **..
+    .**.
+    ....
+    ....
+*/
 #define TETROMINO_Z     (4)
+/* 
+    *...
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_J     (5)
+/* 
+    ..*.
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_L     (6)
 
 /* Tetromino color indexes (must be between 0 - TETROMINO_TYPES) */

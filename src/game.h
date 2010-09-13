@@ -47,12 +47,54 @@
 
 /* Tetromino definitions (used as indexes: must be between 0 - [TETROMINO_TYPES - 1])
  * http://tetris.wikia.com/wiki/Tetromino */
+/* 
+    ....
+    ****
+    ....
+    ....
+*/
 #define TETROMINO_I     (0)
+/* 
+    **..
+    **..
+    ....
+    ....
+*/
 #define TETROMINO_O     (1)
+/* 
+    .*..
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_T     (2)
+/* 
+    .**.
+    **..
+    ....
+    ....
+*/
 #define TETROMINO_S     (3)
+/* 
+    **..
+    .**.
+    ....
+    ....
+*/
 #define TETROMINO_Z     (4)
+/* 
+    *...
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_J     (5)
+/* 
+    ..*.
+    ***.
+    ....
+    ....
+*/
 #define TETROMINO_L     (6)
 
 /* Tetromino color indexes (must be between 0 - TETROMINO_TYPES) */
@@ -75,20 +117,25 @@
 typedef struct StcPlatform StcPlatform;
 
 /*
+    * Data structure that holds information about our tetromino blocks
+    */
+typedef struct StcTetromino {
+    // Tetromino buffer: [x][y]
+    // +---- x
+    // |
+    // |
+    // y
+    int cells[TETROMINO_SIZE][TETROMINO_SIZE];
+    int x;
+    int y;
+    int size;
+    int type;
+} StcTetromino;
+
+/*
  * Data structure that holds information about our game *object*
  */
 typedef struct StcGame {
-    /*
-     * Data structure that holds information about our tetromino blocks
-     */
-    struct StcTetromino {
-        int cells[TETROMINO_SIZE][TETROMINO_SIZE];
-        int x;
-        int y;
-        int size;
-        int type;
-    };
-
     /*
      * Statistic data
      */
@@ -114,8 +161,8 @@ typedef struct StcGame {
     /*
      * Public properties.
      */
-    struct StcTetromino nextBlock;     /* next tetromino               */
-    struct StcTetromino fallingBlock;  /* current falling tetromino    */
+    StcTetromino nextBlock;     /* next tetromino               */
+    StcTetromino fallingBlock;  /* current falling tetromino    */
     int errorCode;              /* game error code              */
     int isPaused;       /* 1 if the game is paused, 0 otherwise */
     int showPreview;    /* 1 if we must show preview tetromino  */

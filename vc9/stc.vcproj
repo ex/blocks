@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;STC_USE_SIMPLE_SDL;STC_SHOW_GHOST_PIECE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;STC_USE_SIMPLE_SDL;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;STC_USE_SIMPLE_SDL;STC_SHOW_GHOST_PIECE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;STC_USE_SIMPLE_SDL;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

@@ -8,7 +8,7 @@
     <movie fps="30" />
     <movie width="480" />
     <movie height="272" />
-    <movie version="9" />
+    <movie version="10" />
     <movie background="#FFFFFF" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
@@ -21,6 +21,7 @@
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
+    <option locale="" />
     <option loadConfig="" />
     <option optimize="True" />
     <option showActionScriptWarnings="True" />
@@ -34,7 +35,9 @@
     <option verboseStackTraces="False" />
     <option linkReport="" />
     <option loadExterns="" />
+    <option staticLinkRSL="True" />
     <option additional="" />
+    <option compilerConstants="" />
     <option customSDK="" />
   </build>
   <!-- SWC Include Libraries -->

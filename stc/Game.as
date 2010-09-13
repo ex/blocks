@@ -38,7 +38,7 @@ import flash.display.MovieClip;
 public class Game extends MovieClip {
 
     /* Application name */
-    private static const GAME_NAME:String = "STC: simple tetris clone";
+    private static const GAME_NAME:String = "STC: simple tetris clone (AS3)";
 
     /* Playfield size (in tiles) */
     public static const BOARD_WIDTH:int = 10;
@@ -89,12 +89,54 @@ public class Game extends MovieClip {
 
     /* Tetromino definitions (used as indexes: must be between 0 - [TETROMINO_TYPES - 1])
      * http://www.tetrisconcept.com/wiki/index.php/Tetromino */
+    /*
+        ....
+        ****
+        ....
+        ....
+    */
     public static const TETROMINO_I:int = 0;
+    /*
+        **..
+        **..
+        ....
+        ....
+    */
     public static const TETROMINO_O:int = 1;
+    /*
+        .*..
+        ***.
+        ....
+        ....
+    */
     public static const TETROMINO_T:int = 2;
+    /*
+        .**.
+        **..
+        ....
+        ....
+    */
     public static const TETROMINO_S:int = 3;
+    /*
+        **..
+        .**.
+        ....
+        ....
+    */
     public static const TETROMINO_Z:int = 4;
+    /*
+        *...
+        ***.
+        ....
+        ....
+    */
     public static const TETROMINO_J:int = 5;
+    /*
+        ..*.
+        ***.
+        ....
+        ....
+    */
     public static const TETROMINO_L:int = 6;
 
     /* Tetromino color indexes (must be between 0 - TETROMINO_TYPES) */
@@ -285,22 +327,53 @@ public class Game extends MovieClip {
                 }
             }
         }
-        /* Check collision of the temporary array */
+
+        var wallDisplace:int = 0;
+
+        /* Check collision with left wall */
+        if (fallingBlock.x < 0) {
+            for (i = 0; (wallDisplace == 0) && (i < -fallingBlock.x); ++i) {
+                for (j = 0; j < fallingBlock.size; ++j) {
+                    if (rotated[i][j] != EMPTY_CELL) {
+                        wallDisplace = i - fallingBlock.x;
+                        break;
+                    }
+                }
+            }
+        }
+        /* Or check collision with right wall */
+        else if (fallingBlock.x > BOARD_WIDTH - fallingBlock.size) {
+            i = fallingBlock.size - 1;
+            for (; (wallDisplace == 0) && (i >= BOARD_WIDTH - fallingBlock.x); --i) {
+                for (j = 0; j < fallingBlock.size; ++j) {
+                    if (rotated[i][j] != EMPTY_CELL) {
+                        wallDisplace = -fallingBlock.x - i + BOARD_WIDTH - 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /* Check collision with board floor and other cells on board */
         for (i = 0; i < fallingBlock.size; ++i) {
             for (j = 0; j < fallingBlock.size; ++j) {
                 if (rotated[i][j] != EMPTY_CELL) {
-                    /* Check collision with left, right or bottom borders of the map */
-                    if ((fallingBlock.x + i < 0) || (fallingBlock.x + i >= BOARD_WIDTH)
-                            || (fallingBlock.y + j >= BOARD_HEIGHT)) {
+                    /* Check collision with bottom border of the map */
+                    if (fallingBlock.y + j >= BOARD_HEIGHT) {
                         return; /* there was collision therefore return */
                     }
                     /* Check collision with existing cells in the map */
-                    if (map[i + fallingBlock.x][j + fallingBlock.y] != EMPTY_CELL) {
+                    if (map[i + fallingBlock.x + wallDisplace][j + fallingBlock.y] != EMPTY_CELL) {
                         return; /* there was collision therefore return */
                     }
                 }
             }
         }
+        /* Move the falling piece if there was wall collision and it's a legal move */
+        if (wallDisplace != 0) {
+            fallingBlock.x += wallDisplace;
+        }
+
         /* There are no collisions, replace tetromino cells with rotated cells */
         for (i = 0; i < 4; ++i) {
             for (j = 0; j < 4; ++j) {

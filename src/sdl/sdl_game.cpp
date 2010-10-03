@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <SDL_image.h>
 
-#ifdef STC_USE_SIMPLE_SDL
-
 /*
  * Initializes platform, if there are no problems returns GAME_ERROR_NONE.
  */
@@ -49,6 +47,9 @@ int StcPlatformSdl::init() {
     delayLeft = -1;
     delayRight = -1;
     delayDown = -1;
+#ifdef STC_AUTO_ROTATION
+    delayRotation = -1;
+#endif
 
     return GAME_ERROR_NONE;
 };
@@ -84,6 +85,9 @@ void StcPlatformSdl::readInput(StcGame *game) {
             case SDLK_w:
             case SDLK_UP:
                 game->events |= EVENT_ROTATE_CW;
+#ifdef STC_AUTO_ROTATION
+                delayRotation = ROTATION_AUTOREPEAT_DELAY;
+#endif
                 break;
             case SDLK_a:
             case SDLK_LEFT:
@@ -111,7 +115,7 @@ void StcPlatformSdl::readInput(StcGame *game) {
             case SDLK_F3:
                 game->events |= EVENT_SHOW_SHADOW;
                 break;
-#endif
+#endif /* STC_SHOW_GHOST_PIECE */
             default:
                 break;
             }
@@ -131,6 +135,12 @@ void StcPlatformSdl::readInput(StcGame *game) {
             case SDLK_RIGHT:
                 delayRight = -1;
                 break;
+#ifdef STC_AUTO_ROTATION
+            case SDLK_w:
+            case SDLK_UP:
+                delayRotation = -1;
+                break;
+#endif /* STC_AUTO_ROTATION */
             default:
                 break;
             }
@@ -163,6 +173,15 @@ void StcPlatformSdl::readInput(StcGame *game) {
             game->events |= EVENT_MOVE_RIGHT;
         }
     }
+#ifdef STC_AUTO_ROTATION
+    if (delayRotation > 0) {
+        delayRotation -= timeDelta;
+        if (delayRotation <= 0) {
+            delayRotation = ROTATION_AUTOREPEAT_TIMER;
+            game->events |= EVENT_ROTATE_CW;
+        }
+    }
+#endif /* STC_AUTO_ROTATION */
     lastTime = timeNow;
 }
 
@@ -205,80 +224,99 @@ void StcPlatformSdl::drawNumber(StcGame *game, int x, int y, long number, int le
 void StcPlatformSdl::renderGame(StcGame *game) {
     int i, j;
 
-    /* Draw background */
-    SDL_BlitSurface(bmpBack, NULL, screen, NULL);
+    /* Check if the game state has changed, if so redraw */
+    if (game->stateChanged) {
+        /* Draw background */
+        SDL_BlitSurface(bmpBack, NULL, screen, NULL);
 
-    /* Draw preview block */
-    if (game->showPreview) {
-        for (i = 0; i < TETROMINO_SIZE; ++i) {
-            for (j = 0; j < TETROMINO_SIZE; ++j) {
-                if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
-                    drawTile(game,
-                             PREVIEW_X + (TILE_SIZE * i),
-                             PREVIEW_Y + (TILE_SIZE * j),
-                             game->nextBlock.cells[i][j]);
+        /* Draw preview block */
+        if (game->showPreview) {
+            for (i = 0; i < TETROMINO_SIZE; ++i) {
+                for (j = 0; j < TETROMINO_SIZE; ++j) {
+                    if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
+                        drawTile(game,
+                                 PREVIEW_X + (TILE_SIZE * i),
+                                 PREVIEW_Y + (TILE_SIZE * j),
+                                 game->nextBlock.cells[i][j]);
+                    }
                 }
             }
         }
-    }
 #ifdef STC_SHOW_GHOST_PIECE
-    /* Draw shadow tetromino */
-    if (game->showShadow && game->shadowGap > 0) {
+        /* Draw shadow tetromino */
+        if (game->showShadow && game->shadowGap > 0) {
+            for (i = 0; i < TETROMINO_SIZE; ++i) {
+                for (j = 0; j < TETROMINO_SIZE; ++j) {
+                    if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
+                        drawTile(game,
+                                 BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
+                                 BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + game->shadowGap + j)),
+                                 game->fallingBlock.cells[i][j], 1);
+                    }
+                }
+            }
+        }
+#endif
+        /* Draw the cells in the board */
+        for (i = 0; i < BOARD_WIDTH; ++i) {
+            for (j = 0; j < BOARD_HEIGHT; ++j) {
+                if (game->map[i][j] != EMPTY_CELL) {
+                    drawTile(game,
+                             BOARD_X + (TILE_SIZE * i),
+                             BOARD_Y + (TILE_SIZE * j),
+                             game->map[i][j]);
+                }
+            }
+        }
+
+        /* Draw falling tetromino */
         for (i = 0; i < TETROMINO_SIZE; ++i) {
             for (j = 0; j < TETROMINO_SIZE; ++j) {
                 if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                    drawTile(game,
-                             BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
-                             BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + game->shadowGap + j)),
-                             game->fallingBlock.cells[i][j], 1);
+                    drawTile(game, 
+                             BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)), 
+                             BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)), 
+                             game->fallingBlock.cells[i][j]);
                 }
             }
         }
-    }
-#endif
-    /* Draw the cells in the board */
-    for (i = 0; i < BOARD_WIDTH; ++i) {
-        for (j = 0; j < BOARD_HEIGHT; ++j) {
-            if (game->map[i][j] != EMPTY_CELL) {
-                drawTile(game,
-                         BOARD_X + (TILE_SIZE * i),
-                         BOARD_Y + (TILE_SIZE * j),
-                         game->map[i][j]);
-            }
-        }
-    }
-    /* Draw falling tetromino */
-    for (i = 0; i < TETROMINO_SIZE; ++i) {
-        for (j = 0; j < TETROMINO_SIZE; ++j) {
-            if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                drawTile(game, 
-                         BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)), 
-                         BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)), 
-                         game->fallingBlock.cells[i][j]);
-            }
-        }
-    }
-    /* Draw game statistic data */
-    if (!game->isPaused) {
-        drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
-        drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
-        drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
 
-        drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
-        drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
-        drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
-        drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
-        drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
-        drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
-        drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
+        /* Draw game statistic data */
+        if (!game->isPaused) {
+            drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
+            drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
+            drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
 
-        drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
+            drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
+            drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
+            drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
+            drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
+            drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
+            drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
+            drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
+
+            drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
+        }
+
+        /* Clear the game state */
+        game->stateChanged = false;
+
+        /* Swap video buffers */
+        SDL_Flip(screen);
     }
-    /* Swap video buffers */
-    SDL_Flip(screen);
 
     /* Resting game */
     SDL_Delay(DAS_MOVE_TIMER);
+}
+
+/* Initialize the random number generator */
+void StcPlatformSdl::seedRandom(long seed) {
+    srand(seed);
+}
+
+/* Return a random positive integer number */
+int StcPlatformSdl::random() {
+    return rand();
 }
 
 /*
@@ -294,5 +332,3 @@ void StcPlatformSdl::end() {
     /* Shut down SDL */
     SDL_Quit();
 }
-
-#endif /* STC_USE_SIMPLE_SDL */

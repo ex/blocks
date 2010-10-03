@@ -10,7 +10,8 @@
 
 #include "../game.hpp"
 
-#ifdef STC_USE_SIMPLE_SDL
+#ifndef STC_SDL_GAME_HPP_
+#define STC_SDL_GAME_HPP_
 
 #include <SDL.h>
 
@@ -57,6 +58,8 @@
 #define TETROMINO_Z_Y   (149)
 #define TETROMINO_O_Y   (173)
 #define TETROMINO_J_Y   (197)
+
+/* Size of subtotals */
 #define TETROMINO_LENGTH    (5)
 
 /* Tetromino total position */
@@ -76,16 +79,26 @@
 #define BMP_NUMBERS         "sdl/numbers.png"
 
 /* Use 32 bits per pixel */
-#define SCREEN_BIT_DEPTH        (32)
+#define SCREEN_BIT_DEPTH    (32)
 
 /* Use video hardware and double buffering */
-#define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
+#define SCREEN_VIDEO_MODE   (SDL_HWSURFACE | SDL_DOUBLEBUF)
 
 /* Delayed autoshift initial delay */
 #define DAS_DELAY_TIMER     (200)
 
 /* Delayed autoshift timer for left and right moves */
 #define DAS_MOVE_TIMER      (40)
+
+#ifdef STC_AUTO_ROTATION
+
+/* Rotation auto-repeat delay */
+#define ROTATION_AUTOREPEAT_DELAY   (375)
+
+/* Rotation autorepeat timer */
+#define ROTATION_AUTOREPEAT_TIMER   (200)
+
+#endif /* STC_AUTO_ROTATION */
 
 /* Here we define the platform dependent implementation */
 class StcPlatformSdl : public StcPlatform {
@@ -94,13 +107,19 @@ class StcPlatformSdl : public StcPlatform {
     virtual void end();
 
     /* Read input device and notify game */
-    virtual void readInput(StcGame *gameInstance);
+    virtual void readInput(StcGame *game);
 
     /* Render the state of the game */
-    virtual void renderGame(StcGame *gameInstance);
+    virtual void renderGame(StcGame *game);
 
     /* Return the current system time in milliseconds */
     virtual long getSystemTime();
+
+    /* Initialize the random number generator */
+    virtual void seedRandom(long seed);
+
+    /* Return a random positive integer number */
+    virtual int random();
 
   private:
     SDL_Surface* screen;
@@ -112,10 +131,13 @@ class StcPlatformSdl : public StcPlatform {
     int delayLeft;
     int delayRight;
     int delayDown;
+#ifdef STC_AUTO_ROTATION
+    int delayRotation;
+#endif
     int lastTime;
 
     void drawTile(StcGame *game, int x, int y, int tile, int shadow = 0);
     void drawNumber(StcGame *game, int x, int y, long number, int length, int color);
 };
 
-#endif /* STC_USE_SIMPLE_SDL */
+#endif /* STC_SDL_GAME_HPP_ */

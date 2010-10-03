@@ -127,6 +127,12 @@ class StcPlatform {
 
     /* Return the current system time in milliseconds */
     virtual long getSystemTime() = 0;
+
+    /* Initialize the random number generator */
+    virtual void seedRandom(long seed) = 0;
+
+    /* Return a random positive integer number */
+    virtual int random() = 0;
 };
 
 /*
@@ -134,8 +140,15 @@ class StcPlatform {
  */
 class StcGame {
   public:
-    // Data structure that holds information about our tetromino blocks.
+    /* Data structure that holds information about our tetromino blocks. */
     struct StcTetromino {
+        /*
+         *  Tetromino buffer: [x][y]
+         *  +---- x
+         *  |
+         *  |
+         *  y
+         */
         int cells[TETROMINO_SIZE][TETROMINO_SIZE];
         int x;
         int y;
@@ -143,7 +156,7 @@ class StcGame {
         int type;
     };
 
-    // Statistic data.
+    /* Statistic data. */
     struct {
         long score;         /* user score for current game      */
         int lines;          /* total number of lines cleared    */
@@ -169,12 +182,15 @@ class StcGame {
     StcTetromino nextBlock;     /* next tetromino               */
     StcTetromino fallingBlock;  /* current falling tetromino    */
     int errorCode;              /* game error code              */
-    int isPaused;       /* 1 if the game is paused, 0 otherwise */
-    int showPreview;    /* 1 if we must show preview tetromino  */
+    bool isPaused;       /* true if the game is paused, false otherwise */
+    bool showPreview;    /* true if we must show preview tetromino      */
+    bool stateChanged;  /* true if game state changed, false otherwise */
+
 #ifdef STC_SHOW_GHOST_PIECE
-    int showShadow;     /* 1 if we must show ghost shadow       */
-    int shadowGap;      /* height gap between shadow and falling tetromino */
+    bool showShadow;     /* true if we must show ghost shadow           */
+    int shadowGap;  /* height gap between shadow and falling tetromino  */
 #endif
+
     /*
      * Public methods.
      */
@@ -189,10 +205,8 @@ class StcGame {
     StcPlatform *platform;      /* platform interface           */
     long systemTime;            /* system time in milliseconds  */
     int delay;          /* delay time for falling tetrominoes   */
-    int isOver;         /* 1 if the game is over, 0 otherwise   */
+    bool isOver;        /* true if the game is over, false otherwise      */
     long lastFallTime;  /* last time the game moved the falling tetromino */
-    int stateChanged;   /* 1 if game state changed, 0 otherwise */
-    int scoreChanged;   /* 1 if game score changed, 0 otherwise */
 
     /*
      * Internal methods.
@@ -200,8 +214,8 @@ class StcGame {
     void setMatrixCells(int *matrix, int width, int height, int value);
     void setTetromino(int indexTetromino, StcTetromino *tetromino);
     void start();
-    void rotateTetromino(int clockwise);
-    int checkCollision(int dx, int dy);
+    void rotateTetromino(bool clockwise);
+    bool checkCollision(int dx, int dy);
     void onFilledRows(int filledRows);
     void moveTetromino(int x, int y);
     void dropTetromino();

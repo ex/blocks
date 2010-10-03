@@ -117,14 +117,16 @@
 typedef struct StcPlatform StcPlatform;
 
 /*
-    * Data structure that holds information about our tetromino blocks
-    */
+ * Data structure that holds information about our tetromino blocks
+ */
 typedef struct StcTetromino {
-    // Tetromino buffer: [x][y]
-    // +---- x
-    // |
-    // |
-    // y
+    /*
+     *  Tetromino buffer: [x][y]
+     *  +---- x
+     *  |
+     *  |
+     *  y
+     */
     int cells[TETROMINO_SIZE][TETROMINO_SIZE];
     int x;
     int y;
@@ -180,7 +182,6 @@ typedef struct StcGame {
     int isOver;         /* 1 if the game is over, 0 otherwise   */
     long lastFallTime;  /* last time the game moved the falling tetromino */
     int stateChanged;   /* 1 if game state changed, 0 otherwise */
-    int scoreChanged;   /* 1 if game score changed, 0 otherwise */
 
 } StcGame;
 
@@ -216,5 +217,11 @@ extern void platformRenderGame(StcGame *gameInstance);
 
 /* Return the current system time in milliseconds */
 extern long platformGetSystemTime();
+
+/* Initialize the random number generator */
+extern void platformSeedRandom(long seed);
+
+/* Return a random positive integer number */
+extern int platformRandom();
 
 #endif /* STC_SRC_GAME_H_ */

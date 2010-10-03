@@ -13,9 +13,8 @@
 
 /* Set matrix elements to indicated value */
 void StcGame::setMatrixCells(int *matrix, int width, int height, int value) {
-    int i, j;
-    for (i = 0; i < width; ++i) {
-        for (j = 0; j < height; ++j) {
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
             *(matrix + i + (j * width)) = value;
         }
     }
@@ -82,19 +81,18 @@ void StcGame::setTetromino(int indexTetromino, StcTetromino *tetromino) {
 
 /* Start a new game */
 void StcGame::start() {
-    int i;
 
     /* Initialize game data */
     errorCode = GAME_ERROR_NONE;
     systemTime = platform->getSystemTime();
     lastFallTime = systemTime;
-    isOver = 0;
-    isPaused = 0;
-    showPreview = 1;
+    isOver = false;
+    isPaused = false;
+    showPreview = true;
     events = EVENT_NONE;
     delay = INIT_DELAY_FALL;
 #ifdef STC_SHOW_GHOST_PIECE
-    showShadow = 1;
+    showShadow = true;
 #endif
 
     /* Initialize game statistics */
@@ -102,27 +100,26 @@ void StcGame::start() {
     stats.lines = 0;
     stats.totalPieces = 0;
     stats.level = 0;
-    for (i = 0; i < TETROMINO_TYPES; ++i) {
+    for (int i = 0; i < TETROMINO_TYPES; ++i) {
         stats.pieces[i] = 0;
     }
 
     /* Initialize random generator */
-    srand(systemTime);
+    platform->seedRandom(systemTime);
 
     /* Initialize game tile map */
     setMatrixCells(&map[0][0], BOARD_WIDTH, BOARD_HEIGHT, EMPTY_CELL);
 
     /* Initialize falling tetromino */
-    setTetromino(rand() % TETROMINO_TYPES, &fallingBlock);
+    setTetromino(platform->random() % TETROMINO_TYPES, &fallingBlock);
     fallingBlock.x = (BOARD_WIDTH - fallingBlock.size) / 2;
     fallingBlock.y = 0;
 
     /* Initialize preview tetromino */
-    setTetromino(rand() % TETROMINO_TYPES, &nextBlock);
+    setTetromino(platform->random() % TETROMINO_TYPES, &nextBlock);
 
     /* Initialize events */
     onTetrominoMoved();
-    scoreChanged = 1;
 }
 
 /*
@@ -131,18 +128,18 @@ void StcGame::start() {
 int StcGame::init(StcPlatform *targetPlatform) {
     if (targetPlatform != NULL) {
         platform = targetPlatform;
-        int errorCode = platform->init();
-        if (errorCode == GAME_ERROR_NONE) {
+        int error = platform->init();
+        if (error == GAME_ERROR_NONE) {
             start();
             return GAME_ERROR_NONE;
         }
-        return errorCode;
+        return error;
     }
     return GAME_ERROR_NO_MEMORY;
 };
 
+/* Free used resources */
 void StcGame::end() {
-    /* Free platform resources */
     platform->end();
     delete platform;
     platform = NULL;
@@ -152,7 +149,7 @@ void StcGame::end() {
  * Rotate falling tetromino. If there are no collisions when the 
  * tetromino is rotated this modifies the tetromino's cell buffer.
  */
-void StcGame::rotateTetromino(int clockwise) {
+void StcGame::rotateTetromino(bool clockwise) {
     int i, j;
     int rotated[TETROMINO_SIZE][TETROMINO_SIZE];  /* temporary array to hold rotated cells */
 
@@ -251,28 +248,27 @@ void StcGame::rotateTetromino(int clockwise) {
  * Check if tetromino will collide with something if it is moved in the requested direction.
  * If there are collisions returns 1 else returns 0.
  */
-int StcGame::checkCollision(int dx, int dy) {
-    int newx, newy, i, j;
+bool StcGame::checkCollision(int dx, int dy) {
 
-    newx = fallingBlock.x + dx;
-    newy = fallingBlock.y + dy;
+    int newx = fallingBlock.x + dx;
+    int newy = fallingBlock.y + dy;
 
-    for (i = 0; i < fallingBlock.size; ++i) {
-        for (j = 0; j < fallingBlock.size; ++j) {
+    for (int i = 0; i < fallingBlock.size; ++i) {
+        for (int j = 0; j < fallingBlock.size; ++j) {
             if (fallingBlock.cells[i][j] != EMPTY_CELL) {
                 /* Check the tetromino would be inside the left, right and bottom borders */
                 if ((newx + i < 0) || (newx + i >= BOARD_WIDTH)
                     || (newy + j >= BOARD_HEIGHT)) {
-                    return 1;
+                    return true;
                 }
                 /* Check the tetromino won't collide with existing cells in the map */
                 if (map[newx + i][newy + j] != EMPTY_CELL) {
-                    return 1;
+                    return true;
                 }
             }
         }
     }
-    return 0;
+    return false;
 }
 
 /* Game scoring: http://tetris.wikia.com/wiki/Scoring */
@@ -312,7 +308,7 @@ void StcGame::onFilledRows(int filledRows) {
  * lands a falling tetromino, also checks for game over condition.
  */
 void StcGame::moveTetromino(int x, int y) {
-    int i, j, hasFullRow, numFilledRows;
+    int i, j;
     
     /* Check if the move would create a collision */
     if (checkCollision(x, y)) {
@@ -321,7 +317,7 @@ void StcGame::moveTetromino(int x, int y) {
             /* Check if collision occurs when the falling 
              * tetromino is on the 1st or 2nd row */
             if (fallingBlock.y <= 1) {
-                isOver = 1;   /* if this happens the game is over */
+                isOver = true;   /* if this happens the game is over */
             }
             else {
                 /* The falling tetromino has reached the bottom, 
@@ -336,12 +332,12 @@ void StcGame::moveTetromino(int x, int y) {
                 }
 
                 /* Check if the landing tetromino has created full rows */
-                numFilledRows = 0;
+                int numFilledRows = 0;
                 for (j = 1; j < BOARD_HEIGHT; ++j) {
-                    hasFullRow = 1;
+                    int hasFullRow = true;
                     for (i = 0; i < BOARD_WIDTH; ++i) {
                         if (map[i][j] == EMPTY_CELL) {
-                            hasFullRow = 0;
+                            hasFullRow = false;
                             break;
                         }
                     }
@@ -358,12 +354,11 @@ void StcGame::moveTetromino(int x, int y) {
                 }
 
                 /* Update game statistics */
-                if (numFilledRows) {
+                if (numFilledRows > 0) {
                     onFilledRows(numFilledRows);
                 }
                 stats.totalPieces++;
                 stats.pieces[fallingBlock.type]++;
-                scoreChanged = 1;
                 
                 /* Use preview tetromino as falling tetromino.
                  * Copy preview tetromino for falling tetromino */
@@ -381,7 +376,7 @@ void StcGame::moveTetromino(int x, int y) {
                 onTetrominoMoved();
 
                 /* Create next preview tetromino */
-                setTetromino(rand() % TETROMINO_TYPES, &nextBlock);
+                setTetromino(platform->random() % TETROMINO_TYPES, &nextBlock);
             }
         }
     }
@@ -406,7 +401,6 @@ void StcGame::dropTetromino() {
     else {
         stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
     }
-    scoreChanged = 1;
 #else
     int y = 0;
     /* Calculate number of cells to drop */
@@ -416,7 +410,6 @@ void StcGame::dropTetromino() {
 
     /* Update score */
     stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
-    scoreChanged = 1;
 #endif
 }
 
@@ -424,23 +417,22 @@ void StcGame::dropTetromino() {
  * Main function game called every frame
  */
 void StcGame::update() {
-    long sysTime;
 
     /* Read user input */
     platform->readInput(this);
 
     /* Update game state */
     if (isOver) {
-        if (events & EVENT_RESTART) {
-            isOver = 0;
+        if ((events & EVENT_RESTART) != 0) {
+            isOver = false;
             start();
         }
     }
     else {
-        sysTime = platform->getSystemTime();
+        long sysTime = platform->getSystemTime();
         
         /* Always handle pause event */
-        if (events & EVENT_PAUSE) {
+        if ((events & EVENT_PAUSE) != 0) {
             isPaused = !isPaused;
             events = EVENT_NONE;
         }
@@ -453,32 +445,31 @@ void StcGame::update() {
         }
         else {
             if (events != EVENT_NONE) {
-                if (events & EVENT_SHOW_NEXT) {
+                if ((events & EVENT_SHOW_NEXT) != 0)  {
                     showPreview = !showPreview;
-                    stateChanged = 1;
+                    stateChanged = true;
                 }
 #ifdef STC_SHOW_GHOST_PIECE
-                if (events & EVENT_SHOW_SHADOW) {
+                if ((events & EVENT_SHOW_SHADOW) != 0) {
                     showShadow = !showShadow;
-                    stateChanged = 1;
+                    stateChanged = true;
                 }
 #endif
-                if (events & EVENT_DROP) {
+                if ((events & EVENT_DROP) != 0) {
                     dropTetromino();
                 }
-                if (events & EVENT_ROTATE_CW) {
-                    rotateTetromino(1);
+                if ((events & EVENT_ROTATE_CW) != 0) {
+                    rotateTetromino(true);
                 }
-                if (events & EVENT_MOVE_RIGHT) {
+                if ((events & EVENT_MOVE_RIGHT) != 0) {
                     moveTetromino(1, 0);
                 }
-                else if (events & EVENT_MOVE_LEFT) {
+                else if ((events & EVENT_MOVE_LEFT) != 0) {
                     moveTetromino(-1, 0);
                 }
-                if (events & EVENT_MOVE_DOWN) {
+                if ((events & EVENT_MOVE_DOWN) != 0) {
                     /* Update score if the user accelerates downfall */
                     stats.score += (long)(SCORE_MOVE_DOWN_FACTOR * (SCORE_2_FILLED_ROW * (stats.level + 1)));
-                    scoreChanged = 1;
 
                     moveTetromino(0, 1);
                 }
@@ -504,5 +495,5 @@ void StcGame::onTetrominoMoved() {
     while (!checkCollision(0, ++y));
     shadowGap = y - 1;
 #endif
-    stateChanged = 1;
+    stateChanged = true;
 }

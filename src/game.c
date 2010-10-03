@@ -109,22 +109,21 @@ static void startGame(StcGame *game) {
     }
 
     /* Initialize random generator */
-    srand(game->systemTime);
+    platformSeedRandom(game->systemTime);
 
     /* Initialize game tile map */
     setMatrixCells(&game->map[0][0], BOARD_WIDTH, BOARD_HEIGHT, EMPTY_CELL);
 
     /* Initialize falling tetromino */
-    setTetromino(rand() % TETROMINO_TYPES, &game->fallingBlock);
+    setTetromino(platformRandom() % TETROMINO_TYPES, &game->fallingBlock);
     game->fallingBlock.x = (BOARD_WIDTH - game->fallingBlock.size) / 2;
     game->fallingBlock.y = 0;
 
     /* Initialize preview tetromino */
-    setTetromino(rand() % TETROMINO_TYPES, &game->nextBlock);
+    setTetromino(platformRandom() % TETROMINO_TYPES, &game->nextBlock);
 
     /* Initialize events */
     onTetrominoMoved(game);
-    game->scoreChanged = 1;
 }
 
 /* Create new game object */
@@ -359,7 +358,7 @@ static void moveTetromino(StcGame *game, int x, int y) {
                     }
                     /* If we found a full row we need to remove that row from the map
                      * we do that by just moving all the above rows one row below */
-                    if (hasFullRow) {
+                    if (hasFullRow != 0) {
                         for (x = 0; x < BOARD_WIDTH; ++x) {
                             for (y = j; y > 0; --y) {
                                 game->map[x][y] = game->map[x][y - 1];
@@ -370,12 +369,11 @@ static void moveTetromino(StcGame *game, int x, int y) {
                 }
 
                 /* Update game statistics */
-                if (numFilledRows) {
+                if (numFilledRows > 0) {
                     onFilledRows(game, numFilledRows);
                 }
                 game->stats.totalPieces++;
                 game->stats.pieces[game->fallingBlock.type]++;
-                game->scoreChanged = 1;
                 
                 /* Use preview tetromino as falling tetromino.
                  * Copy preview tetromino for falling tetromino */
@@ -393,7 +391,7 @@ static void moveTetromino(StcGame *game, int x, int y) {
                 onTetrominoMoved(game);
 
                 /* Create next preview tetromino */
-                setTetromino(rand() % TETROMINO_TYPES, &game->nextBlock);
+                setTetromino(platformRandom() % TETROMINO_TYPES, &game->nextBlock);
             }
         }
     }
@@ -418,7 +416,6 @@ static void dropTetromino(StcGame *game) {
     else {
         game->stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (game->stats.level + 1));
     }
-    game->scoreChanged = 1;
 #else
     int y = 0;
     /* Calculate number of cells to drop */
@@ -428,7 +425,6 @@ static void dropTetromino(StcGame *game) {
 
     /* Update score */
     game->stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (game->stats.level + 1));
-    game->scoreChanged = 1;
 #endif
 }
 
@@ -443,7 +439,7 @@ void gameUpdate(StcGame *game) {
 
     /* Update game state */
     if (game->isOver) {
-        if (game->events & EVENT_RESTART) {
+        if ((game->events & EVENT_RESTART) != 0) {
             game->isOver = 0;
             startGame(game);
         }
@@ -452,45 +448,44 @@ void gameUpdate(StcGame *game) {
         sysTime = platformGetSystemTime();
         
         /* Always handle pause event */
-        if (game->events & EVENT_PAUSE) {
+        if ((game->events & EVENT_PAUSE) != 0) {
             game->isPaused = !game->isPaused;
             game->events = EVENT_NONE;
         }
 
         /* Check if the game is paused */
-        if (game->isPaused) {
+        if (game->isPaused != 0) {
             /* We achieve the effect of pausing the game
              * adding the last frame duration to lastFallTime */
             game->lastFallTime += (sysTime - game->systemTime);
         }
         else {
-            if (game->events != EVENT_NONE) {
+            if ((game->events != EVENT_NONE) != 0) {
                 if (game->events & EVENT_SHOW_NEXT) {
                     game->showPreview = !game->showPreview;
                     game->stateChanged = 1;
                 }
 #ifdef STC_SHOW_GHOST_PIECE
-                if (game->events & EVENT_SHOW_SHADOW) {
+                if ((game->events & EVENT_SHOW_SHADOW) != 0) {
                     game->showShadow = !game->showShadow;
                     game->stateChanged = 1;
                 }
 #endif
-                if (game->events & EVENT_DROP) {
+                if ((game->events & EVENT_DROP) != 0) {
                     dropTetromino(game);
                 }
-                if (game->events & EVENT_ROTATE_CW) {
+                if ((game->events & EVENT_ROTATE_CW) != 0) {
                     rotateTetromino(game, 1);
                 }
-                if (game->events & EVENT_MOVE_RIGHT) {
+                if ((game->events & EVENT_MOVE_RIGHT) != 0) {
                     moveTetromino(game, 1, 0);
                 }
-                else if (game->events & EVENT_MOVE_LEFT) {
+                else if ((game->events & EVENT_MOVE_LEFT) != 0) {
                     moveTetromino(game, -1, 0);
                 }
-                if (game->events & EVENT_MOVE_DOWN) {
+                if ((game->events & EVENT_MOVE_DOWN) != 0) {
                     /* Update score if the user accelerates downfall */
                     game->stats.score += (long)(SCORE_MOVE_DOWN_FACTOR * (SCORE_2_FILLED_ROW * (game->stats.level + 1)));
-                    game->scoreChanged = 1;
 
                     moveTetromino(game, 0, 1);
                 }

@@ -5,13 +5,14 @@
 /*                                                                            */
 /*   Some symbols you can define for the project:                             */
 /*                                                                            */
-/*   STC_USE_SIMPLE_SDL:        define this for basic SDL support.            */
-/*                                                                            */
 /*   STC_SHOW_GHOST_PIECE:      define this for showing the shadow piece.     */
 /*                              http://tetris.wikia.com/wiki/Ghost_piece      */
 /*                                                                            */
 /*   STC_WALL_KICK_ENABLED:     define this for enabling wall kick.           */
 /*                              http://tetris.wikia.com/wiki/Wall_kick        */
+/*                                                                            */
+/*   STC_AUTO_ROTATION:         define this for enabling auto-rotation of     */
+/*                              the falling piece.                            */
 /*                                                                            */
 /*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */

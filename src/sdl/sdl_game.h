@@ -10,7 +10,8 @@
 
 #include "../game.h"
 
-#ifdef STC_USE_SIMPLE_SDL
+#ifndef STC_SDL_GAME_H_
+#define STC_SDL_GAME_H_
 
 #include <SDL.h>
 
@@ -57,6 +58,8 @@
 #define TETROMINO_Z_Y   (149)
 #define TETROMINO_O_Y   (173)
 #define TETROMINO_J_Y   (197)
+
+/* Size of subtotals */
 #define TETROMINO_LENGTH    (5)
 
 /* Tetromino total position */
@@ -76,7 +79,7 @@
 #define BMP_NUMBERS         "sdl/numbers.bmp"
 
 /* Use 32 bits per pixel */
-#define SCREEN_BIT_DEPTH        (32)
+#define SCREEN_BIT_DEPTH    (32)
 
 /* Use video hardware and double buffering */
 #define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
@@ -86,6 +89,16 @@
 
 /* Delayed autoshift timer for left and right moves */
 #define DAS_MOVE_TIMER      (40)
+
+#ifdef STC_AUTO_ROTATION
+
+/* Rotation auto-repeat delay */
+#define ROTATION_AUTOREPEAT_DELAY   (375)
+
+/* Rotation autorepeat timer */
+#define ROTATION_AUTOREPEAT_TIMER   (200)
+
+#endif /* STC_AUTO_ROTATION */
 
 /* Here we define the platform dependent data structure */
 struct StcPlatform {
@@ -98,7 +111,10 @@ struct StcPlatform {
     int delayLeft;
     int delayRight;
     int delayDown;
+#ifdef STC_AUTO_ROTATION
+    int delayRotation;
+#endif
     int lastTime;
 };
 
-#endif /* STC_USE_SIMPLE_SDL */
+#endif /* STC_SDL_GAME_H_ */

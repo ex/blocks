@@ -1,0 +1,8 @@
+MIDlet-1: Simple Tetris Clone,,com.ex.stc.Main
+MIDlet-Jar-Size: 14050
+MIDlet-Jar-URL: stc.jar
+MIDlet-Name: Simple Tetris Clone
+MIDlet-Vendor: ex
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0

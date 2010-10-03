@@ -114,7 +114,7 @@ public class Platform extends Canvas implements Runnable {
     private int delayDown;
     private int delayRotation;
     private long lastTime;
-    
+
     /*
      * Initializes platform, if there are no problems returns GAME_ERROR_NONE.
      */
@@ -151,7 +151,7 @@ public class Platform extends Canvas implements Runnable {
     }
 
     /* Return the current system time in milliseconds */
-    public long getSystemTime() { 
+    public long getSystemTime() {
         return System.currentTimeMillis();
     }
 

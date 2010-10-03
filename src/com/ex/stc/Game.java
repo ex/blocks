@@ -11,12 +11,12 @@
 package com.ex.stc;
 
 public class Game {
-	
-    /* Enable shadow piece:						*/
+
+    /* Enable shadow piece:                     */
     /* http://tetris.wikia.com/wiki/Ghost_piece */
     public static final boolean STC_SHOW_GHOST_PIECE = true;
 
-    /* Enable wall kick:					    */
+    /* Enable wall kick:                        */
     /* http://tetris.wikia.com/wiki/Wall_kick   */
     public static final boolean STC_WALL_KICK_ENABLED = true;
 
@@ -145,7 +145,7 @@ public class Game {
     public static final int COLOR_GREEN  = 5;
     public static final int COLOR_YELLOW = 6;
     public static final int COLOR_PURPLE = 7;
-    public static final int COLOR_WHITE  = 0;	/* Used for effects (if any) */
+    public static final int COLOR_WHITE  = 0;   /* Used for effects (if any) */
 
     /* This value used for empty tiles */
     public static final int EMPTY_CELL = -1;
@@ -213,11 +213,11 @@ public class Game {
         start();
     }
 
-    /* Free used resources */    
+    /* Free used resources */
     public void end() {
         platform = null;
     }
-    
+
     /* Main function game called every frame */
     public void update() {
         /* Update game state */
@@ -229,7 +229,7 @@ public class Game {
         }
         else {
             long sysTime = platform.getSystemTime();
-            
+
             /* Always handle pause event */
             if ((events & EVENT_PAUSE) != 0) {
                 isPaused = !isPaused;
@@ -249,10 +249,10 @@ public class Game {
                         stateChanged = true;
                     }
                     if (STC_SHOW_GHOST_PIECE) {
-	                if ((events & EVENT_SHOW_SHADOW) != 0) {
-	                    showShadow = !showShadow;
-	                    stateChanged = true;
-	                }
+                    if ((events & EVENT_SHOW_SHADOW) != 0) {
+                        showShadow = !showShadow;
+                        stateChanged = true;
+                    }
                     }
                     if ((events & EVENT_DROP) != 0) {
                         dropTetromino();
@@ -284,7 +284,7 @@ public class Game {
         }
     }
 
-    /* Set matrix elements to indicated value */    
+    /* Set matrix elements to indicated value */
     private void setMatrixCells(int[][] matrix, int width, int height, int value) {
         for (int i = 0; i < width; ++i) {
             for (int j = 0; j < height; ++j) {
@@ -292,8 +292,8 @@ public class Game {
             }
         }
     }
-    
-    /* Initialize tetromino cells for every type of tetromino */    
+
+    /* Initialize tetromino cells for every type of tetromino */
     private void setTetromino(int indexTetromino, StcTetromino tetromino) {
 
         /* Initialize tetromino cells to empty cells */
@@ -352,7 +352,7 @@ public class Game {
         tetromino.type = indexTetromino;
     }
 
-    /* Start a new game */    
+    /* Start a new game */
     private void start() {
 
         /* Initialize game data */
@@ -394,9 +394,9 @@ public class Game {
         /* Initialize events */
         onTetrominoMoved();
     }
-    
+
     /*
-     * Rotate falling tetromino. If there are no collisions when the 
+     * Rotate falling tetromino. If there are no collisions when the
      * tetromino is rotated this modifies the tetromino's cell buffer.
      */
     private void rotateTetromino(boolean clockwise) {
@@ -421,72 +421,72 @@ public class Game {
                 }
             }
         }
-        
-		if (STC_WALL_KICK_ENABLED) {
-	        int wallDisplace = 0;
-	
-	        /* Check collision with left wall */
-	        if (fallingBlock.x < 0) {
-	            for (i = 0; (wallDisplace == 0) && (i < -fallingBlock.x); ++i) {
-	                for (j = 0; j < fallingBlock.size; ++j) {
-	                    if (rotated[i][j] != EMPTY_CELL) {
-	                        wallDisplace = i - fallingBlock.x;
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	        /* Or check collision with right wall */
-	        else if (fallingBlock.x > BOARD_WIDTH - fallingBlock.size) {
-	            i = fallingBlock.size - 1; 
-	            for (; (wallDisplace == 0) && (i >= BOARD_WIDTH - fallingBlock.x); --i) {
-	                for (j = 0; j < fallingBlock.size; ++j) {
-	                    if (rotated[i][j] != EMPTY_CELL) {
-	                        wallDisplace = -fallingBlock.x - i + BOARD_WIDTH - 1;
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	
-	        /* Check collision with board floor and other cells on board */
-	        for (i = 0; i < fallingBlock.size; ++i) {
-	            for (j = 0; j < fallingBlock.size; ++j) {
-	                if (rotated[i][j] != EMPTY_CELL) {
-	                    /* Check collision with bottom border of the map */
-	                    if (fallingBlock.y + j >= BOARD_HEIGHT) {
-	                        return; /* there was collision therefore return */
-	                    }
-	                    /* Check collision with existing cells in the map */
-	                    if (map[i + fallingBlock.x + wallDisplace][j + fallingBlock.y] != EMPTY_CELL) {
-	                        return; /* there was collision therefore return */
-	                    }
-	                }
-	            }
-	        }
-	        /* Move the falling piece if there was wall collision and it's a legal move */
-	        if (wallDisplace != 0) {
-	            fallingBlock.x += wallDisplace;
-	        }
-		}
-		else {
-	        /* Check collision of the temporary array */
-	        for (i = 0; i < fallingBlock.size; ++i) {
-	            for (j = 0; j < fallingBlock.size; ++j) {
-	                if (rotated[i][j] != EMPTY_CELL) {
-	                    /* Check collision with left, right or bottom borders of the map */
-	                    if ((fallingBlock.x + i < 0) || (fallingBlock.x + i >= BOARD_WIDTH)
-	                            || (fallingBlock.y + j >= BOARD_HEIGHT)) {
-	                        return; /* there was collision therefore return */
-	                    }
-	                    /* Check collision with existing cells in the map */
-	                    if (map[i + fallingBlock.x][j + fallingBlock.y] != EMPTY_CELL) {
-	                        return; /* there was collision therefore return */
-	                    }
-	                }
-	            }
-	        }
-		}
+
+        if (STC_WALL_KICK_ENABLED) {
+            int wallDisplace = 0;
+
+            /* Check collision with left wall */
+            if (fallingBlock.x < 0) {
+                for (i = 0; (wallDisplace == 0) && (i < -fallingBlock.x); ++i) {
+                    for (j = 0; j < fallingBlock.size; ++j) {
+                        if (rotated[i][j] != EMPTY_CELL) {
+                            wallDisplace = i - fallingBlock.x;
+                            break;
+                        }
+                    }
+                }
+            }
+            /* Or check collision with right wall */
+            else if (fallingBlock.x > BOARD_WIDTH - fallingBlock.size) {
+                i = fallingBlock.size - 1;
+                for (; (wallDisplace == 0) && (i >= BOARD_WIDTH - fallingBlock.x); --i) {
+                    for (j = 0; j < fallingBlock.size; ++j) {
+                        if (rotated[i][j] != EMPTY_CELL) {
+                            wallDisplace = -fallingBlock.x - i + BOARD_WIDTH - 1;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            /* Check collision with board floor and other cells on board */
+            for (i = 0; i < fallingBlock.size; ++i) {
+                for (j = 0; j < fallingBlock.size; ++j) {
+                    if (rotated[i][j] != EMPTY_CELL) {
+                        /* Check collision with bottom border of the map */
+                        if (fallingBlock.y + j >= BOARD_HEIGHT) {
+                            return; /* there was collision therefore return */
+                        }
+                        /* Check collision with existing cells in the map */
+                        if (map[i + fallingBlock.x + wallDisplace][j + fallingBlock.y] != EMPTY_CELL) {
+                            return; /* there was collision therefore return */
+                        }
+                    }
+                }
+            }
+            /* Move the falling piece if there was wall collision and it's a legal move */
+            if (wallDisplace != 0) {
+                fallingBlock.x += wallDisplace;
+            }
+        }
+        else {
+            /* Check collision of the temporary array */
+            for (i = 0; i < fallingBlock.size; ++i) {
+                for (j = 0; j < fallingBlock.size; ++j) {
+                    if (rotated[i][j] != EMPTY_CELL) {
+                        /* Check collision with left, right or bottom borders of the map */
+                        if ((fallingBlock.x + i < 0) || (fallingBlock.x + i >= BOARD_WIDTH)
+                                || (fallingBlock.y + j >= BOARD_HEIGHT)) {
+                            return; /* there was collision therefore return */
+                        }
+                        /* Check collision with existing cells in the map */
+                        if (map[i + fallingBlock.x][j + fallingBlock.y] != EMPTY_CELL) {
+                            return; /* there was collision therefore return */
+                        }
+                    }
+                }
+            }
+        }
         /* There are no collisions, replace tetromino cells with rotated cells */
         for (i = 0; i < TETROMINO_SIZE; ++i) {
             for (j = 0; j < TETROMINO_SIZE; ++j) {
@@ -522,8 +522,8 @@ public class Game {
         }
         return false;
     }
-    
-    /* Game scoring: http://tetris.wikia.com/wiki/Scoring */    
+
+    /* Game scoring: http://tetris.wikia.com/wiki/Scoring */
     private void onFilledRows(int filledRows) {
         /* Update total number of filled rows */
         stats.lines += filledRows;
@@ -553,31 +553,31 @@ public class Game {
             delay = (int)(delay * DELAY_FACTOR_FOR_LEVEL_UP);
         }
     }
-    
+
     /*
      * Move tetromino in the direction specified by (x, y) (in tile units)
-     * This function detects if there are filled rows or if the move 
+     * This function detects if there are filled rows or if the move
      * lands a falling tetromino, also checks for game over condition.
      */
     private void moveTetromino(int x, int y) {
         int i, j;
-        
+
         /* Check if the move would create a collision */
         if (checkCollision(x, y)) {
             /* In case of collision check if move was downwards (y == 1) */
             if (y == 1) {
-                /* Check if collision occurs when the falling 
+                /* Check if collision occurs when the falling
                  * tetromino is on the 1st or 2nd row */
                 if (fallingBlock.y <= 1) {
                     isOver = true;   /* if this happens the game is over */
                 }
                 else {
-                    /* The falling tetromino has reached the bottom, 
+                    /* The falling tetromino has reached the bottom,
                      * so we copy their cells to the board map */
                     for (i = 0; i < fallingBlock.size; ++i) {
                         for (j = 0; j < fallingBlock.size; ++j) {
                             if (fallingBlock.cells[i][j] != EMPTY_CELL) {
-                                map[fallingBlock.x + i][fallingBlock.y + j] 
+                                map[fallingBlock.x + i][fallingBlock.y + j]
                                         = fallingBlock.cells[i][j];
                             }
                         }
@@ -611,7 +611,7 @@ public class Game {
                     }
                     stats.totalPieces++;
                     stats.pieces[fallingBlock.type]++;
-                    
+
                     /* Use preview tetromino as falling tetromino.
                      * Copy preview tetromino for falling tetromino */
                     for (i = 0; i < TETROMINO_SIZE; ++i) {
@@ -640,40 +640,40 @@ public class Game {
         onTetrominoMoved();
     }
 
-    /* Hard drop */    
+    /* Hard drop */
     private void dropTetromino() {
-    	if (STC_SHOW_GHOST_PIECE) {
-	        moveTetromino(0, shadowGap);
-	        moveTetromino(0, 1); /* Force lock */
-	
-	        /* Update score */
-	        if (showShadow) {
-	            stats.score += (long)(SCORE_DROP_WITH_SHADOW_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
-	        }
-	        else {
-	            stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
-	        }
-    	}
-    	else {
-	        int y = 0;
-	        /* Calculate number of cells to drop */
-	        while (!checkCollision(0, ++y));
-	        moveTetromino(0, y - 1);
-	        moveTetromino(0, 1); /* Force lock */
-	
-	        /* Update score */
-	        stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
-    	}
+        if (STC_SHOW_GHOST_PIECE) {
+            moveTetromino(0, shadowGap);
+            moveTetromino(0, 1); /* Force lock */
+
+            /* Update score */
+            if (showShadow) {
+                stats.score += (long)(SCORE_DROP_WITH_SHADOW_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
+            }
+            else {
+                stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
+            }
+        }
+        else {
+            int y = 0;
+            /* Calculate number of cells to drop */
+            while (!checkCollision(0, ++y));
+            moveTetromino(0, y - 1);
+            moveTetromino(0, 1); /* Force lock */
+
+            /* Update score */
+            stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
+        }
     }
 
-    /* This event is called when the falling tetromino is moved */    
+    /* This event is called when the falling tetromino is moved */
     private void onTetrominoMoved() {
-    	if (STC_SHOW_GHOST_PIECE) {
+        if (STC_SHOW_GHOST_PIECE) {
             int y = 0;
-	    /* Calculate number of cells where shadow tetromino would be */
-	    while (!checkCollision(0, ++y));
-	    shadowGap = y - 1;
-    	}
+        /* Calculate number of cells where shadow tetromino would be */
+        while (!checkCollision(0, ++y));
+        shadowGap = y - 1;
+        }
         stateChanged = true;
     }
 }

@@ -157,7 +157,7 @@ void deleteGame(StcGame *game) {
 }
 
 /*
- * Rotate falling tetromino. If there are no collisions when the 
+ * Rotate falling tetromino. If there are no collisions when the
  * tetromino is rotated this modifies the tetromino's cell buffer.
  */
 void rotateTetromino(StcGame *game, int clockwise) {
@@ -201,7 +201,7 @@ void rotateTetromino(StcGame *game, int clockwise) {
     }
     /* Or check collision with right wall */
     else if (game->fallingBlock.x > BOARD_WIDTH - game->fallingBlock.size) {
-        i = game->fallingBlock.size - 1; 
+        i = game->fallingBlock.size - 1;
         for (; (wallDisplace == 0) && (i >= BOARD_WIDTH - game->fallingBlock.x); --i) {
             for (j = 0; j < game->fallingBlock.size; ++j) {
                 if (rotated[i][j] != EMPTY_CELL) {
@@ -319,28 +319,28 @@ static void onFilledRows(StcGame *game, int filledRows) {
 
 /*
  * Move tetromino in the direction specified by (x, y) (in tile units)
- * This function detects if there are filled rows or if the move 
+ * This function detects if there are filled rows or if the move
  * lands a falling tetromino, also checks for game over condition.
  */
 static void moveTetromino(StcGame *game, int x, int y) {
     int i, j, hasFullRow, numFilledRows;
-    
+
     /* Check if the move would create a collision */
     if (checkCollision(game, x, y)) {
         /* In case of collision check if move was downwards (y == 1) */
         if (y == 1) {
-            /* Check if collision occurs when the falling 
+            /* Check if collision occurs when the falling
              * tetromino is on the 1st or 2nd row */
             if (game->fallingBlock.y <= 1) {
                 game->isOver = 1;   /* if this happens the game is over */
             }
             else {
-                /* The falling tetromino has reached the bottom, 
+                /* The falling tetromino has reached the bottom,
                  * so we copy their cells to the board map */
                 for (i = 0; i < game->fallingBlock.size; ++i) {
                     for (j = 0; j < game->fallingBlock.size; ++j) {
                         if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                            game->map[game->fallingBlock.x + i][game->fallingBlock.y + j] 
+                            game->map[game->fallingBlock.x + i][game->fallingBlock.y + j]
                                     = game->fallingBlock.cells[i][j];
                         }
                     }
@@ -374,7 +374,7 @@ static void moveTetromino(StcGame *game, int x, int y) {
                 }
                 game->stats.totalPieces++;
                 game->stats.pieces[game->fallingBlock.type]++;
-                
+
                 /* Use preview tetromino as falling tetromino.
                  * Copy preview tetromino for falling tetromino */
                 for (i = 0; i < TETROMINO_SIZE; ++i) {
@@ -446,7 +446,7 @@ void gameUpdate(StcGame *game) {
     }
     else {
         sysTime = platformGetSystemTime();
-        
+
         /* Always handle pause event */
         if ((game->events & EVENT_PAUSE) != 0) {
             game->isPaused = !game->isPaused;

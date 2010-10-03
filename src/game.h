@@ -23,7 +23,7 @@
 #define GAME_ERROR_NO_IMAGES    (-3)    /* Problem loading the image files    */
 #define GAME_ERROR_ASSERT       (-100)  /* Something went very very wrong...  */
 
-/* 
+/*
  * Game events
  */
 #define EVENT_NONE          (0)
@@ -47,49 +47,49 @@
 
 /* Tetromino definitions (used as indexes: must be between 0 - [TETROMINO_TYPES - 1])
  * http://tetris.wikia.com/wiki/Tetromino */
-/* 
+/*
     ....
     ****
     ....
     ....
 */
 #define TETROMINO_I     (0)
-/* 
+/*
     **..
     **..
     ....
     ....
 */
 #define TETROMINO_O     (1)
-/* 
+/*
     .*..
     ***.
     ....
     ....
 */
 #define TETROMINO_T     (2)
-/* 
+/*
     .**.
     **..
     ....
     ....
 */
 #define TETROMINO_S     (3)
-/* 
+/*
     **..
     .**.
     ....
     ....
 */
 #define TETROMINO_Z     (4)
-/* 
+/*
     *...
     ***.
     ....
     ....
 */
 #define TETROMINO_J     (5)
-/* 
+/*
     ..*.
     ***.
     ....
@@ -108,7 +108,7 @@
 #define COLOR_WHITE     (0)     /* Used for effects (if any) */
 
 /* This value used for empty tiles */
-#define EMPTY_CELL  (-1)    
+#define EMPTY_CELL  (-1)
 
 /*
  * Data structure that is going to hold platform dependent

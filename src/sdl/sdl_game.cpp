@@ -23,7 +23,7 @@ int StcPlatformSdl::init() {
     }
 
     /* Create game video surface */
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 
+    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT,
                               SCREEN_BIT_DEPTH,
                               SCREEN_VIDEO_MODE);
     if (screen == NULL) {
@@ -273,9 +273,9 @@ void StcPlatformSdl::renderGame(StcGame *game) {
         for (i = 0; i < TETROMINO_SIZE; ++i) {
             for (j = 0; j < TETROMINO_SIZE; ++j) {
                 if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                    drawTile(game, 
-                             BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)), 
-                             BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)), 
+                    drawTile(game,
+                             BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
+                             BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)),
                              game->fallingBlock.cells[i][j]);
                 }
             }

@@ -15,7 +15,7 @@
 
 #include <SDL.h>
 
-/* 
+/*
  * UI layout (quantities are expressed in pixels)
  */
 
@@ -71,9 +71,9 @@
 #define NUMBER_WIDTH    (7)
 #define NUMBER_HEIGHT   (9)
 
-/* 
+/*
  * Image files
- */ 
+ */
 #define BMP_TILE_BLOCKS     "sdl/blocks.png"
 #define BMP_BACKGROUND      "sdl/back.png"
 #define BMP_NUMBERS         "sdl/numbers.png"

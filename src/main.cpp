@@ -28,33 +28,28 @@
 /* -------------------------------------------------------------------------- */
 
 #include <stdlib.h>
+#include <new>
 #include "game.hpp"
 #include "sdl/sdl_game.hpp"
 
 int main(int argc, char *argv[]) {
-    /* Create new game. */
-    StcGame *game = new StcGame();
+    /* Game object */
+    Game game;
 
-    /* Check if we got a valid game. */
-    if (game != NULL) {
-        /* We got a valid game, therefore start the game. */
-        int errorCode = game->init(new StcPlatformSdl());
-        if (errorCode == GAME_ERROR_NONE) {
+    /* Platform object */
+    PlatformSdl platform;
 
-            /* Loop until some error happens or the user quits. */
-            while (game->errorCode == GAME_ERROR_NONE) {
-                game->update();
-            }
-            /* Save error code and end game. */
-            errorCode = game->errorCode;
-            game->end();
-        }
-        /* Free resources used by our game. */
-        delete game;
+    /* Start the game */
+    game.init(&platform);
 
-        /* Return to the system. */
-        return errorCode;
+    /* Loop until some error happens or the user quits */
+    while (game.errorCode() == Game::ERROR_NONE) {
+        game.update();
     }
-    /* If we get here the game was not created. */
-    return GAME_ERROR_NO_MEMORY;
+
+    /* Game was interrupted or an error happened, end the game */
+    game.end();
+
+    /* Return to the system */
+    return game.errorCode();
 }

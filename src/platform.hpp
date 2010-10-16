@@ -1,0 +1,41 @@
+/* ========================================================================== */
+/*                          STC - SIMPLE TETRIS CLONE                         */
+/* -------------------------------------------------------------------------- */
+/*   Platform interface definition.                                           */
+/*                                                                            */
+/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   This code is licensed under the MIT license:                             */
+/*   http://www.opensource.org/licenses/mit-license.php                       */
+/* -------------------------------------------------------------------------- */
+
+#ifndef STC_SRC_PLATFORM_HPP_
+#define STC_SRC_PLATFORM_HPP_
+
+/* Game class forward declaration */
+class Game;
+
+class Platform {
+  public:
+    /* Initializes platform */
+    virtual int init(Game *game) = 0;
+
+    /* Clear resources used by platform */
+    virtual void end() = 0;
+
+    /* Read input device and notify game */
+    virtual void readInput() = 0;
+
+    /* Render the state of the game */
+    virtual void renderGame() = 0;
+
+    /* Return the current system time in milliseconds */
+    virtual long getSystemTime() = 0;
+
+    /* Initialize the random number generator */
+    virtual void seedRandom(long seed) = 0;
+
+    /* Return a random positive integer number */
+    virtual int random() = 0;
+};
+
+#endif /* STC_SRC_PLATFORM_HPP_ */

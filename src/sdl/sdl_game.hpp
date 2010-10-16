@@ -16,101 +16,93 @@
 #include <SDL.h>
 
 /*
- * UI layout (quantities are expressed in pixels)
- */
-
-/* Screen size */
-#define SCREEN_WIDTH    (480)
-#define SCREEN_HEIGHT   (272)
-
-/* Size of square tile */
-#define TILE_SIZE       (12)
-
-/* Board up-left corner coordinates */
-#define BOARD_X         (180)
-#define BOARD_Y         (4)
-
-/* Preview tetromino position */
-#define PREVIEW_X       (112)
-#define PREVIEW_Y       (210)
-
-/* Score position and length on screen */
-#define SCORE_X         (72)
-#define SCORE_Y         (52)
-#define SCORE_LENGTH    (10)
-
-/* Lines position and length on screen */
-#define LINES_X         (108)
-#define LINES_Y         (34)
-#define LINES_LENGTH    (5)
-
-/* Level position and length on screen */
-#define LEVEL_X         (108)
-#define LEVEL_Y         (16)
-#define LEVEL_LENGTH    (5)
-
-/* Tetromino subtotals position */
-#define TETROMINO_X     (425)
-#define TETROMINO_L_Y   (53)
-#define TETROMINO_I_Y   (77)
-#define TETROMINO_T_Y   (101)
-#define TETROMINO_S_Y   (125)
-#define TETROMINO_Z_Y   (149)
-#define TETROMINO_O_Y   (173)
-#define TETROMINO_J_Y   (197)
-
-/* Size of subtotals */
-#define TETROMINO_LENGTH    (5)
-
-/* Tetromino total position */
-#define PIECES_X        (418)
-#define PIECES_Y        (221)
-#define PIECES_LENGTH   (6)
-
-/* Size of number */
-#define NUMBER_WIDTH    (7)
-#define NUMBER_HEIGHT   (9)
-
-/*
  * Image files
  */
-#define BMP_TILE_BLOCKS     "sdl/blocks.png"
-#define BMP_BACKGROUND      "sdl/back.png"
-#define BMP_NUMBERS         "sdl/numbers.png"
+#define STC_BMP_TILE_BLOCKS     "sdl/blocks.png"
+#define STC_BMP_BACKGROUND      "sdl/back.png"
+#define STC_BMP_NUMBERS         "sdl/numbers.png"
 
-/* Use 32 bits per pixel */
-#define SCREEN_BIT_DEPTH    (32)
-
-/* Use video hardware and double buffering */
-#define SCREEN_VIDEO_MODE   (SDL_HWSURFACE | SDL_DOUBLEBUF)
-
-/* Delayed autoshift initial delay */
-#define DAS_DELAY_TIMER     (200)
-
-/* Delayed autoshift timer for left and right moves */
-#define DAS_MOVE_TIMER      (40)
-
-#ifdef STC_AUTO_ROTATION
-
-/* Rotation auto-repeat delay */
-#define ROTATION_AUTOREPEAT_DELAY   (375)
-
-/* Rotation autorepeat timer */
-#define ROTATION_AUTOREPEAT_TIMER   (200)
-
-#endif /* STC_AUTO_ROTATION */
-
-/* Here we define the platform dependent implementation */
-class StcPlatformSdl : public StcPlatform {
+/*
+ * SDL platform implementation
+ */
+class PlatformSdl : public Platform {
   public:
-    virtual int init();
+    /*
+     * UI layout (quantities are expressed in pixels)
+     */
+
+    /* Screen size */
+    static const int SCREEN_WIDTH  = 480;
+    static const int SCREEN_HEIGHT = 272;
+
+    /* Size of square tile */
+    static const int TILE_SIZE = 12;
+
+    /* Board up-left corner coordinates */
+    static const int BOARD_X = 180;
+    static const int BOARD_Y = 4;
+
+    /* Preview tetromino position */
+    static const int PREVIEW_X = 112;
+    static const int PREVIEW_Y = 210;
+
+    /* Score position and length on screen */
+    static const int SCORE_X      = 72;
+    static const int SCORE_Y      = 52;
+    static const int SCORE_LENGTH = 10;
+
+    /* Lines position and length on screen */
+    static const int LINES_X      = 108;
+    static const int LINES_Y      = 34;
+    static const int LINES_LENGTH = 5;
+
+    /* Level position and length on screen */
+    static const int LEVEL_X      = 108;
+    static const int LEVEL_Y      = 16;
+    static const int LEVEL_LENGTH = 5;
+
+    /* Tetromino subtotals position */
+    static const int TETROMINO_X   = 425;
+    static const int TETROMINO_L_Y = 53;
+    static const int TETROMINO_I_Y = 77;
+    static const int TETROMINO_T_Y = 101;
+    static const int TETROMINO_S_Y = 125;
+    static const int TETROMINO_Z_Y = 149;
+    static const int TETROMINO_O_Y = 173;
+    static const int TETROMINO_J_Y = 197;
+
+    /* Size of subtotals */
+    static const int TETROMINO_LENGTH = 5;
+
+    /* Tetromino total position */
+    static const int PIECES_X      = 418;
+    static const int PIECES_Y      = 221;
+    static const int PIECES_LENGTH = 6;
+
+    /* Size of number */
+    static const int NUMBER_WIDTH  = 7;
+    static const int NUMBER_HEIGHT = 9;
+
+    /* Use 32 bits per pixel */
+    static const int SCREEN_BIT_DEPTH = 32;
+
+    /* Use video hardware and double buffering */
+    static const int SCREEN_VIDEO_MODE = (SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+    /* Sleep time (in milliseconds) */
+    static const int SLEEP_TIME = 40;
+
+    /* Initializes platform */
+    virtual int init(Game *game);
+
+    /* Clear resources used by platform */
     virtual void end();
 
     /* Read input device and notify game */
-    virtual void readInput(StcGame *game);
+    virtual void readInput();
 
     /* Render the state of the game */
-    virtual void renderGame(StcGame *game);
+    virtual void renderGame();
 
     /* Return the current system time in milliseconds */
     virtual long getSystemTime();
@@ -122,22 +114,16 @@ class StcPlatformSdl : public StcPlatform {
     virtual int random();
 
   private:
+
     SDL_Surface* screen;
     SDL_Surface* bmpTiles;
     SDL_Surface* bmpBack;
     SDL_Surface* bmpNumbers;
 
-    /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
-    int delayLeft;
-    int delayRight;
-    int delayDown;
-#ifdef STC_AUTO_ROTATION
-    int delayRotation;
-#endif
-    int lastTime;
+    Game* mGame;
 
-    void drawTile(StcGame *game, int x, int y, int tile, int shadow = 0);
-    void drawNumber(StcGame *game, int x, int y, long number, int length, int color);
+    void drawTile(int x, int y, int tile, bool shadow);
+    void drawNumber(int x, int y, long number, int length, int color);
 };
 
 #endif /* STC_SDL_GAME_HPP_ */

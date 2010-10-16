@@ -14,12 +14,12 @@
 #include <SDL_image.h>
 
 /*
- * Initializes platform, if there are no problems returns GAME_ERROR_NONE.
+ * Initializes platform, if there are no problems returns ERROR_NONE.
  */
-int StcPlatformSdl::init() {
+int PlatformSdl::init(Game *game) {
     /* Start video system */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        return GAME_ERROR_NO_VIDEO;
+        return Game::ERROR_NO_VIDEO;
     }
 
     /* Create game video surface */
@@ -27,41 +27,32 @@ int StcPlatformSdl::init() {
                               SCREEN_BIT_DEPTH,
                               SCREEN_VIDEO_MODE);
     if (screen == NULL) {
-        return GAME_ERROR_NO_VIDEO;
+        return Game::ERROR_NO_VIDEO;
     }
 
     /* Set window caption */
-    SDL_WM_SetCaption(GAME_NAME " (C++)", GAME_NAME);
+    SDL_WM_SetCaption(STC_GAME_NAME " (C++)", STC_GAME_NAME);
 
     /* Load images for blocks and background */
-    bmpTiles = IMG_Load(BMP_TILE_BLOCKS);
-    bmpBack = IMG_Load(BMP_BACKGROUND);
-    bmpNumbers = IMG_Load(BMP_NUMBERS);
+    bmpTiles = IMG_Load(STC_BMP_TILE_BLOCKS);
+    bmpBack = IMG_Load(STC_BMP_BACKGROUND);
+    bmpNumbers = IMG_Load(STC_BMP_NUMBERS);
 
     if (bmpTiles == NULL || bmpBack == NULL || bmpNumbers == NULL) {
-        return GAME_ERROR_NO_IMAGES;
+        return Game::ERROR_NO_IMAGES;
     }
 
-    /* Initialize delayed autoshift */
-    lastTime = SDL_GetTicks();
-    delayLeft = -1;
-    delayRight = -1;
-    delayDown = -1;
-#ifdef STC_AUTO_ROTATION
-    delayRotation = -1;
-#endif
-
-    return GAME_ERROR_NONE;
+    mGame = game;
+    return Game::ERROR_NONE;
 };
 
 /* Return the current system time in milliseconds */
-long StcPlatformSdl::getSystemTime() {
+long PlatformSdl::getSystemTime() {
     return SDL_GetTicks();
 }
 
 /* Read input device and notify game */
-void StcPlatformSdl::readInput(StcGame *game) {
-    long timeNow, timeDelta;
+void PlatformSdl::readInput() {
     SDL_Event event;
 
     /* Grab events in the queue */
@@ -69,51 +60,45 @@ void StcPlatformSdl::readInput(StcGame *game) {
         switch (event.type) {
         /* On quit game */
         case SDL_QUIT:
-            game->errorCode = GAME_ERROR_USER_QUITS;
+            mGame->onKeyDown(Game::EVENT_QUIT);
             break;
         /* On key pressed */
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
-                game->errorCode = GAME_ERROR_USER_QUITS;
+                mGame->onKeyDown(Game::EVENT_QUIT);
                 break;
             case SDLK_s:
             case SDLK_DOWN:
-                game->events |= EVENT_MOVE_DOWN;
-                delayDown = DAS_DELAY_TIMER;
+                mGame->onKeyDown(Game::EVENT_MOVE_DOWN);
                 break;
             case SDLK_w:
             case SDLK_UP:
-                game->events |= EVENT_ROTATE_CW;
-#ifdef STC_AUTO_ROTATION
-                delayRotation = ROTATION_AUTOREPEAT_DELAY;
-#endif
+                mGame->onKeyDown(Game::EVENT_ROTATE_CW);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                game->events |= EVENT_MOVE_LEFT;
-                delayLeft = DAS_DELAY_TIMER;
+                mGame->onKeyDown(Game::EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                game->events |= EVENT_MOVE_RIGHT;
-                delayRight = DAS_DELAY_TIMER;
+                mGame->onKeyDown(Game::EVENT_MOVE_RIGHT);
                 break;
             case SDLK_SPACE:
-                game->events |= EVENT_DROP;
+                mGame->onKeyDown(Game::EVENT_DROP);
                 break;
             case SDLK_F5:
-                game->events |= EVENT_RESTART;
+                mGame->onKeyDown(Game::EVENT_RESTART);
                 break;
             case SDLK_F1:
-                game->events |= EVENT_PAUSE;
+                mGame->onKeyDown(Game::EVENT_PAUSE);
                 break;
             case SDLK_F2:
-                game->events |= EVENT_SHOW_NEXT;
+                mGame->onKeyDown(Game::EVENT_SHOW_NEXT);
                 break;
 #ifdef STC_SHOW_GHOST_PIECE
             case SDLK_F3:
-                game->events |= EVENT_SHOW_SHADOW;
+                mGame->onKeyDown(Game::EVENT_SHOW_SHADOW);
                 break;
 #endif /* STC_SHOW_GHOST_PIECE */
             default:
@@ -125,20 +110,20 @@ void StcPlatformSdl::readInput(StcGame *game) {
             switch (event.key.keysym.sym) {
             case SDLK_s:
             case SDLK_DOWN:
-                delayDown = -1;
+                mGame->onKeyUp(Game::EVENT_MOVE_DOWN);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                delayLeft = -1;
+                mGame->onKeyUp(Game::EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                delayRight = -1;
+                mGame->onKeyUp(Game::EVENT_MOVE_RIGHT);
                 break;
 #ifdef STC_AUTO_ROTATION
             case SDLK_w:
             case SDLK_UP:
-                delayRotation = -1;
+                mGame->onKeyUp(Game::EVENT_ROTATE_CW);
                 break;
 #endif /* STC_AUTO_ROTATION */
             default:
@@ -148,45 +133,10 @@ void StcPlatformSdl::readInput(StcGame *game) {
             break;
         }
     }
-
-    /* Process delayed autoshift */
-    timeNow = SDL_GetTicks();
-    timeDelta = timeNow - lastTime;
-    if (delayDown > 0) {
-        delayDown -= timeDelta;
-        if (delayDown <= 0) {
-            delayDown = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_DOWN;
-        }
-    }
-    if (delayLeft > 0) {
-        delayLeft -= timeDelta;
-        if (delayLeft <= 0) {
-            delayLeft = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_LEFT;
-        }
-    }
-    else if (delayRight > 0) {
-        delayRight -= timeDelta;
-        if (delayRight <= 0) {
-            delayRight = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_RIGHT;
-        }
-    }
-#ifdef STC_AUTO_ROTATION
-    if (delayRotation > 0) {
-        delayRotation -= timeDelta;
-        if (delayRotation <= 0) {
-            delayRotation = ROTATION_AUTOREPEAT_TIMER;
-            game->events |= EVENT_ROTATE_CW;
-        }
-    }
-#endif /* STC_AUTO_ROTATION */
-    lastTime = timeNow;
 }
 
 /* Draw a tile from a tetromino */
-void StcPlatformSdl::drawTile(StcGame *game, int x, int y, int tile, int shadow) {
+void PlatformSdl::drawTile(int x, int y, int tile, bool shadow) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
@@ -200,7 +150,7 @@ void StcPlatformSdl::drawTile(StcGame *game, int x, int y, int tile, int shadow)
 }
 
 /* Draw a number on the given position */
-void StcPlatformSdl::drawNumber(StcGame *game, int x, int y, long number, int length, int color) {
+void PlatformSdl::drawNumber(int x, int y, long number, int length, int color) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
@@ -221,108 +171,104 @@ void StcPlatformSdl::drawNumber(StcGame *game, int x, int y, long number, int le
 /*
  * Render the state of the game using platform functions
  */
-void StcPlatformSdl::renderGame(StcGame *game) {
+void PlatformSdl::renderGame() {
     int i, j;
 
     /* Check if the game state has changed, if so redraw */
-    if (game->stateChanged) {
+    if (mGame->stateChanged) {
         /* Draw background */
         SDL_BlitSurface(bmpBack, NULL, screen, NULL);
 
         /* Draw preview block */
-        if (game->showPreview) {
-            for (i = 0; i < TETROMINO_SIZE; ++i) {
-                for (j = 0; j < TETROMINO_SIZE; ++j) {
-                    if (game->nextBlock.cells[i][j] != EMPTY_CELL) {
-                        drawTile(game,
-                                 PREVIEW_X + (TILE_SIZE * i),
+        if (mGame->showPreview()) {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
+                    if (mGame->nextBlock().cells[i][j] != Game::EMPTY_CELL) {
+                        drawTile(PREVIEW_X + (TILE_SIZE * i),
                                  PREVIEW_Y + (TILE_SIZE * j),
-                                 game->nextBlock.cells[i][j]);
+                                 mGame->nextBlock().cells[i][j], false);
                     }
                 }
             }
         }
 #ifdef STC_SHOW_GHOST_PIECE
         /* Draw shadow tetromino */
-        if (game->showShadow && game->shadowGap > 0) {
-            for (i = 0; i < TETROMINO_SIZE; ++i) {
-                for (j = 0; j < TETROMINO_SIZE; ++j) {
-                    if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                        drawTile(game,
-                                 BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
-                                 BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + game->shadowGap + j)),
-                                 game->fallingBlock.cells[i][j], 1);
+        if (mGame->showShadow() && mGame->shadowGap() > 0) {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
+                    if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+                        drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
+                                 BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + mGame->shadowGap() + j)),
+                                 mGame->fallingBlock().cells[i][j], true);
                     }
                 }
             }
         }
 #endif
         /* Draw the cells in the board */
-        for (i = 0; i < BOARD_WIDTH; ++i) {
-            for (j = 0; j < BOARD_HEIGHT; ++j) {
-                if (game->map[i][j] != EMPTY_CELL) {
-                    drawTile(game,
-                             BOARD_X + (TILE_SIZE * i),
+        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; ++i) {
+            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; ++j) {
+                if (mGame->getCell(i, j) != Game::EMPTY_CELL) {
+                    drawTile(BOARD_X + (TILE_SIZE * i),
                              BOARD_Y + (TILE_SIZE * j),
-                             game->map[i][j]);
+                             mGame->getCell(i, j), false);
                 }
             }
         }
 
         /* Draw falling tetromino */
-        for (i = 0; i < TETROMINO_SIZE; ++i) {
-            for (j = 0; j < TETROMINO_SIZE; ++j) {
-                if (game->fallingBlock.cells[i][j] != EMPTY_CELL) {
-                    drawTile(game,
-                             BOARD_X + (TILE_SIZE * (game->fallingBlock.x + i)),
-                             BOARD_Y + (TILE_SIZE * (game->fallingBlock.y + j)),
-                             game->fallingBlock.cells[i][j]);
+        for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
+            for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
+                if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+                    drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
+                             BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + j)),
+                             mGame->fallingBlock().cells[i][j], false);
                 }
             }
         }
 
         /* Draw game statistic data */
-        if (!game->isPaused) {
-            drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
-            drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
-            drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
+        if (!mGame->isPaused()) {
+            drawNumber(LEVEL_X, LEVEL_Y, mGame->stats().level, LEVEL_LENGTH, Game::COLOR_WHITE);
+            drawNumber(LINES_X, LINES_Y, mGame->stats().lines, LINES_LENGTH, Game::COLOR_WHITE);
+            drawNumber(SCORE_X, SCORE_Y, mGame->stats().score, SCORE_LENGTH, Game::COLOR_WHITE);
 
-            drawNumber(game, TETROMINO_X, TETROMINO_L_Y, game->stats.pieces[TETROMINO_L], TETROMINO_LENGTH, COLOR_ORANGE);
-            drawNumber(game, TETROMINO_X, TETROMINO_I_Y, game->stats.pieces[TETROMINO_I], TETROMINO_LENGTH, COLOR_CYAN);
-            drawNumber(game, TETROMINO_X, TETROMINO_T_Y, game->stats.pieces[TETROMINO_T], TETROMINO_LENGTH, COLOR_PURPLE);
-            drawNumber(game, TETROMINO_X, TETROMINO_S_Y, game->stats.pieces[TETROMINO_S], TETROMINO_LENGTH, COLOR_GREEN);
-            drawNumber(game, TETROMINO_X, TETROMINO_Z_Y, game->stats.pieces[TETROMINO_Z], TETROMINO_LENGTH, COLOR_RED);
-            drawNumber(game, TETROMINO_X, TETROMINO_O_Y, game->stats.pieces[TETROMINO_O], TETROMINO_LENGTH, COLOR_YELLOW);
-            drawNumber(game, TETROMINO_X, TETROMINO_J_Y, game->stats.pieces[TETROMINO_J], TETROMINO_LENGTH, COLOR_BLUE);
+            drawNumber(TETROMINO_X, TETROMINO_L_Y, mGame->stats().pieces[Game::TETROMINO_L], TETROMINO_LENGTH, Game::COLOR_ORANGE);
+            drawNumber(TETROMINO_X, TETROMINO_I_Y, mGame->stats().pieces[Game::TETROMINO_I], TETROMINO_LENGTH, Game::COLOR_CYAN);
+            drawNumber(TETROMINO_X, TETROMINO_T_Y, mGame->stats().pieces[Game::TETROMINO_T], TETROMINO_LENGTH, Game::COLOR_PURPLE);
+            drawNumber(TETROMINO_X, TETROMINO_S_Y, mGame->stats().pieces[Game::TETROMINO_S], TETROMINO_LENGTH, Game::COLOR_GREEN);
+            drawNumber(TETROMINO_X, TETROMINO_Z_Y, mGame->stats().pieces[Game::TETROMINO_Z], TETROMINO_LENGTH, Game::COLOR_RED);
+            drawNumber(TETROMINO_X, TETROMINO_O_Y, mGame->stats().pieces[Game::TETROMINO_O], TETROMINO_LENGTH, Game::COLOR_YELLOW);
+            drawNumber(TETROMINO_X, TETROMINO_J_Y, mGame->stats().pieces[Game::TETROMINO_J], TETROMINO_LENGTH, Game::COLOR_BLUE);
 
-            drawNumber(game, PIECES_X, PIECES_Y, game->stats.totalPieces, PIECES_LENGTH, COLOR_WHITE);
+            drawNumber(PIECES_X, PIECES_Y, mGame->stats().totalPieces, PIECES_LENGTH, Game::COLOR_WHITE);
         }
 
         /* Clear the game state */
-        game->stateChanged = false;
+        mGame->stateChanged = false;
 
         /* Swap video buffers */
         SDL_Flip(screen);
     }
 
     /* Resting game */
-    SDL_Delay(DAS_MOVE_TIMER);
+    SDL_Delay(SLEEP_TIME);
 }
 
 /* Initialize the random number generator */
-void StcPlatformSdl::seedRandom(long seed) {
+void PlatformSdl::seedRandom(long seed) {
     srand(seed);
 }
 
 /* Return a random positive integer number */
-int StcPlatformSdl::random() {
+int PlatformSdl::random() {
     return rand();
 }
 
 /*
  * Release platform allocated resources
  */
-void StcPlatformSdl::end() {
+void PlatformSdl::end() {
     /* Free all the created surfaces */
     SDL_FreeSurface(screen);
     SDL_FreeSurface(bmpTiles);

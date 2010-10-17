@@ -3,6 +3,18 @@
 /* -------------------------------------------------------------------------- */
 /*   A simple tetris clone.                                                   */
 /*                                                                            */
+/*   Some symbols you can define for the project:                             */
+/*                                                                            */
+/*   STC_SHOW_GHOST_PIECE:      define this for showing the shadow piece.     */
+/*                              http://tetris.wikia.com/wiki/Ghost_piece      */
+/*                                                                            */
+/*   STC_WALL_KICK_ENABLED:     define this for enabling wall kick.           */
+/*                              http://tetris.wikia.com/wiki/Wall_kick        */
+/*                                                                            */
+/*   STC_AUTO_ROTATION:         define this for enabling auto-rotation of     */
+/*                              the falling piece.                            */
+/*                                                                            */
+/* -------------------------------------------------------------------------- */
 /*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
 /*                                                                            */
 /*   Permission is hereby granted, free of charge, to any person              */
@@ -31,6 +43,9 @@
 #include <new>
 #include "game.hpp"
 #include "sdl/sdl_game.hpp"
+
+using Stc::Game;
+using Stc::PlatformSdl;
 
 int main(int argc, char *argv[]) {
     /* Game object */

@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <SDL_image.h>
 
+namespace Stc {
+
 /*
  * Initializes platform, if there are no problems returns ERROR_NONE.
  */
@@ -23,10 +25,10 @@ int PlatformSdl::init(Game *game) {
     }
 
     /* Create game video surface */
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT,
+    mScreen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT,
                               SCREEN_BIT_DEPTH,
                               SCREEN_VIDEO_MODE);
-    if (screen == NULL) {
+    if (mScreen == NULL) {
         return Game::ERROR_NO_VIDEO;
     }
 
@@ -34,11 +36,11 @@ int PlatformSdl::init(Game *game) {
     SDL_WM_SetCaption(STC_GAME_NAME " (C++)", STC_GAME_NAME);
 
     /* Load images for blocks and background */
-    bmpTiles = IMG_Load(STC_BMP_TILE_BLOCKS);
-    bmpBack = IMG_Load(STC_BMP_BACKGROUND);
-    bmpNumbers = IMG_Load(STC_BMP_NUMBERS);
+    mBmpTiles = IMG_Load(STC_BMP_TILE_BLOCKS);
+    mBmpBack = IMG_Load(STC_BMP_BACKGROUND);
+    mBmpNumbers = IMG_Load(STC_BMP_NUMBERS);
 
-    if (bmpTiles == NULL || bmpBack == NULL || bmpNumbers == NULL) {
+    if (mBmpTiles == NULL || mBmpBack == NULL || mBmpNumbers == NULL) {
         return Game::ERROR_NO_IMAGES;
     }
 
@@ -146,7 +148,7 @@ void PlatformSdl::drawTile(int x, int y, int tile, bool shadow) {
     recSource.y = (TILE_SIZE + 1) * shadow;
     recSource.w = TILE_SIZE + 1;
     recSource.h = TILE_SIZE + 1;
-    SDL_BlitSurface(bmpTiles, &recSource, screen, &recDestine);
+    SDL_BlitSurface(mBmpTiles, &recSource, mScreen, &recDestine);
 }
 
 /* Draw a number on the given position */
@@ -163,7 +165,7 @@ void PlatformSdl::drawNumber(int x, int y, long number, int length, int color) {
     do {
         recDestine.x = x + NUMBER_WIDTH * (length - pos);
         recSource.x = NUMBER_WIDTH * (Sint16)(number % 10);
-        SDL_BlitSurface(bmpNumbers, &recSource, screen, &recDestine);
+        SDL_BlitSurface(mBmpNumbers, &recSource, mScreen, &recDestine);
         number /= 10;
     } while (++pos < length);
 }
@@ -175,9 +177,9 @@ void PlatformSdl::renderGame() {
     int i, j;
 
     /* Check if the game state has changed, if so redraw */
-    if (mGame->stateChanged) {
+    if (mGame->hasChanged()) {
         /* Draw background */
-        SDL_BlitSurface(bmpBack, NULL, screen, NULL);
+        SDL_BlitSurface(mBmpBack, NULL, mScreen, NULL);
 
         /* Draw preview block */
         if (mGame->showPreview()) {
@@ -244,11 +246,11 @@ void PlatformSdl::renderGame() {
             drawNumber(PIECES_X, PIECES_Y, mGame->stats().totalPieces, PIECES_LENGTH, Game::COLOR_WHITE);
         }
 
-        /* Clear the game state */
-        mGame->stateChanged = false;
+        /* Inform the game that we are done with the changed state */
+        mGame->onChangeProcessed();
 
         /* Swap video buffers */
-        SDL_Flip(screen);
+        SDL_Flip(mScreen);
     }
 
     /* Resting game */
@@ -270,11 +272,12 @@ int PlatformSdl::random() {
  */
 void PlatformSdl::end() {
     /* Free all the created surfaces */
-    SDL_FreeSurface(screen);
-    SDL_FreeSurface(bmpTiles);
-    SDL_FreeSurface(bmpBack);
-    SDL_FreeSurface(bmpNumbers);
+    SDL_FreeSurface(mScreen);
+    SDL_FreeSurface(mBmpTiles);
+    SDL_FreeSurface(mBmpBack);
+    SDL_FreeSurface(mBmpNumbers);
 
     /* Shut down SDL */
     SDL_Quit();
+}
 }

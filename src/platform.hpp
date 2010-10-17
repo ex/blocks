@@ -11,6 +11,8 @@
 #ifndef STC_SRC_PLATFORM_HPP_
 #define STC_SRC_PLATFORM_HPP_
 
+namespace Stc {
+
 /* Game class forward declaration */
 class Game;
 
@@ -37,5 +39,6 @@ class Platform {
     /* Return a random positive integer number */
     virtual int random() = 0;
 };
+}
 
 #endif /* STC_SRC_PLATFORM_HPP_ */

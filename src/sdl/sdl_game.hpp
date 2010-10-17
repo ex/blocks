@@ -15,6 +15,8 @@
 
 #include <SDL.h>
 
+namespace Stc {
+
 /*
  * Image files
  */
@@ -115,15 +117,16 @@ class PlatformSdl : public Platform {
 
   private:
 
-    SDL_Surface* screen;
-    SDL_Surface* bmpTiles;
-    SDL_Surface* bmpBack;
-    SDL_Surface* bmpNumbers;
+    SDL_Surface* mScreen;
+    SDL_Surface* mBmpTiles;
+    SDL_Surface* mBmpBack;
+    SDL_Surface* mBmpNumbers;
 
     Game* mGame;
 
     void drawTile(int x, int y, int tile, bool shadow);
     void drawNumber(int x, int y, long number, int length, int color);
 };
+}
 
 #endif /* STC_SDL_GAME_HPP_ */

@@ -16,11 +16,13 @@
 /* Game name */
 #define STC_GAME_NAME    "STC: simple tetris clone"
 
+namespace Stc {
+
 class Game {
   public:
     /*
      * Game configuration.
-     * Edit this section to change the size, scores or pace of the game.
+     * Edit this section to change the sizes, scores or pace of the game.
      */
 
     /* Playfield size (in tiles) */
@@ -37,14 +39,15 @@ class Game {
     static const int SCORE_3_FILLED_ROW = 3000;
     static const int SCORE_4_FILLED_ROW = 12000;
 
-    /* Score points for hard drop. The player gets more score points
-     * if he uses a hard drop. (these values divide SCORE_2_FILLED_ROW) */
+    /* The player gets points every time he accelerates downfall.
+     * The added points are equal to SCORE_2_FILLED_ROW divided by this value */
+    static const int SCORE_MOVE_DOWN_DIVISOR = 1000;
+
+    /* The player gets points every time he does a hard drop.
+     * The added points are equal to SCORE_2_FILLED_ROW divided by these
+     * values. If the player is not using the shadow he gets more points */
     static const int SCORE_DROP_DIVISOR             = 20;
     static const int SCORE_DROP_WITH_SHADOW_DIVISOR = 100;
-
-    /* Player gets points every time he accelerates downfall
-     * (this value divides SCORE_2_FILLED_ROW */
-    static const int SCORE_MOVE_DOWN_DIVISOR = 1000;
 
     /* Number of filled rows required to increase the game level */
     static const int FILLED_ROWS_FOR_LEVEL_UP = 10;
@@ -72,27 +75,32 @@ class Game {
      * Game constants.
      * You likely don't need to change this section unless you're changing the gameplay.
      */
-    static const int ERROR_NONE         =  0;    /* Everything is OK, oh wonders!    */
-    static const int ERROR_PLAYER_QUITS =  1;    /* The player quits, our fail       */
-    static const int ERROR_NO_VIDEO     = -2;    /* Video system was not initialized */
-    static const int ERROR_NO_IMAGES    = -3;    /* Problem loading the image files  */
-    static const int ERROR_ASSERT       = -100;  /* Something went very very wrong   */
 
-    /*
-     * Game events
-     */
-    static const int EVENT_NONE        = (0);
-    static const int EVENT_MOVE_DOWN   = (1 << 1);
-    static const int EVENT_MOVE_LEFT   = (1 << 2);
-    static const int EVENT_MOVE_RIGHT  = (1 << 3);
-    static const int EVENT_ROTATE_CW   = (1 << 4);   /* rotate clockwise         */
-    static const int EVENT_ROTATE_CCW  = (1 << 5);   /* rotate counter-clockwise */
-    static const int EVENT_DROP        = (1 << 6);
-    static const int EVENT_PAUSE       = (1 << 7);
-    static const int EVENT_RESTART     = (1 << 8);
-    static const int EVENT_SHOW_NEXT   = (1 << 9);   /* toggle show next tetromino */
-    static const int EVENT_SHOW_SHADOW = (1 << 10);  /* toggle show shadow         */
-    static const int EVENT_QUIT        = (1 << 11);  /* finish the game            */
+    /* Error codes */
+    enum { 
+        ERROR_NONE         =  0,   /* Everything is OK, oh wonders!      */
+        ERROR_PLAYER_QUITS =  1,   /* The user quits, our fail           */
+        ERROR_NO_MEMORY    = -1,   /* Not enough memory                  */
+        ERROR_NO_VIDEO     = -2,   /* Video system was not initialized   */
+        ERROR_NO_IMAGES    = -3,   /* Problem loading the image files    */
+        ERROR_ASSERT       = -100  /* Something went very very wrong...  */
+    }; 
+
+    /* Game events */
+    enum {
+        EVENT_NONE        = 0,
+        EVENT_MOVE_DOWN   = 1 << 1,
+        EVENT_MOVE_LEFT   = 1 << 2,
+        EVENT_MOVE_RIGHT  = 1 << 3,
+        EVENT_ROTATE_CW   = 1 << 4,  /* rotate clockwise           */
+        EVENT_ROTATE_CCW  = 1 << 5,  /* rotate counter-clockwise   */
+        EVENT_DROP        = 1 << 6,
+        EVENT_PAUSE       = 1 << 7,
+        EVENT_RESTART     = 1 << 8,
+        EVENT_SHOW_NEXT   = 1 << 9,  /* toggle show next tetromino */
+        EVENT_SHOW_SHADOW = 1 << 10, /* toggle show shadow         */
+        EVENT_QUIT        = 1 << 11  /* finish the game            */
+    };
 
     /* We are going to store the tetromino cells in a square matrix
      * of this size (this is the size of the biggest tetromino) */
@@ -101,68 +109,74 @@ class Game {
     /* Number of tetromino types */
     static const int TETROMINO_TYPES = 7;
 
-    /*
-     * Tetromino definitions (they are indexes and must be between: 0 - [TETROMINO_TYPES - 1])
+    /* Tetromino definitions.
+     * They are indexes and must be between: 0 - [TETROMINO_TYPES - 1]
      * http://tetris.wikia.com/wiki/Tetromino
-     *
-            ....
-            ####
-            ....
-            ....
+     * Initial cell disposition is commented below.
      */
-    static const int TETROMINO_I = 0;
-    /*
-            ##..
-            ##..
-            ....
-            ....
-     */
-    static const int TETROMINO_O = 1;
-    /*
-            .#..
-            ###.
-            ....
-            ....
-     */
-    static const int TETROMINO_T = 2;
-    /*
-            .##.
-            ##..
-            ....
-            ....
-     */
-    static const int TETROMINO_S = 3;
-    /*
-            ##..
-            .##.
-            ....
-            ....
-     */
-    static const int TETROMINO_Z = 4;
-    /*
-            #...
-            ###.
-            ....
-            ....
-     */
-    static const int TETROMINO_J = 5;
-    /*
-            ..#.
-            ###.
-            ....
-            ....
-     */
-    static const int TETROMINO_L = 6;
+    enum { 
+        /*
+         *              ....
+         *              ####
+         *              ....
+         *              ....
+         */
+        TETROMINO_I = 0,
+        /*
+         *              ##..
+         *              ##..
+         *              ....
+         *              ....
+         */
+        TETROMINO_O = 1,
+        /*
+         *              .#..
+         *              ###.
+         *              ....
+         *              ....
+         */
+        TETROMINO_T = 2,
+        /*
+         *              .##.
+         *              ##..
+         *              ....
+         *              ....
+         */
+        TETROMINO_S = 3,
+        /*
+         *              ##..
+         *              .##.
+         *              ....
+         *              ....
+         */
+        TETROMINO_Z = 4,
+        /*
+         *              #...
+         *              ###.
+         *              ....
+         *              ....
+         */
+        TETROMINO_J = 5,
+        /*
+         *              ..#.
+         *              ###.
+         *              ....
+         *              ....
+         */
+        TETROMINO_L = 6
+    };
 
-    /* Tetromino color indexes (must be between 0 - TETROMINO_TYPES) */
-    static const int COLOR_CYAN   = 1;
-    static const int COLOR_RED    = 2;
-    static const int COLOR_BLUE   = 3;
-    static const int COLOR_ORANGE = 4;
-    static const int COLOR_GREEN  = 5;
-    static const int COLOR_YELLOW = 6;
-    static const int COLOR_PURPLE = 7;
-    static const int COLOR_WHITE  = 0;     /* Used for effects (if any) */
+    /* Color indexes */
+    enum {
+        COLOR_CYAN   = 1,
+        COLOR_RED    = 2,
+        COLOR_BLUE   = 3,
+        COLOR_ORANGE = 4,
+        COLOR_GREEN  = 5,
+        COLOR_YELLOW = 6,
+        COLOR_PURPLE = 7,
+        COLOR_WHITE  = 0     /* Used for effects (if any) */
+    };
 
     /* This value used for empty tiles */
     static const int EMPTY_CELL = -1;
@@ -194,8 +208,11 @@ class Game {
 
   public:
 
-    /* Public property used to flag that the game state has changed */
-    bool stateChanged;
+    /* Return true if the game state has changed, false otherwise */
+    bool hasChanged() { return mStateChanged; }
+
+    /* The platform must call this method after processing a changed state */
+    void onChangeProcessed() { mStateChanged = true; };
 
     /* Return the cell at the specified position */
     int getCell(int column, int row) { return mMap[column][row]; }
@@ -245,6 +262,7 @@ class Game {
     StcTetromino mFallingBlock;  /* current falling tetromino */
     StcTetromino mNextBlock;     /* next tetromino            */
 
+    bool mStateChanged;
     int mErrorCode;
     bool mIsPaused;
     bool mShowPreview;
@@ -277,5 +295,6 @@ class Game {
     void dropTetromino();
     void onTetrominoMoved();
 };
+}
 
 #endif /* STC_SRC_GAME_HPP_ */

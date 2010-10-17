@@ -11,6 +11,8 @@
 #include "game.hpp"
 #include <stdlib.h>
 
+namespace Stc {
+
 /* Set matrix elements to indicated value */
 void Game::setMatrixCells(int *matrix, int width, int height, int value) {
     for (int i = 0; i < width; ++i) {
@@ -487,12 +489,12 @@ void Game::update() {
             if (mEvents != EVENT_NONE) {
                 if ((mEvents & EVENT_SHOW_NEXT) != 0)  {
                     mShowPreview = !mShowPreview;
-                    stateChanged = true;
+                    mStateChanged = true;
                 }
 #ifdef STC_SHOW_GHOST_PIECE
                 if ((mEvents & EVENT_SHOW_SHADOW) != 0) {
                     mShowShadow = !mShowShadow;
-                    stateChanged = true;
+                    mStateChanged = true;
                 }
 #endif
                 if ((mEvents & EVENT_DROP) != 0) {
@@ -536,7 +538,7 @@ void Game::onTetrominoMoved() {
     while (!checkCollision(0, ++y));
     mShadowGap = y - 1;
 #endif
-    stateChanged = true;
+    mStateChanged = true;
 }
 
 /* Process a key down event */
@@ -591,5 +593,6 @@ void Game::onKeyUp(int command) {
         break;
 #endif /* STC_AUTO_ROTATION */
     }
+}
 }
 

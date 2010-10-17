@@ -78,12 +78,12 @@ class Game {
 
     /* Error codes */
     enum { 
-        ERROR_NONE         =  0,   /* Everything is OK, oh wonders!      */
-        ERROR_PLAYER_QUITS =  1,   /* The user quits, our fail           */
-        ERROR_NO_MEMORY    = -1,   /* Not enough memory                  */
-        ERROR_NO_VIDEO     = -2,   /* Video system was not initialized   */
-        ERROR_NO_IMAGES    = -3,   /* Problem loading the image files    */
-        ERROR_ASSERT       = -100  /* Something went very very wrong...  */
+        ERROR_NONE         =  0,   /* Everything is OK, oh wonders!     */
+        ERROR_PLAYER_QUITS =  1,   /* The user quits, our fail          */
+        ERROR_NO_MEMORY    = -1,   /* Not enough memory                 */
+        ERROR_NO_VIDEO     = -2,   /* Video system was not initialized  */
+        ERROR_NO_IMAGES    = -3,   /* Problem loading the image files   */
+        ERROR_ASSERT       = -100  /* Something went very very wrong... */
     }; 
 
     /* Game events */
@@ -258,31 +258,32 @@ class Game {
     /* Matrix that holds the cells (tilemap) */
     int mMap[BOARD_TILEMAP_WIDTH][BOARD_TILEMAP_HEIGHT];
 
-    StcStatics mStats;           /* statistic data */
-    StcTetromino mFallingBlock;  /* current falling tetromino */
-    StcTetromino mNextBlock;     /* next tetromino            */
+    Platform    *mPlatform;     /* platform interface              */
+    StcStatics   mStats;        /* statistic data                  */
+    StcTetromino mFallingBlock; /* current falling tetromino       */
+    StcTetromino mNextBlock;    /* next tetromino                  */
 
-    bool mStateChanged;
-    int mErrorCode;
-    bool mIsPaused;
-    bool mShowPreview;
+    bool mStateChanged; /* true if game state has changed          */
+    int  mErrorCode;    /* stores current error code               */
+    bool mIsPaused;     /* true if the game is over                */
+    bool mIsOver;       /* true if the game is over                */
+    bool mShowPreview;  /* true if we must show the preview block  */
+
 #ifdef STC_SHOW_GHOST_PIECE
-    bool mShowShadow;
-    int mShadowGap;
+    bool mShowShadow; /* true if we must show the shadow block     */
+    int  mShadowGap;  /* distance between falling block and shadow */
 #endif
 
-    Platform *mPlatform; /* platform interface           */
-    long mSystemTime;    /* system time in milliseconds  */
-    int mFallingDelay;   /* delay time for falling tetrominoes  */
-    bool mIsOver;        /* true if the game is over, false otherwise      */
-    long mLastFallTime;  /* last time the game moved the falling tetromino */
+    long mSystemTime;   /* system time in milliseconds             */
+    int  mFallingDelay; /* delay time for falling tetrominoes      */
+    long mLastFallTime; /* last time the falling tetromino moved   */
 
     /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
-    int mDelayLeft;
-    int mDelayRight;
-    int mDelayDown;
+    int  mDelayLeft;
+    int  mDelayRight;
+    int  mDelayDown;
 #ifdef STC_AUTO_ROTATION
-    int mDelayRotation;
+    int  mDelayRotation;
 #endif
 
     void setMatrixCells(int *matrix, int width, int height, int value);

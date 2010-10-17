@@ -226,16 +226,17 @@ void Game::rotateTetromino(bool clockwise) {
     }
 #else
     /* Check collision of the temporary array */
-    for (i = 0; i < fallingBlock.size; ++i) {
-        for (j = 0; j < fallingBlock.size; ++j) {
+    for (i = 0; i < mFallingBlock.size; ++i) {
+        for (j = 0; j < mFallingBlock.size; ++j) {
             if (rotated[i][j] != EMPTY_CELL) {
                 /* Check collision with left, right or bottom borders of the map */
-                if ((fallingBlock.x + i < 0) || (fallingBlock.x + i >= BOARD_WIDTH)
-                        || (fallingBlock.y + j >= BOARD_HEIGHT)) {
+                if ((mFallingBlock.x + i < 0) 
+                        || (mFallingBlock.x + i >= BOARD_TILEMAP_WIDTH)
+                        || (mFallingBlock.y + j >= BOARD_TILEMAP_HEIGHT)) {
                     return; /* there was collision therefore return */
                 }
                 /* Check collision with existing cells in the map */
-                if (map[i + fallingBlock.x][j + fallingBlock.y] != EMPTY_CELL) {
+                if (mMap[i + mFallingBlock.x][j + mFallingBlock.y] != EMPTY_CELL) {
                     return; /* there was collision therefore return */
                 }
             }
@@ -418,7 +419,7 @@ void Game::dropTetromino() {
     moveTetromino(0, 1); /* Force lock */
 
     /* Update score */
-    stats.score += (long)(SCORE_DROP_FACTOR * SCORE_2_FILLED_ROW * (stats.level + 1));
+    mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) / SCORE_DROP_DIVISOR);
 #endif
 }
 

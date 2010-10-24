@@ -85,17 +85,17 @@ enum {
 /* Game events */
 enum {
     EVENT_NONE        = 0,
-    EVENT_MOVE_DOWN   = 1 << 1,
-    EVENT_MOVE_LEFT   = 1 << 2,
-    EVENT_MOVE_RIGHT  = 1 << 3,
-    EVENT_ROTATE_CW   = 1 << 4,  /* rotate clockwise           */
-    EVENT_ROTATE_CCW  = 1 << 5,  /* rotate counter-clockwise   */
-    EVENT_DROP        = 1 << 6,
-    EVENT_PAUSE       = 1 << 7,
-    EVENT_RESTART     = 1 << 8,
-    EVENT_SHOW_NEXT   = 1 << 9,  /* toggle show next tetromino */
-    EVENT_SHOW_SHADOW = 1 << 10, /* toggle show shadow         */
-    EVENT_QUIT        = 1 << 11  /* finish the game            */
+    EVENT_MOVE_DOWN   = 1,
+    EVENT_MOVE_LEFT   = 1 << 1,
+    EVENT_MOVE_RIGHT  = 1 << 2,
+    EVENT_ROTATE_CW   = 1 << 3,  /* rotate clockwise           */
+    EVENT_ROTATE_CCW  = 1 << 4,  /* rotate counter-clockwise   */
+    EVENT_DROP        = 1 << 5,
+    EVENT_PAUSE       = 1 << 6,
+    EVENT_RESTART     = 1 << 7,
+    EVENT_SHOW_NEXT   = 1 << 8,  /* toggle show next tetromino */
+    EVENT_SHOW_SHADOW = 1 << 9,  /* toggle show shadow         */
+    EVENT_QUIT        = 1 << 10  /* finish the game            */
 };
 
 /* We are going to store the tetromino cells in a square matrix */

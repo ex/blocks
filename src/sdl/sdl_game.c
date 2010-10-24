@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 /*
- * Initialize platform, if there are no problems return GAME_ERROR_NONE.
+ * Initialize platform, if there are no problems return ERROR_NONE.
  */
 int platformInit(StcGame *game) {
 
@@ -50,7 +50,7 @@ int platformInit(StcGame *game) {
     }
 
     return ERROR_NONE;
-};
+}
 
 /* Return the current system time in milliseconds */
 long platformGetSystemTime() {

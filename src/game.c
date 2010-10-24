@@ -176,7 +176,7 @@ int gameInit(StcGame *game) {
     /* If platform was correctly initialized, start the game */
     startGame(game);
     return ERROR_NONE;
-};
+}
 
 /* Free used resources */
 void gameEnd(StcGame *game) {

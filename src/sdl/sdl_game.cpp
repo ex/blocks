@@ -2,7 +2,7 @@
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
 /*   Simple pure SDL implementation. (No sound, no fonts)                     */
-/*   We use SDL for rendering the game state, reading user input and timing.  */
+/*   Using SDL for game state rendering, user input and timing.               */
 /*                                                                            */
 /*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
@@ -46,7 +46,7 @@ int PlatformSdl::init(Game *game) {
 
     mGame = game;
     return Game::ERROR_NONE;
-};
+}
 
 /* Return the current system time in milliseconds */
 long PlatformSdl::getSystemTime() {

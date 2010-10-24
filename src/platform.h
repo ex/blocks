@@ -21,19 +21,19 @@ extern int platformInit(StcGame *game);
 extern void platformEnd(StcGame *game);
 
 /* Read input device and notify game */
-extern void platformReadInput();
+extern void platformReadInput(StcGame *game);
 
 /* Render the state of the game */
-extern void platformRenderGame();
+extern void platformRenderGame(StcGame *game);
 
 /* Return the current system time in milliseconds */
-extern long platformGetSystemTime();
+extern long platformGetSystemTime(void);
 
 /* Initialize the random number generator */
 extern void platformSeedRandom(long seed);
 
 /* Return a random positive integer number */
-extern int platformRandom();
+extern int platformRandom(void);
 
 /*
  * Data structure that is going to hold platform dependent

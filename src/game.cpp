@@ -132,7 +132,7 @@ void Game::start() {
 }
 
 /*
- * Initializes the game, if there are no problems returns ERROR_NONE.
+ * Initialize the game, if there are no problems return ERROR_NONE.
  */
 void Game::init(Platform *targetPlatform) {
     /* Store platform reference and start it */
@@ -308,7 +308,8 @@ void Game::onFilledRows(int filledRows) {
         mStats.level++;
 
         /* Increase speed for falling tetrominoes */
-        mFallingDelay = (int)(DELAY_FACTOR_FOR_LEVEL_UP * mFallingDelay / DELAY_DIVISOR_FOR_LEVEL_UP);
+        mFallingDelay = (int)(DELAY_FACTOR_FOR_LEVEL_UP * mFallingDelay 
+                              / DELAY_DIVISOR_FOR_LEVEL_UP);
     }
 }
 
@@ -406,10 +407,12 @@ void Game::dropTetromino() {
 
     /* Update score */
     if (mShowShadow) {
-        mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) / SCORE_DROP_WITH_SHADOW_DIVISOR);
+        mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) 
+                               / SCORE_DROP_WITH_SHADOW_DIVISOR);
     }
     else {
-        mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) / SCORE_DROP_DIVISOR);
+        mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1)
+                               / SCORE_DROP_DIVISOR);
     }
 #else
     int y = 0;
@@ -419,7 +422,8 @@ void Game::dropTetromino() {
     moveTetromino(0, 1); /* Force lock */
 
     /* Update score */
-    mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) / SCORE_DROP_DIVISOR);
+    mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) 
+                           / SCORE_DROP_DIVISOR);
 #endif
 }
 
@@ -512,7 +516,8 @@ void Game::update() {
                 }
                 if ((mEvents & EVENT_MOVE_DOWN) != 0) {
                     /* Update score if the player accelerates downfall */
-                    mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) / SCORE_MOVE_DOWN_DIVISOR);
+                    mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) 
+                                           / SCORE_MOVE_DOWN_DIVISOR);
 
                     moveTetromino(0, 1);
                 }
@@ -566,10 +571,10 @@ void Game::onKeyDown(int command) {
         mEvents |= EVENT_MOVE_RIGHT;
         mDelayRight = DAS_DELAY_TIMER;
         break;
-    case EVENT_DROP:        /* Fall through. */
-    case EVENT_RESTART:     /* Fall through. */
-    case EVENT_PAUSE:       /* Fall through. */
-    case EVENT_SHOW_NEXT:   /* Fall through. */
+    case EVENT_DROP:        /* Fall through */
+    case EVENT_RESTART:     /* Fall through */
+    case EVENT_PAUSE:       /* Fall through */
+    case EVENT_SHOW_NEXT:   /* Fall through */
     case EVENT_SHOW_SHADOW:
         mEvents |= command;
         break;

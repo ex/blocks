@@ -47,7 +47,7 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="1"
 			/>
@@ -121,7 +121,7 @@
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -178,10 +178,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\defines.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\game.c"
 				>
 			</File>
@@ -191,6 +187,10 @@
 			</File>
 			<File
 				RelativePath="..\src\main.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\platform.h"
 				>
 			</File>
 		</Filter>

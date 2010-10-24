@@ -16,89 +16,76 @@
 #include <SDL.h>
 
 /*
+ * Image files
+ */
+#define STC_BMP_TILE_BLOCKS     "sdl/blocks.bmp"
+#define STC_BMP_BACKGROUND      "sdl/back.bmp"
+#define STC_BMP_NUMBERS         "sdl/numbers.bmp"
+
+/*
  * UI layout (quantities are expressed in pixels)
  */
 
 /* Screen size */
-#define SCREEN_WIDTH    (480)
-#define SCREEN_HEIGHT   (272)
+enum { SCREEN_WIDTH  = 480 };
+enum { SCREEN_HEIGHT = 272 };
 
 /* Size of square tile */
-#define TILE_SIZE       (12)
+enum { TILE_SIZE = 12 };
 
 /* Board up-left corner coordinates */
-#define BOARD_X         (180)
-#define BOARD_Y         (4)
+enum { BOARD_X = 180 };
+enum { BOARD_Y = 4 };
 
 /* Preview tetromino position */
-#define PREVIEW_X       (112)
-#define PREVIEW_Y       (210)
+enum { PREVIEW_X = 112 };
+enum { PREVIEW_Y = 210 };
 
 /* Score position and length on screen */
-#define SCORE_X         (72)
-#define SCORE_Y         (52)
-#define SCORE_LENGTH    (10)
+enum { SCORE_X      = 72 };
+enum { SCORE_Y      = 52 };
+enum { SCORE_LENGTH = 10 };
 
 /* Lines position and length on screen */
-#define LINES_X         (108)
-#define LINES_Y         (34)
-#define LINES_LENGTH    (5)
+enum { LINES_X      = 108 };
+enum { LINES_Y      = 34 };
+enum { LINES_LENGTH = 5 };
 
 /* Level position and length on screen */
-#define LEVEL_X         (108)
-#define LEVEL_Y         (16)
-#define LEVEL_LENGTH    (5)
+enum { LEVEL_X      = 108 };
+enum { LEVEL_Y      = 16 };
+enum { LEVEL_LENGTH = 5 };
 
 /* Tetromino subtotals position */
-#define TETROMINO_X     (425)
-#define TETROMINO_L_Y   (53)
-#define TETROMINO_I_Y   (77)
-#define TETROMINO_T_Y   (101)
-#define TETROMINO_S_Y   (125)
-#define TETROMINO_Z_Y   (149)
-#define TETROMINO_O_Y   (173)
-#define TETROMINO_J_Y   (197)
+enum { TETROMINO_X   = 425 };
+enum { TETROMINO_L_Y = 53 };
+enum { TETROMINO_I_Y = 77 };
+enum { TETROMINO_T_Y = 101 };
+enum { TETROMINO_S_Y = 125 };
+enum { TETROMINO_Z_Y = 149 };
+enum { TETROMINO_O_Y = 173 };
+enum { TETROMINO_J_Y = 197 };
 
 /* Size of subtotals */
-#define TETROMINO_LENGTH    (5)
+enum { TETROMINO_LENGTH = 5 };
 
 /* Tetromino total position */
-#define PIECES_X        (418)
-#define PIECES_Y        (221)
-#define PIECES_LENGTH   (6)
+enum { PIECES_X      = 418 };
+enum { PIECES_Y      = 221 };
+enum { PIECES_LENGTH = 6 };
 
 /* Size of number */
-#define NUMBER_WIDTH    (7)
-#define NUMBER_HEIGHT   (9)
-
-/*
- * Image files
- */
-#define BMP_TILE_BLOCKS     "sdl/blocks.bmp"
-#define BMP_BACKGROUND      "sdl/back.bmp"
-#define BMP_NUMBERS         "sdl/numbers.bmp"
+enum { NUMBER_WIDTH  = 7 };
+enum { NUMBER_HEIGHT = 9 };
 
 /* Use 32 bits per pixel */
-#define SCREEN_BIT_DEPTH    (32)
+enum { SCREEN_BIT_DEPTH = 32 };
 
 /* Use video hardware and double buffering */
-#define SCREEN_VIDEO_MODE       (SDL_HWSURFACE | SDL_DOUBLEBUF)
+enum { SCREEN_VIDEO_MODE = (SDL_HWSURFACE | SDL_DOUBLEBUF) };
 
-/* Delayed autoshift initial delay */
-#define DAS_DELAY_TIMER     (200)
-
-/* Delayed autoshift timer for left and right moves */
-#define DAS_MOVE_TIMER      (40)
-
-#ifdef STC_AUTO_ROTATION
-
-/* Rotation auto-repeat delay */
-#define ROTATION_AUTOREPEAT_DELAY   (375)
-
-/* Rotation autorepeat timer */
-#define ROTATION_AUTOREPEAT_TIMER   (200)
-
-#endif /* STC_AUTO_ROTATION */
+/* Sleep time (in milliseconds) */
+enum { SLEEP_TIME = 40 };
 
 /* Here we define the platform dependent data structure */
 struct StcPlatform {
@@ -106,15 +93,6 @@ struct StcPlatform {
     SDL_Surface* bmpTiles;
     SDL_Surface* bmpBack;
     SDL_Surface* bmpNumbers;
-
-    /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
-    int delayLeft;
-    int delayRight;
-    int delayDown;
-#ifdef STC_AUTO_ROTATION
-    int delayRotation;
-#endif
-    int lastTime;
 };
 
 #endif /* STC_SDL_GAME_H_ */

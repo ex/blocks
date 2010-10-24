@@ -175,7 +175,7 @@ class Game {
         COLOR_GREEN  = 5,
         COLOR_YELLOW = 6,
         COLOR_PURPLE = 7,
-        COLOR_WHITE  = 0     /* Used for effects (if any) */
+        COLOR_WHITE  = 0  /* Used for effects (if any) */
     };
 
     /* This value used for empty tiles */
@@ -203,28 +203,28 @@ class Game {
         int lines;          /* total number of lines cleared    */
         int totalPieces;    /* total number of tetrominoes used */
         int level;          /* current game level               */
-        int pieces[TETROMINO_TYPES];    /* number of tetrominoes per type */
+        int pieces[TETROMINO_TYPES]; /* number of tetrominoes per type */
     };
 
   public:
 
-    /* Return true if the game state has changed, false otherwise */
-    bool hasChanged() { return mStateChanged; }
-
     /* The platform must call this method after processing a changed state */
-    void onChangeProcessed() { mStateChanged = true; };
+    void onChangeProcessed()           { mStateChanged = true; }
+
+    /* Return true if the game state has changed, false otherwise */
+    bool hasChanged()                  { return mStateChanged; }
 
     /* Return the cell at the specified position */
-    int getCell(int column, int row) { return mMap[column][row]; }
+    int getCell(int column, int row)   { return mMap[column][row]; }
 
-    /* Return a reference to the sgame tatistic data */
-    StcStatics const &stats() { return mStats; }
+    /* Return a reference to the game statistic data */
+    StcStatics const &stats()          { return mStats; }
 
     /* Return current falling tetromino */
     StcTetromino const &fallingBlock() { return mFallingBlock; }
 
     /* Return next tetromino */
-    StcTetromino const &nextBlock() { return mNextBlock; }
+    StcTetromino const &nextBlock()    { return mNextBlock; }
 
     /* Return current error code */    
     int errorCode()     { return mErrorCode; } 
@@ -276,7 +276,7 @@ class Game {
 
     long mSystemTime;   /* system time in milliseconds             */
     int  mFallingDelay; /* delay time for falling tetrominoes      */
-    long mLastFallTime; /* last time the falling tetromino moved   */
+    long mLastFallTime; /* last time the falling tetromino dropped */
 
     /* For delayed autoshift: http://tetris.wikia.com/wiki/DAS */
     int  mDelayLeft;

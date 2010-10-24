@@ -272,10 +272,10 @@ int PlatformSdl::random() {
  */
 void PlatformSdl::end() {
     /* Free all the created surfaces */
-    SDL_FreeSurface(mScreen);
     SDL_FreeSurface(mBmpTiles);
     SDL_FreeSurface(mBmpBack);
     SDL_FreeSurface(mBmpNumbers);
+    SDL_FreeSurface(mScreen);
 
     /* Shut down SDL */
     SDL_Quit();

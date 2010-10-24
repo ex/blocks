@@ -10,14 +10,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\defines.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\game.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\sdl\sdl_game.hpp">
       <Filter>sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform.hpp">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

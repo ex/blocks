@@ -20,12 +20,12 @@ int platformInit(StcGame *game) {
     /* First we initialize the platform data */
     game->platform = (StcPlatform *) malloc(sizeof(StcPlatform));
     if (game->platform == NULL) {
-        return GAME_ERROR_NO_MEMORY;
+        return ERROR_NO_MEMORY;
     }
 
     /* Start video system */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        return GAME_ERROR_NO_VIDEO;
+        return ERROR_NO_VIDEO;
     }
 
     /* Create game video surface */
@@ -33,32 +33,23 @@ int platformInit(StcGame *game) {
                                               SCREEN_BIT_DEPTH,
                                               SCREEN_VIDEO_MODE);
     if (game->platform->screen == NULL) {
-        return GAME_ERROR_NO_VIDEO;
+        return ERROR_NO_VIDEO;
     }
 
     /* Set window caption */
-    SDL_WM_SetCaption(GAME_NAME " (ANSI C)", GAME_NAME);
+    SDL_WM_SetCaption(STC_GAME_NAME " (ANSI C)", STC_GAME_NAME);
 
     /* Load images for blocks and background */
-    game->platform->bmpTiles = SDL_LoadBMP(BMP_TILE_BLOCKS);
-    game->platform->bmpBack = SDL_LoadBMP(BMP_BACKGROUND);
-    game->platform->bmpNumbers = SDL_LoadBMP(BMP_NUMBERS);
+    game->platform->bmpTiles = SDL_LoadBMP(STC_BMP_TILE_BLOCKS);
+    game->platform->bmpBack = SDL_LoadBMP(STC_BMP_BACKGROUND);
+    game->platform->bmpNumbers = SDL_LoadBMP(STC_BMP_NUMBERS);
 
     if (game->platform->bmpTiles == NULL || game->platform->bmpBack == NULL
                                          || game->platform->bmpNumbers == NULL) {
-        return GAME_ERROR_NO_IMAGES;
+        return ERROR_NO_IMAGES;
     }
 
-    /* Initialize delayed autoshift */
-    game->platform->lastTime = SDL_GetTicks();
-    game->platform->delayLeft = -1;
-    game->platform->delayRight = -1;
-    game->platform->delayDown = -1;
-#ifdef STC_AUTO_ROTATION
-    game->platform->delayRotation = -1;
-#endif
-
-    return GAME_ERROR_NONE;
+    return ERROR_NONE;
 };
 
 /* Return the current system time in milliseconds */
@@ -68,7 +59,6 @@ long platformGetSystemTime() {
 
 /* Read input device and notify game */
 void platformReadInput(StcGame *game) {
-    long timeNow, timeDelta;
     SDL_Event event;
 
     /* Grab events in the queue */
@@ -76,51 +66,45 @@ void platformReadInput(StcGame *game) {
         switch (event.type) {
         /* On quit game */
         case SDL_QUIT:
-            game->errorCode = GAME_ERROR_USER_QUITS;
+            gameOnKeyDown(game, EVENT_QUIT);
             break;
         /* On key pressed */
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
-                game->errorCode = GAME_ERROR_USER_QUITS;
+                gameOnKeyDown(game, EVENT_QUIT);
                 break;
             case SDLK_s:
             case SDLK_DOWN:
-                game->events |= EVENT_MOVE_DOWN;
-                game->platform->delayDown = DAS_DELAY_TIMER;
+                gameOnKeyDown(game, EVENT_MOVE_DOWN);
                 break;
             case SDLK_w:
             case SDLK_UP:
-                game->events |= EVENT_ROTATE_CW;
-#ifdef STC_AUTO_ROTATION
-                game->platform->delayRotation = ROTATION_AUTOREPEAT_DELAY;
-#endif
+                gameOnKeyDown(game, EVENT_ROTATE_CW);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                game->events |= EVENT_MOVE_LEFT;
-                game->platform->delayLeft = DAS_DELAY_TIMER;
+                gameOnKeyDown(game, EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                game->events |= EVENT_MOVE_RIGHT;
-                game->platform->delayRight = DAS_DELAY_TIMER;
+                gameOnKeyDown(game, EVENT_MOVE_RIGHT);
                 break;
             case SDLK_SPACE:
-                game->events |= EVENT_DROP;
+                gameOnKeyDown(game, EVENT_DROP);
                 break;
             case SDLK_F5:
-                game->events |= EVENT_RESTART;
+                gameOnKeyDown(game, EVENT_RESTART);
                 break;
             case SDLK_F1:
-                game->events |= EVENT_PAUSE;
+                gameOnKeyDown(game, EVENT_PAUSE);
                 break;
             case SDLK_F2:
-                game->events |= EVENT_SHOW_NEXT;
+                gameOnKeyDown(game, EVENT_SHOW_NEXT);
                 break;
 #ifdef STC_SHOW_GHOST_PIECE
             case SDLK_F3:
-                game->events |= EVENT_SHOW_SHADOW;
+                gameOnKeyDown(game, EVENT_SHOW_SHADOW);
                 break;
 #endif /* STC_SHOW_GHOST_PIECE */
             default:
@@ -132,20 +116,20 @@ void platformReadInput(StcGame *game) {
             switch (event.key.keysym.sym) {
             case SDLK_s:
             case SDLK_DOWN:
-                game->platform->delayDown = -1;
+                gameOnKeyUp(game, EVENT_MOVE_DOWN);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                game->platform->delayLeft = -1;
+                gameOnKeyUp(game, EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                game->platform->delayRight = -1;
+                gameOnKeyUp(game, EVENT_MOVE_RIGHT);
                 break;
 #ifdef STC_AUTO_ROTATION
             case SDLK_w:
             case SDLK_UP:
-                game->platform->delayRotation = -1;
+                gameOnKeyUp(game, EVENT_ROTATE_CW);
                 break;
 #endif /* STC_AUTO_ROTATION */
             default:
@@ -155,41 +139,6 @@ void platformReadInput(StcGame *game) {
             break;
         }
     }
-
-    /* Process delayed autoshift */
-    timeNow = SDL_GetTicks();
-    timeDelta = timeNow - game->platform->lastTime;
-    if (game->platform->delayDown > 0) {
-        game->platform->delayDown -= timeDelta;
-        if (game->platform->delayDown <= 0) {
-            game->platform->delayDown = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_DOWN;
-        }
-    }
-    if (game->platform->delayLeft > 0) {
-        game->platform->delayLeft -= timeDelta;
-        if (game->platform->delayLeft <= 0) {
-            game->platform->delayLeft = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_LEFT;
-        }
-    }
-    else if (game->platform->delayRight > 0) {
-        game->platform->delayRight -= timeDelta;
-        if (game->platform->delayRight <= 0) {
-            game->platform->delayRight = DAS_MOVE_TIMER;
-            game->events |= EVENT_MOVE_RIGHT;
-        }
-    }
-#ifdef STC_AUTO_ROTATION
-    if (game->platform->delayRotation > 0) {
-        game->platform->delayRotation -= timeDelta;
-        if (game->platform->delayRotation <= 0) {
-            game->platform->delayRotation = ROTATION_AUTOREPEAT_TIMER;
-            game->events |= EVENT_ROTATE_CW;
-        }
-    }
-#endif /* STC_AUTO_ROTATION */
-    game->platform->lastTime = timeNow;
 }
 
 /* Draw a tile from a tetromino */
@@ -233,7 +182,7 @@ void platformRenderGame(StcGame *game) {
     int i, j;
 
     /* Check if the game state has changed, if so redraw */
-    if (game->stateChanged == 1) {
+    if (game->stateChanged != 0) {
 
         /* Draw background */
         SDL_BlitSurface(game->platform->bmpBack, NULL, game->platform->screen, NULL);
@@ -267,8 +216,8 @@ void platformRenderGame(StcGame *game) {
         }
 #endif
         /* Draw the cells in the board */
-        for (i = 0; i < BOARD_WIDTH; ++i) {
-            for (j = 0; j < BOARD_HEIGHT; ++j) {
+        for (i = 0; i < BOARD_TILEMAP_WIDTH; ++i) {
+            for (j = 0; j < BOARD_TILEMAP_HEIGHT; ++j) {
                 if (game->map[i][j] != EMPTY_CELL) {
                     drawTile(game,
                              BOARD_X + (TILE_SIZE * i),
@@ -291,7 +240,7 @@ void platformRenderGame(StcGame *game) {
         }
 
         /* Draw game statistic data */
-        if (!game->isPaused) {
+        if (game->isPaused == 0) {
             drawNumber(game, LEVEL_X, LEVEL_Y, game->stats.level, LEVEL_LENGTH, COLOR_WHITE);
             drawNumber(game, LINES_X, LINES_Y, game->stats.lines, LINES_LENGTH, COLOR_WHITE);
             drawNumber(game, SCORE_X, SCORE_Y, game->stats.score, SCORE_LENGTH, COLOR_WHITE);
@@ -315,7 +264,7 @@ void platformRenderGame(StcGame *game) {
     }
 
     /* Resting game */
-    SDL_Delay(DAS_MOVE_TIMER);
+    SDL_Delay(SLEEP_TIME);
 }
 
 /* Initialize the random number generator */
@@ -332,12 +281,18 @@ int platformRandom() {
  * Release platform allocated resources
  */
 void platformEnd(StcGame *game) {
-    /* Free all the created surfaces */
-    SDL_FreeSurface(game->platform->screen);
-    SDL_FreeSurface(game->platform->bmpTiles);
-    SDL_FreeSurface(game->platform->bmpBack);
-    SDL_FreeSurface(game->platform->bmpNumbers);
+    if (game->platform != NULL) {
+        /* Free all the created surfaces */
+        SDL_FreeSurface(game->platform->bmpTiles);
+        SDL_FreeSurface(game->platform->bmpBack);
+        SDL_FreeSurface(game->platform->bmpNumbers);
+        SDL_FreeSurface(game->platform->screen);
 
-    /* Shut down SDL */
-    SDL_Quit();
+        /* Shut down SDL */
+        SDL_Quit();
+
+        /* Release allocated memory */
+        free(game->platform);
+        game->platform = NULL;
+    }
 }

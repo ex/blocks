@@ -16,7 +16,7 @@
     <ClInclude Include="..\src\sdl\sdl_game.h">
       <Filter>sdl</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\defines.h">
+    <ClInclude Include="..\src\platform.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

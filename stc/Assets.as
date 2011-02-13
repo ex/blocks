@@ -9,8 +9,6 @@
 
 package stc {
 
-import flash.display.MovieClip;
-
 public class Assets {
 
     [Embed(source = "../res/back.png")]

@@ -13,10 +13,75 @@
 #include <windows.h>
 
 class PlatformGL {
+    /*
+     * UI layout (quantities are expressed in pixels)
+     */
+
+    /* Screen size */
+    static const int SCREEN_WIDTH  = 480;
+    static const int SCREEN_HEIGHT = 272;
+
+    /* Size of square tile */
+    static const int TILE_SIZE = 12;
+
+    /* Board up-left corner coordinates */
+    static const int BOARD_X = 180;
+    static const int BOARD_Y = 4;
+
+    /* Preview tetromino position */
+    static const int PREVIEW_X = 112;
+    static const int PREVIEW_Y = 210;
+
+    /* Score position and length on screen */
+    static const int SCORE_X      = 72;
+    static const int SCORE_Y      = 52;
+    static const int SCORE_LENGTH = 10;
+
+    /* Lines position and length on screen */
+    static const int LINES_X      = 108;
+    static const int LINES_Y      = 34;
+    static const int LINES_LENGTH = 5;
+
+    /* Level position and length on screen */
+    static const int LEVEL_X      = 108;
+    static const int LEVEL_Y      = 16;
+    static const int LEVEL_LENGTH = 5;
+
+    /* Tetromino subtotals position */
+    static const int TETROMINO_X   = 425;
+    static const int TETROMINO_L_Y = 53;
+    static const int TETROMINO_I_Y = 77;
+    static const int TETROMINO_T_Y = 101;
+    static const int TETROMINO_S_Y = 125;
+    static const int TETROMINO_Z_Y = 149;
+    static const int TETROMINO_O_Y = 173;
+    static const int TETROMINO_J_Y = 197;
+
+    /* Size of subtotals */
+    static const int TETROMINO_LENGTH = 5;
+
+    /* Tetromino total position */
+    static const int PIECES_X      = 418;
+    static const int PIECES_Y      = 221;
+    static const int PIECES_LENGTH = 6;
+
+    /* Size of number */
+    static const int NUMBER_WIDTH  = 7;
+    static const int NUMBER_HEIGHT = 9;
+
+    /* Use 32 bits per pixel */
+    static const int SCREEN_BIT_DEPTH = 32;
+
+    /* Use video hardware and double buffering */
+    static const bool FULL_SCREEN = false;
+
+    /* Sleep time (in milliseconds) */
+    static const int SLEEP_TIME = 40;
+
   public:
     PlatformGL(HINSTANCE hInstance);
 
-    bool create(int width, int height, int bpp, bool fullscreen);
+    bool create();
     void destroy();
     void processEvents();
     

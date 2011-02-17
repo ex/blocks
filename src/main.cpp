@@ -53,6 +53,8 @@
 #include "PlatformGLX.hpp"
 #endif
 
+#include "targa/TargaImage.h"
+
 #ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
@@ -61,11 +63,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 #else
 int main(int argc, char** argv) {
 #endif
-    // Set our window settings.
-    const int windowWidth = 480;
-    const int windowHeight = 272;
-    const int windowBPP = 16;
-    const int windowFullscreen = false;
 
 #ifdef _WIN32
     // This is our window.
@@ -74,8 +71,11 @@ int main(int argc, char** argv) {
     SimpleGLXWindow programWindow;
 #endif
 
+    TargaImage t;
+    t.load("numbers.tga");
+
     // Attempt to create the window.
-    if (!platform.create(windowWidth, windowHeight, windowBPP, windowFullscreen)) {
+    if (!platform.create()) {
         // If it fails
 #ifdef _WIN32
         MessageBox(NULL, "Unable to create the OpenGL Window", "An error occurred", MB_ICONERROR | MB_OK);

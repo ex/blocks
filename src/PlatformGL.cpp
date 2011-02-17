@@ -27,16 +27,17 @@ PlatformGL::PlatformGL(HINSTANCE hInstance) {
     mRotationAngle = 0.0f;
 }
 
-bool PlatformGL::create(int width, int height, int bpp, bool fullscreen) {
-    DWORD      dwExStyle;       // Window Extended Style
-    DWORD      dwStyle;         // Window Style
+bool PlatformGL::create() {
+    DWORD dwExStyle;       // Window Extended Style
+    DWORD dwStyle;         // Window Style
 
-    mIsFullscreen = fullscreen; // Store the fullscreen flag
+    mIsFullscreen = FULL_SCREEN; // Store the fullscreen flag
 
-    mWindowRect.left = (long)0;        // Set Left Value To 0
-    mWindowRect.right = (long)width;   // Set Right Value To Requested Width
-    mWindowRect.top = (long)0;         // Set Top Value To 0
-    mWindowRect.bottom = (long)height; // Set Bottom Value To Requested Height
+    // Set initial position and size
+    mWindowRect.left = long(0);        
+    mWindowRect.right = long(SCREEN_WIDTH);
+    mWindowRect.top = long(0);
+    mWindowRect.bottom = long(SCREEN_HEIGHT);
 
     // Fill out the window class structure
     mWindowClass.cbSize          = sizeof(WNDCLASSEX);
@@ -64,13 +65,13 @@ bool PlatformGL::create(int width, int height, int bpp, bool fullscreen) {
         memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
         dmScreenSettings.dmSize = sizeof(dmScreenSettings); 
 
-        dmScreenSettings.dmPelsWidth = width;   // screen width
-        dmScreenSettings.dmPelsHeight = height; // screen height
-        dmScreenSettings.dmBitsPerPel = bpp;    // bits per pixel
+        dmScreenSettings.dmPelsWidth = SCREEN_WIDTH;   // screen width
+        dmScreenSettings.dmPelsHeight = SCREEN_HEIGHT; // screen height
+        dmScreenSettings.dmBitsPerPel = SCREEN_BIT_DEPTH;    // bits per pixel
         dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
         if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
-            // setting display mode failed, switch to windowed
+            // Setting display mode failed, switch to windowed
             MessageBox(NULL, "Display mode failed", NULL, MB_OK);
             mIsFullscreen = false; 
         }
@@ -167,7 +168,7 @@ void PlatformGL::setupPixelFormat(void) {
 }
 
 LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch(uMsg) {
+    switch (uMsg) {
     case WM_CREATE: // Window creation
         {
             mHandleDeviceContext = GetDC(hWnd);
@@ -206,7 +207,7 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             mIsRunning = true; // Mark our window as running
         }
         break;
-
+    
     case WM_DESTROY: // window destroy
     case WM_CLOSE:   // windows is closing
         wglMakeCurrent(mHandleDeviceContext, NULL);

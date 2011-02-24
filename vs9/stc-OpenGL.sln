@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stc", "stc.vcproj", "{B45429C4-E940-45F6-B8C6-3508431A9FC9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stc-OpenGL", "stc-OpenGL.vcproj", "{B45429C4-E940-45F6-B8C6-3508431A9FC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

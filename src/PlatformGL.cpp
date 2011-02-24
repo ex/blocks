@@ -7,6 +7,7 @@
 /* -------------------------------------------------------------------------- */
 #include "PlatformGL.hpp"
 
+#include <stdlib.h>
 #include <ctime>
 #include <iostream>
 #include <windows.h>
@@ -20,11 +21,14 @@ typedef HGLRC (APIENTRYP PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC, HGLRC, const in
 
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
 
+namespace Stc {
+
 PlatformGL::PlatformGL(HINSTANCE hInstance) {
     mIsRunning = false;
     mHandleInstance = hInstance;
     mLastTime = 0;
     mRotationAngle = 0.0f;
+    mGame = NULL;
 }
 
 bool PlatformGL::create() {
@@ -113,19 +117,8 @@ bool PlatformGL::create() {
     ShowWindow(mHandleWindow, SW_SHOW); // display the window
     UpdateWindow(mHandleWindow);        // update the window
 
-    mLastTime = GetTickCount() / 1000.0f; // Initialize the time
+    mLastTime = GetTickCount() / 1000.0f; // initialize the time
     return true;
-}
-
-void PlatformGL::destroy() {
-    if (mIsFullscreen) {
-        ChangeDisplaySettings(NULL, 0); // If So Switch Back To The Desktop
-        ShowCursor(true);               // Show Mouse Pointer
-    }
-}
-
-bool PlatformGL::isRunning() {
-    return mIsRunning;
 }
 
 void PlatformGL::processEvents() {
@@ -139,40 +132,35 @@ void PlatformGL::processEvents() {
     }
 }
 
-void PlatformGL::setupPixelFormat(void) {
-    int pixelFormat;
-
-    PIXELFORMATDESCRIPTOR pfd = {   
-        sizeof(PIXELFORMATDESCRIPTOR),  // size
-        1,                          // version
-        PFD_SUPPORT_OPENGL |        // OpenGL window
-        PFD_DRAW_TO_WINDOW |        // render to window
-        PFD_DOUBLEBUFFER,           // support double-buffering
-        PFD_TYPE_RGBA,              // color type
-        32,                         // prefered color depth
-        0, 0, 0, 0, 0, 0,           // color bits (ignored)
-        0,                          // no alpha buffer
-        0,                          // alpha bits (ignored)
-        0,                          // no accumulation buffer
-        0, 0, 0, 0,                 // accum bits (ignored)
-        16,                         // depth buffer
-        0,                          // no stencil buffer
-        0,                          // no auxiliary buffers
-        PFD_MAIN_PLANE,             // main layer
-        0,                          // reserved
-        0, 0, 0,                    // no layer, visible, damage masks
-    };
-
-    pixelFormat = ChoosePixelFormat(mHandleDeviceContext, &pfd);
-    SetPixelFormat(mHandleDeviceContext, pixelFormat, &pfd);
-}
-
 LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE: // Window creation
         {
             mHandleDeviceContext = GetDC(hWnd);
-            setupPixelFormat();
+
+            // Setup pixel format
+            PIXELFORMATDESCRIPTOR pfd = {   
+                sizeof(PIXELFORMATDESCRIPTOR),  // size
+                1,                          // version
+                PFD_SUPPORT_OPENGL |        // OpenGL window
+                PFD_DRAW_TO_WINDOW |        // render to window
+                PFD_DOUBLEBUFFER,           // support double-buffering
+                PFD_TYPE_RGBA,              // color type
+                32,                         // prefered color depth
+                0, 0, 0, 0, 0, 0,           // color bits (ignored)
+                0,                          // no alpha buffer
+                0,                          // alpha bits (ignored)
+                0,                          // no accumulation buffer
+                0, 0, 0, 0,                 // accum bits (ignored)
+                16,                         // depth buffer
+                0,                          // no stencil buffer
+                0,                          // no auxiliary buffers
+                PFD_MAIN_PLANE,             // main layer
+                0,                          // reserved
+                0, 0, 0,                    // no layer, visible, damage masks
+            };
+            int pixelFormat = ChoosePixelFormat(mHandleDeviceContext, &pfd);
+            SetPixelFormat(mHandleDeviceContext, pixelFormat, &pfd);
 
             // Set the version that we want, in this case 3.0
             int attribs[] = {
@@ -226,6 +214,7 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     case WM_KEYDOWN:
         if (wParam == VK_ESCAPE) { //If the escape key was pressed
+            mGame->onEventStart(Game::EVENT_QUIT);
             DestroyWindow(mHandleWindow); //Send a WM_DESTROY message
         }
         break;
@@ -264,13 +253,6 @@ float PlatformGL::getElapsedSeconds() {
     return seconds;
 }
 
-bool PlatformGL::init() {
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-    // Return success
-    return true;
-}
-
 void PlatformGL::prepare(float dt) {
     const float SPEED = 15.0f;
     mRotationAngle += SPEED * dt;
@@ -295,9 +277,6 @@ void PlatformGL::render() {
 	glEnd();
 }
 
-void PlatformGL::shutdown() {
-}
-
 void PlatformGL::onResize(int width, int height) {
     glViewport(0, 0, width, height);
 
@@ -308,5 +287,51 @@ void PlatformGL::onResize(int width, int height) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+}
+
+int PlatformGL::init(Game *game) {
+    // Attempt to create the window.
+    if (!create()) {
+        MessageBox(NULL, "Unable to create the OpenGL Window", "An error occurred", MB_ICONERROR | MB_OK);
+        end(); // Reset the display and exit
+        return Game::ERROR_PLATFORM;
+    }
+
+    // Initialize OpenGL.
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+    mGame = game;
+    return Game::ERROR_NONE;
+}
+
+void PlatformGL::end() {
+    // Destroy the program window.
+    if (mIsFullscreen) {
+        ChangeDisplaySettings(NULL, 0); // if so switch back to the desktop
+        ShowCursor(true);               // show mouse pointer
+    }
+}
+
+void PlatformGL::renderGame() {
+    // We get the time that passed since the last frame.
+    float elapsedTime = getElapsedSeconds();
+
+    prepare(elapsedTime); // Do any pre-rendering logic.
+    render(); // Render the scene.
+    swapBuffers();
+}
+
+long PlatformGL::getSystemTime() {
+    return GetTickCount();
+}
+
+void PlatformGL::seedRandom(long seed) {
+    srand(seed);
+}
+
+int PlatformGL::random() {
+    return rand();
+}
 }
 

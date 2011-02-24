@@ -11,8 +11,11 @@
 #define PLATFORM_H_
 
 #include <windows.h>
+#include "../../../trunk/src/game.hpp"
 
-class PlatformGL {
+namespace Stc {
+
+class PlatformGL : public Platform {
     /*
      * UI layout (quantities are expressed in pixels)
      */
@@ -81,11 +84,15 @@ class PlatformGL {
   public:
     PlatformGL(HINSTANCE hInstance);
 
-    bool create();
-    void destroy();
-    void processEvents();
-    
-    bool isRunning(); // Is the window running?.
+    virtual int init(Game *game);
+    virtual void end();
+    virtual void processEvents();
+    virtual void renderGame();
+    virtual long getSystemTime();
+    virtual void seedRandom(long seed);
+    virtual int random();
+
+  private:
     float getElapsedSeconds();
 
     void swapBuffers() { SwapBuffers(mHandleDeviceContext); }
@@ -93,20 +100,18 @@ class PlatformGL {
     static LRESULT CALLBACK StaticWndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
     LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    bool init();
     void prepare(float dt);
     void render();
-    void shutdown();
     void onResize(int width, int height);
-
-  private:
-    void setupPixelFormat(void);
+    bool create();
 
     bool mIsRunning; // Is the window still running?.
     bool mIsFullscreen; 
 
     float mLastTime;
     float mRotationAngle;
+
+    Game* mGame;
 
     HWND       mHandleWindow;        // Window handle
     HGLRC      mHandleRenderContext; // Rendering context
@@ -115,5 +120,6 @@ class PlatformGL {
     HINSTANCE  mHandleInstance;      // Application instance
     WNDCLASSEX mWindowClass;
 };
+}
 
 #endif

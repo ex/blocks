@@ -2,7 +2,7 @@
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
 /*   A simple tetris clone.                                                   */
-/*   OpenGL branch using sample code found in the book:                       */
+/*   OpenGL branch using parts of sample code found in the book:              */
 /*   Beginning OpenGL, second edition by Luke Bendstead.                      */
 /*                                                                            */
 /*   Some symbols you can define for the project:                             */
@@ -46,66 +46,36 @@
 // Must be declared so that our local glxext.h is picked up, rather than the system one
 #define GLX_GLXEXT_LEGACY 
 
-#ifdef _WIN32
+#include "../../../trunk/src/game.hpp"
+
 #include <windows.h>
 #include "PlatformGL.hpp"
-#else
-#include "PlatformGLX.hpp"
-#endif
 
-#include "targa/TargaImage.h"
+using Stc::Game;
+using Stc::PlatformGL;
 
-#ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR cmdLine,
                    int cmdShow) {
-#else
-int main(int argc, char** argv) {
-#endif
 
-#ifdef _WIN32
-    // This is our window.
+    // Game object.
+    Game game;
+
+    // Platform object.
     PlatformGL platform(hInstance);
-#else
-    SimpleGLXWindow programWindow;
-#endif
 
-    TargaImage t;
-    t.load("numbers.tga");
+    // Start the game.
+    game.init(&platform);
 
-    // Attempt to create the window.
-    if (!platform.create()) {
-        // If it fails
-#ifdef _WIN32
-        MessageBox(NULL, "Unable to create the OpenGL Window", "An error occurred", MB_ICONERROR | MB_OK);
-#endif
-        platform.destroy(); // Reset the display and exit
-        return 1;
+    // Loop until some error happens or the user quits.
+    while (game.errorCode() == Game::ERROR_NONE) {
+        game.update();
     }
 
-    // Initialize our example.
-    if (!platform.init()) {
-#ifdef _WIN32
-        MessageBox(NULL, "Could not initialize the application", "An error occurred", MB_ICONERROR | MB_OK);
-#endif
-        platform.destroy(); // Reset the display and exit
-        return 1;
-    }
+    // Game was interrupted or an error happened, end the game.
+    game.end();
 
-    // This is the mainloop, we render frames until isRunning returns false.
-    while (platform.isRunning()) {
-        platform.processEvents(); // Process any window events
-
-        // We get the time that passed since the last frame.
-        float elapsedTime = platform.getElapsedSeconds();
-
-        platform.prepare(elapsedTime); // Do any pre-rendering logic.
-        platform.render(); // Render the scene.
-        platform.swapBuffers();
-    }
-
-    platform.shutdown(); // Free any resources.
-    platform.destroy();  // Destroy the program window.
-    return 0; // Return success.
+    // Return to the system.
+    return game.errorCode();
 }

@@ -101,7 +101,7 @@ class PlatformSdl : public Platform {
     virtual void end();
 
     /* Read input device and notify game */
-    virtual void readInput();
+    virtual void processEvents();
 
     /* Render the state of the game */
     virtual void renderGame();

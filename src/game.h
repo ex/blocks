@@ -241,10 +241,10 @@ typedef struct StcGame {
 /*
  * Main game functions
  */
-int gameInit(StcGame *game);
+void gameInit(StcGame *game);
 void gameUpdate(StcGame *game);
 void gameEnd(StcGame *game);
-void gameOnKeyDown(StcGame *game, int command);
-void gameOnKeyUp(StcGame *game, int command);
+void gameOnEventStart(StcGame *game, int command);
+void gameOnEventEnd(StcGame *game, int command);
 
 #endif /* STC_SRC_GAME_H_ */

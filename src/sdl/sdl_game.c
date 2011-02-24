@@ -57,8 +57,8 @@ long platformGetSystemTime() {
     return SDL_GetTicks();
 }
 
-/* Read input device and notify game */
-void platformReadInput(StcGame *game) {
+/* Process events and notify game */
+void platformProcessEvents(StcGame *game) {
     SDL_Event event;
 
     /* Grab events in the queue */
@@ -66,45 +66,45 @@ void platformReadInput(StcGame *game) {
         switch (event.type) {
         /* On quit game */
         case SDL_QUIT:
-            gameOnKeyDown(game, EVENT_QUIT);
+            gameOnEventStart(game, EVENT_QUIT);
             break;
         /* On key pressed */
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
-                gameOnKeyDown(game, EVENT_QUIT);
+                gameOnEventStart(game, EVENT_QUIT);
                 break;
             case SDLK_s:
             case SDLK_DOWN:
-                gameOnKeyDown(game, EVENT_MOVE_DOWN);
+                gameOnEventStart(game, EVENT_MOVE_DOWN);
                 break;
             case SDLK_w:
             case SDLK_UP:
-                gameOnKeyDown(game, EVENT_ROTATE_CW);
+                gameOnEventStart(game, EVENT_ROTATE_CW);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                gameOnKeyDown(game, EVENT_MOVE_LEFT);
+                gameOnEventStart(game, EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                gameOnKeyDown(game, EVENT_MOVE_RIGHT);
+                gameOnEventStart(game, EVENT_MOVE_RIGHT);
                 break;
             case SDLK_SPACE:
-                gameOnKeyDown(game, EVENT_DROP);
+                gameOnEventStart(game, EVENT_DROP);
                 break;
             case SDLK_F5:
-                gameOnKeyDown(game, EVENT_RESTART);
+                gameOnEventStart(game, EVENT_RESTART);
                 break;
             case SDLK_F1:
-                gameOnKeyDown(game, EVENT_PAUSE);
+                gameOnEventStart(game, EVENT_PAUSE);
                 break;
             case SDLK_F2:
-                gameOnKeyDown(game, EVENT_SHOW_NEXT);
+                gameOnEventStart(game, EVENT_SHOW_NEXT);
                 break;
 #ifdef STC_SHOW_GHOST_PIECE
             case SDLK_F3:
-                gameOnKeyDown(game, EVENT_SHOW_SHADOW);
+                gameOnEventStart(game, EVENT_SHOW_SHADOW);
                 break;
 #endif /* STC_SHOW_GHOST_PIECE */
             default:
@@ -116,20 +116,20 @@ void platformReadInput(StcGame *game) {
             switch (event.key.keysym.sym) {
             case SDLK_s:
             case SDLK_DOWN:
-                gameOnKeyUp(game, EVENT_MOVE_DOWN);
+                gameOnEventEnd(game, EVENT_MOVE_DOWN);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                gameOnKeyUp(game, EVENT_MOVE_LEFT);
+                gameOnEventEnd(game, EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                gameOnKeyUp(game, EVENT_MOVE_RIGHT);
+                gameOnEventEnd(game, EVENT_MOVE_RIGHT);
                 break;
 #ifdef STC_AUTO_ROTATION
             case SDLK_w:
             case SDLK_UP:
-                gameOnKeyUp(game, EVENT_ROTATE_CW);
+                gameOnEventEnd(game, EVENT_ROTATE_CW);
                 break;
 #endif /* STC_AUTO_ROTATION */
             default:

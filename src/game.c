@@ -156,26 +156,23 @@ static void startGame(StcGame *game) {
 }
 
 /*
- * Initialize the game, if there are no problems return ERROR_NONE.
+ * Initialize the game. The error code (if any) is saved in [game->errorCode].
  */
-int gameInit(StcGame *game) {
-    int errorCode;
-
+void gameInit(StcGame *game) {
     /* Allocate space for our game internal data */
     game->data = (StcGamePrivate *) malloc(sizeof(StcGamePrivate));
     if (game->data == NULL) {
-        return ERROR_NO_MEMORY;
+        game->errorCode = ERROR_NO_MEMORY;
     }
+    else {
+        /* Initialize platform */
+        game->errorCode = platformInit(game);
 
-    /* Initialize platform */
-    errorCode = platformInit(game);
-    if (errorCode != ERROR_NONE) {
-        return errorCode;
+        if (game->errorCode != ERROR_NONE) {
+            /* If platform was correctly initialized, start the game */
+            startGame(game);
+        }
     }
-
-    /* If platform was correctly initialized, start the game */
-    startGame(game);
-    return ERROR_NONE;
 }
 
 /* Free used resources */
@@ -587,7 +584,7 @@ static void onTetrominoMoved(StcGame *game) {
 }
 
 /* Process a key down event */
-void gameOnKeyDown(StcGame *game, int command) {
+void gameOnEventStart(StcGame *game, int command) {
     switch (command) {
     case EVENT_QUIT:
         game->errorCode = ERROR_PLAYER_QUITS;
@@ -621,7 +618,7 @@ void gameOnKeyDown(StcGame *game, int command) {
 }
 
 /* Process a key up event */
-void gameOnKeyUp(StcGame *game, int command) {
+void gameOnEventEnd(StcGame *game, int command) {
     switch (command) {
     case EVENT_MOVE_DOWN:
         game->data->delayDown = -1;

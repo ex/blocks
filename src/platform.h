@@ -20,8 +20,8 @@ extern int platformInit(StcGame *game);
 /* Clear resources used by platform */
 extern void platformEnd(StcGame *game);
 
-/* Read input device and notify game */
-extern void platformReadInput(StcGame *game);
+/* Process events and notify game */
+extern void platformProcessEvents(StcGame *game);
 
 /* Render the state of the game */
 extern void platformRenderGame(StcGame *game);

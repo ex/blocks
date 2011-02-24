@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game logic implementation.                                               */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -132,7 +132,7 @@ void Game::start() {
 }
 
 /*
- * Initialize the game, if there are no problems return ERROR_NONE.
+ * Initialize the game. The error code (if any) is saved in [mErrorcode].
  */
 void Game::init(Platform *targetPlatform) {
     /* Store platform reference and start it */
@@ -433,7 +433,7 @@ void Game::dropTetromino() {
 void Game::update() {
 
     /* Read player input */
-    mPlatform->readInput();
+    mPlatform->processEvents();
 
     /* Update game state */
     if (mIsOver) {
@@ -548,7 +548,7 @@ void Game::onTetrominoMoved() {
 }
 
 /* Process a key down event */
-void Game::onKeyDown(int command) {
+void Game::onEventStart(int command) {
     switch (command) {
     case EVENT_QUIT:
         mErrorCode = ERROR_PLAYER_QUITS;
@@ -582,7 +582,7 @@ void Game::onKeyDown(int command) {
 }
 
 /* Process a key up event */
-void Game::onKeyUp(int command) {
+void Game::onEventEnd(int command) {
     switch (command) {
     case EVENT_MOVE_DOWN:
         mDelayDown = -1;

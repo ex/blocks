@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game class definition.                                                   */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -83,6 +83,7 @@ class Game {
         ERROR_NO_MEMORY    = -1,   /* Not enough memory                 */
         ERROR_NO_VIDEO     = -2,   /* Video system was not initialized  */
         ERROR_NO_IMAGES    = -3,   /* Problem loading the image files   */
+        ERROR_PLATFORM     = -4,   /* Problem creating platform         */
         ERROR_ASSERT       = -100  /* Something went very very wrong... */
     }; 
 
@@ -246,8 +247,8 @@ class Game {
     void init(Platform *targetPlatform);
     void end();
     void update();
-    void onKeyDown(int command);
-    void onKeyUp(int command);
+    void onEventStart(int event);
+    void onEventEnd(int event);
 
   private:
 

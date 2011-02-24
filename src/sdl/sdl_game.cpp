@@ -53,8 +53,8 @@ long PlatformSdl::getSystemTime() {
     return SDL_GetTicks();
 }
 
-/* Read input device and notify game */
-void PlatformSdl::readInput() {
+/* Process events and notify game */
+void PlatformSdl::processEvents() {
     SDL_Event event;
 
     /* Grab events in the queue */
@@ -62,45 +62,45 @@ void PlatformSdl::readInput() {
         switch (event.type) {
         /* On quit game */
         case SDL_QUIT:
-            mGame->onKeyDown(Game::EVENT_QUIT);
+            mGame->onEventStart(Game::EVENT_QUIT);
             break;
         /* On key pressed */
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
-                mGame->onKeyDown(Game::EVENT_QUIT);
+                mGame->onEventStart(Game::EVENT_QUIT);
                 break;
             case SDLK_s:
             case SDLK_DOWN:
-                mGame->onKeyDown(Game::EVENT_MOVE_DOWN);
+                mGame->onEventStart(Game::EVENT_MOVE_DOWN);
                 break;
             case SDLK_w:
             case SDLK_UP:
-                mGame->onKeyDown(Game::EVENT_ROTATE_CW);
+                mGame->onEventStart(Game::EVENT_ROTATE_CW);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                mGame->onKeyDown(Game::EVENT_MOVE_LEFT);
+                mGame->onEventStart(Game::EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                mGame->onKeyDown(Game::EVENT_MOVE_RIGHT);
+                mGame->onEventStart(Game::EVENT_MOVE_RIGHT);
                 break;
             case SDLK_SPACE:
-                mGame->onKeyDown(Game::EVENT_DROP);
+                mGame->onEventStart(Game::EVENT_DROP);
                 break;
             case SDLK_F5:
-                mGame->onKeyDown(Game::EVENT_RESTART);
+                mGame->onEventStart(Game::EVENT_RESTART);
                 break;
             case SDLK_F1:
-                mGame->onKeyDown(Game::EVENT_PAUSE);
+                mGame->onEventStart(Game::EVENT_PAUSE);
                 break;
             case SDLK_F2:
-                mGame->onKeyDown(Game::EVENT_SHOW_NEXT);
+                mGame->onEventStart(Game::EVENT_SHOW_NEXT);
                 break;
 #ifdef STC_SHOW_GHOST_PIECE
             case SDLK_F3:
-                mGame->onKeyDown(Game::EVENT_SHOW_SHADOW);
+                mGame->onEventStart(Game::EVENT_SHOW_SHADOW);
                 break;
 #endif /* STC_SHOW_GHOST_PIECE */
             default:
@@ -112,20 +112,20 @@ void PlatformSdl::readInput() {
             switch (event.key.keysym.sym) {
             case SDLK_s:
             case SDLK_DOWN:
-                mGame->onKeyUp(Game::EVENT_MOVE_DOWN);
+                mGame->onEventEnd(Game::EVENT_MOVE_DOWN);
                 break;
             case SDLK_a:
             case SDLK_LEFT:
-                mGame->onKeyUp(Game::EVENT_MOVE_LEFT);
+                mGame->onEventEnd(Game::EVENT_MOVE_LEFT);
                 break;
             case SDLK_d:
             case SDLK_RIGHT:
-                mGame->onKeyUp(Game::EVENT_MOVE_RIGHT);
+                mGame->onEventEnd(Game::EVENT_MOVE_RIGHT);
                 break;
 #ifdef STC_AUTO_ROTATION
             case SDLK_w:
             case SDLK_UP:
-                mGame->onKeyUp(Game::EVENT_ROTATE_CW);
+                mGame->onEventEnd(Game::EVENT_ROTATE_CW);
                 break;
 #endif /* STC_AUTO_ROTATION */
             default:

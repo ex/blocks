@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Platform interface definition.                                           */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -24,8 +24,8 @@ class Platform {
     /* Clear resources used by platform */
     virtual void end() = 0;
 
-    /* Read input device and notify game */
-    virtual void readInput() = 0;
+    /* Process events and notify game */
+    virtual void processEvents() = 0;
 
     /* Render the state of the game */
     virtual void renderGame() = 0;

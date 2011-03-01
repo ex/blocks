@@ -2,8 +2,8 @@
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
 /*   A simple tetris clone.                                                   */
-/*   OpenGL branch using parts of sample code found in the book:              */
-/*   Beginning OpenGL, second edition by Luke Bendstead.                      */
+/*   OpenGL branch using some parts of source code found in the book:         */
+/*   Beginning OpenGL, second edition by Luke Benstead.                       */
 /*                                                                            */
 /*   Some symbols you can define for the project:                             */
 /*                                                                            */
@@ -43,13 +43,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
 
-// Must be declared so that our local glxext.h is picked up, rather than the system one
-#define GLX_GLXEXT_LEGACY 
-
-#include "../../../trunk/src/game.hpp"
-
 #include <windows.h>
 #include "PlatformGL.hpp"
+#include "../../../trunk/src/game.hpp"
 
 using Stc::Game;
 using Stc::PlatformGL;

@@ -24,101 +24,9 @@ PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
 namespace Stc {
 
 PlatformGL::PlatformGL(HINSTANCE hInstance) {
-    mIsRunning = false;
     mHandleInstance = hInstance;
-    mLastTime = 0;
-    mRotationAngle = 0.0f;
     mGame = NULL;
-}
-
-bool PlatformGL::create() {
-    DWORD dwExStyle;       // Window Extended Style
-    DWORD dwStyle;         // Window Style
-
-    mIsFullscreen = FULL_SCREEN; // Store the fullscreen flag
-
-    // Set initial position and size
-    mWindowRect.left = long(0);        
-    mWindowRect.right = long(SCREEN_WIDTH);
-    mWindowRect.top = long(0);
-    mWindowRect.bottom = long(SCREEN_HEIGHT);
-
-    // Fill out the window class structure
-    mWindowClass.cbSize          = sizeof(WNDCLASSEX);
-    mWindowClass.style           = CS_HREDRAW | CS_VREDRAW;
-    mWindowClass.lpfnWndProc     = PlatformGL::StaticWndProc; // We set our static method as the event handler
-    mWindowClass.cbClsExtra      = 0;
-    mWindowClass.cbWndExtra      = 0;
-    mWindowClass.hInstance       = mHandleInstance;
-    mWindowClass.hIcon           = LoadIcon(NULL, IDI_APPLICATION);  // default icon
-    mWindowClass.hCursor         = LoadCursor(NULL, IDC_ARROW);      // default arrow
-    mWindowClass.hbrBackground   = NULL;                             // don't need background
-    mWindowClass.lpszMenuName    = NULL;                             // no menu
-    mWindowClass.lpszClassName   = "GLClass";
-    mWindowClass.hIconSm         = LoadIcon(NULL, IDI_WINLOGO);      // windows logo small icon
-
-    // Register the windows class
-    if (!RegisterClassEx(&mWindowClass)) {
-        return false;
-    }
-
-    // If we are fullscreen, we need to change the display mode
-    if (mIsFullscreen) {
-        DEVMODE dmScreenSettings; // device mode
-        
-        memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-        dmScreenSettings.dmSize = sizeof(dmScreenSettings); 
-
-        dmScreenSettings.dmPelsWidth = SCREEN_WIDTH;   // screen width
-        dmScreenSettings.dmPelsHeight = SCREEN_HEIGHT; // screen height
-        dmScreenSettings.dmBitsPerPel = SCREEN_BIT_DEPTH;    // bits per pixel
-        dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-        if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
-            // Setting display mode failed, switch to windowed
-            MessageBox(NULL, "Display mode failed", NULL, MB_OK);
-            mIsFullscreen = false; 
-        }
-    }
-
-    // Are We Still In Fullscreen Mode?
-    if (mIsFullscreen) {
-        dwExStyle = WS_EX_APPWINDOW; // Window Extended Style
-        dwStyle = WS_POPUP;          // Windows Style
-        ShowCursor(false);           // Hide Mouse Pointer
-    }
-    else {
-        dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE; // Window Extended Style
-        dwStyle = WS_OVERLAPPEDWINDOW;                  // Windows Style
-    }
-
-    // Adjust Window To True Requested Size
-    AdjustWindowRectEx(&mWindowRect, dwStyle, false, dwExStyle);     
-
-    // Class registered, so now create our window
-    mHandleWindow = CreateWindowEx(NULL,       // extended style
-                                   "GLClass",  // class name
-                                   "stc - OpenGL", // app name
-                                   dwStyle | WS_CLIPCHILDREN |WS_CLIPSIBLINGS,
-                                   0, 0,   // x,y coordinate
-                                   mWindowRect.right - mWindowRect.left,
-                                   mWindowRect.bottom - mWindowRect.top, // width, height
-                                   NULL,   // handle to parent
-                                   NULL,   // handle to menu
-                                   mHandleInstance, // application instance
-                                   this);  // we pass a pointer to the PlatformGL here
-
-    // Check if window creation failed (hwnd would equal NULL)
-    if (!mHandleWindow) {
-        return 0;
-    }
-
-    mHandleDeviceContext = GetDC(mHandleWindow);
-    ShowWindow(mHandleWindow, SW_SHOW); // display the window
-    UpdateWindow(mHandleWindow);        // update the window
-
-    mLastTime = GetTickCount() / 1000.0f; // initialize the time
-    return true;
+    mTexture = NULL;
 }
 
 void PlatformGL::processEvents() {
@@ -191,8 +99,6 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
             // Make the GL3 context current
             wglMakeCurrent(mHandleDeviceContext, mHandleRenderContext);
-
-            mIsRunning = true; // Mark our window as running
         }
         break;
     
@@ -200,22 +106,23 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CLOSE:   // windows is closing
         wglMakeCurrent(mHandleDeviceContext, NULL);
         wglDeleteContext(mHandleRenderContext);
-        mIsRunning = false; // Stop the main loop
-        PostQuitMessage(0);  // Send a WM_QUIT message
+        PostQuitMessage(0); // Send a WM_QUIT message
+
+        // Signal game end.
+        mGame->onEventStart(Game::EVENT_QUIT);
         return 0;
 
     case WM_SIZE:
         {
             int height = HIWORD(lParam); // retrieve width and height
             int width = LOWORD(lParam);
-			onResize(width, height);
+            glViewport(0, 0, width, height);
         }
         break;
 
     case WM_KEYDOWN:
-        if (wParam == VK_ESCAPE) { //If the escape key was pressed
-            mGame->onEventStart(Game::EVENT_QUIT);
-            DestroyWindow(mHandleWindow); //Send a WM_DESTROY message
+        if (wParam == VK_ESCAPE) { // If the escape key was pressed
+            DestroyWindow(mHandleWindow); // Send a WM_DESTROY message
         }
         break;
     }
@@ -246,60 +153,138 @@ LRESULT CALLBACK PlatformGL::StaticWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     return window->WndProc(hWnd, uMsg, wParam, lParam);
 }
 
-float PlatformGL::getElapsedSeconds() {
-    float currentTime = float(GetTickCount()) / 1000.0f;
-    float seconds = float(currentTime - mLastTime);
-    mLastTime = currentTime;
-    return seconds;
-}
-
-void PlatformGL::prepare(float dt) {
-    const float SPEED = 15.0f;
-    mRotationAngle += SPEED * dt;
-    if (mRotationAngle > 360.0f) {
-        mRotationAngle -= 360.0f;
-    }
-}
-
-void PlatformGL::render() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
-    glRotatef(mRotationAngle, 0, 0, 1);
-
-	glBegin(GL_TRIANGLES);
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	    glVertex3f(-1.0f, -0.5f, -4.0f);
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
-		glVertex3f(1.0f, -0.5f, -4.0f);
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		glVertex3f(0.0f,  0.5f, -4.0f);
-	glEnd();
-}
-
-void PlatformGL::onResize(int width, int height) {
-    glViewport(0, 0, width, height);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    gluPerspective(45.0f, float(width) / float(height), 1.0f, 100.0f);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
-
 int PlatformGL::init(Game *game) {
-    // Attempt to create the window.
-    if (!create()) {
+    // Create the window.
+    // -------------------------------------------------------------------------
+    DWORD dwExStyle;       // Window Extended Style
+    DWORD dwStyle;         // Window Style
+
+    mIsFullscreen = false; // Fullscreen mode fails for screen size of 480x272
+
+    // Set initial position and size
+    mWindowRect.left = long(0);        
+    mWindowRect.right = long(SCREEN_WIDTH);
+    mWindowRect.top = long(0);
+    mWindowRect.bottom = long(SCREEN_HEIGHT);
+
+    // Fill out the window class structure
+    mWindowClass.cbSize          = sizeof(WNDCLASSEX);
+    mWindowClass.style           = CS_HREDRAW | CS_VREDRAW;
+    mWindowClass.lpfnWndProc     = PlatformGL::StaticWndProc; // We set our static method as the event handler
+    mWindowClass.cbClsExtra      = 0;
+    mWindowClass.cbWndExtra      = 0;
+    mWindowClass.hInstance       = mHandleInstance;
+    mWindowClass.hIcon           = LoadIcon(NULL, IDI_APPLICATION);  // default icon
+    mWindowClass.hCursor         = LoadCursor(NULL, IDC_ARROW);      // default arrow
+    mWindowClass.hbrBackground   = NULL;                             // don't need background
+    mWindowClass.lpszMenuName    = NULL;                             // no menu
+    mWindowClass.lpszClassName   = "GLClass";
+    mWindowClass.hIconSm         = LoadIcon(NULL, IDI_WINLOGO);      // windows logo small icon
+
+    // Register the windows class
+    if (!RegisterClassEx(&mWindowClass)) {
+        return Game::ERROR_PLATFORM;
+    }
+
+    // If we are fullscreen, we need to change the display mode
+    if (mIsFullscreen) {
+        DEVMODE dmScreenSettings; // device mode
+        
+        memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
+        dmScreenSettings.dmSize = sizeof(dmScreenSettings); 
+
+        dmScreenSettings.dmPelsWidth = SCREEN_WIDTH;      // screen width
+        dmScreenSettings.dmPelsHeight = SCREEN_HEIGHT;    // screen height
+        dmScreenSettings.dmBitsPerPel = SCREEN_BIT_DEPTH; // bits per pixel
+        dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+        if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
+            // Setting display mode failed, switch to windowed
+            MessageBox(NULL, "Full screen display mode failed", NULL, MB_OK);
+            mIsFullscreen = false; 
+        }
+    }
+
+    // Are we still in fullscreen mode?
+    if (mIsFullscreen) {
+        dwExStyle = WS_EX_APPWINDOW; // Window extended style
+        dwStyle = WS_POPUP;          // Windows style
+        ShowCursor(false);           // Hide mouse pointer
+    }
+    else {
+        dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE; // Window extended style
+        dwStyle = WS_OVERLAPPEDWINDOW;                  // Windows style
+    }
+
+    // Adjust window to true requested size
+    AdjustWindowRectEx(&mWindowRect, dwStyle, false, dwExStyle);     
+
+    // Class registered, so now create our window
+    mHandleWindow = CreateWindowEx(NULL,           // extended style
+                                   "GLClass",      // class name
+                                   "stc - OpenGL", // app name
+                                   dwStyle | WS_CLIPCHILDREN |WS_CLIPSIBLINGS,
+                                   0, 0,   // x,y coordinate
+                                   mWindowRect.right - mWindowRect.left,
+                                   mWindowRect.bottom - mWindowRect.top, // width, height
+                                   NULL,   // handle to parent
+                                   NULL,   // handle to menu
+                                   mHandleInstance, // application instance
+                                   this);  // we pass a pointer to the PlatformGL here
+
+    // Check if window creation failed (handle equal NULL)
+    if (mHandleWindow == NULL) {
         MessageBox(NULL, "Unable to create the OpenGL Window", "An error occurred", MB_ICONERROR | MB_OK);
         end(); // Reset the display and exit
         return Game::ERROR_PLATFORM;
     }
 
-    // Initialize OpenGL.
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+    mHandleDeviceContext = GetDC(mHandleWindow);
+    ShowWindow(mHandleWindow, SW_SHOW); // display the window
+    UpdateWindow(mHandleWindow);        // update the window
+
+    // Setup OpenGL 2D view.
+    // -------------------------------------------------------------------------
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(0.375f, 0.375f, 0.f);
+
+    // Make sure depth testing and lighting are disabled for 2D rendering
+    glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+	glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    // Setup image texture
+    // -------------------------------------------------------------------------
+    glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    mTexture = new TargaImage();
+    if (!mTexture->load("back.tga")) {
+        MessageBox(NULL, "Unable to load texture", "An error occurred", MB_ICONERROR | MB_OK);
+        end(); // Reset the display and exit
+        return Game::ERROR_NO_IMAGES;
+    }
+
+    glGenTextures(1, &mTextureId);
+    glBindTexture(GL_TEXTURE_2D, mTextureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int bmpWidth = mTexture->getWidth();
+    int bmpHeight = mTexture->getHeight();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bmpWidth, bmpHeight,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, mTexture->getImageData());
 
     mGame = game;
     return Game::ERROR_NONE;
@@ -311,15 +296,38 @@ void PlatformGL::end() {
         ChangeDisplaySettings(NULL, 0); // if so switch back to the desktop
         ShowCursor(true);               // show mouse pointer
     }
+
+    delete mTexture;
+    mTexture = NULL;
 }
 
 void PlatformGL::renderGame() {
-    // We get the time that passed since the last frame.
-    float elapsedTime = getElapsedSeconds();
+    // Render the background.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
 
-    prepare(elapsedTime); // Do any pre-rendering logic.
-    render(); // Render the scene.
-    swapBuffers();
+    GLfloat vertices[] = {0.f, 272.f, 0.f,
+                          480.f, 272.f, 0.f,
+                          0.f, 0.f, 0.f,
+                          480, 0.f, 0.f};
+
+    GLfloat texcoord[] = {0.f, 0.f,
+                          480/512.f, 0.f,
+                          0.f, 272/512.f,
+                          480/512.f, 272/512.f};
+
+    GLubyte indices[] = {0, 1, 2, 3};
+
+    glBindTexture(GL_TEXTURE_2D, mTextureId);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, texcoord);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    SwapBuffers(mHandleDeviceContext);
 }
 
 long PlatformGL::getSystemTime() {

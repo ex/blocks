@@ -1,7 +1,7 @@
 /* ========================================================================== */
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
-/*   PlatformGL interface definition.                                           */
+/*   PlatformGL interface definition.                                         */
 /*                                                                            */
 /*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
@@ -12,6 +12,7 @@
 
 #include <windows.h>
 #include "../../../trunk/src/game.hpp"
+#include "targa/TargaImage.h"
 
 namespace Stc {
 
@@ -75,9 +76,6 @@ class PlatformGL : public Platform {
     /* Use 32 bits per pixel */
     static const int SCREEN_BIT_DEPTH = 32;
 
-    /* Use video hardware and double buffering */
-    static const bool FULL_SCREEN = false;
-
     /* Sleep time (in milliseconds) */
     static const int SLEEP_TIME = 40;
 
@@ -93,25 +91,10 @@ class PlatformGL : public Platform {
     virtual int random();
 
   private:
-    float getElapsedSeconds();
-
-    void swapBuffers() { SwapBuffers(mHandleDeviceContext); }
-
     static LRESULT CALLBACK StaticWndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
     LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    void prepare(float dt);
-    void render();
-    void onResize(int width, int height);
-    bool create();
-
-    bool mIsRunning; // Is the window still running?.
     bool mIsFullscreen; 
-
-    float mLastTime;
-    float mRotationAngle;
-
-    Game* mGame;
 
     HWND       mHandleWindow;        // Window handle
     HGLRC      mHandleRenderContext; // Rendering context
@@ -119,6 +102,12 @@ class PlatformGL : public Platform {
     RECT       mWindowRect;          // Window bounds
     HINSTANCE  mHandleInstance;      // Application instance
     WNDCLASSEX mWindowClass;
+
+    Game *mGame;
+
+    TargaImage *mTexture;
+    unsigned int mTextureId;
+
 };
 }
 

@@ -4,7 +4,7 @@
 /*   Simple pure SDL implementation. (No sound, no fonts)                     */
 /*   Using SDL for game state rendering, user input and timing.               */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */

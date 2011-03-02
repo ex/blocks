@@ -210,7 +210,7 @@ class Game {
   public:
 
     /* The platform must call this method after processing a changed state */
-    void onChangeProcessed()           { mStateChanged = true; }
+    void onChangeProcessed()           { mStateChanged = false; }
 
     /* Return true if the game state has changed, false otherwise */
     bool hasChanged()                  { return mStateChanged; }

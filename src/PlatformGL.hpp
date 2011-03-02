@@ -11,6 +11,8 @@
 #define PLATFORM_H_
 
 #include <windows.h>
+#include <GL/gl.h>
+
 #include "../../../trunk/src/game.hpp"
 #include "targa/TargaImage.h"
 
@@ -79,6 +81,9 @@ class PlatformGL : public Platform {
     /* Sleep time (in milliseconds) */
     static const int SLEEP_TIME = 40;
 
+    /* Texture size of compound images */
+    static const int TEXTURE_SIZE = 512;
+
   public:
     PlatformGL(HINSTANCE hInstance);
 
@@ -93,6 +98,9 @@ class PlatformGL : public Platform {
   private:
     static LRESULT CALLBACK StaticWndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
     LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    void drawTile(int x, int y, int tile, bool shadow);
+    void drawNumber(int x, int y, long number, int length, int color);
+    inline void setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int h);
 
     bool mIsFullscreen; 
 
@@ -105,9 +113,13 @@ class PlatformGL : public Platform {
 
     Game *mGame;
 
-    TargaImage *mTexture;
+    TargaImage  *mTexture;
     unsigned int mTextureId;
-
+    GLubyte     *mTextureIndexes;
+    GLfloat     *mBackgroundTexCoord;
+    GLfloat     *mBackgroundVertices;
+    GLfloat     *mSpriteTexCoord;
+    GLfloat     *mSpriteVertices;
 };
 }
 

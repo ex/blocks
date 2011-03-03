@@ -55,8 +55,8 @@
 				AdditionalOptions=" /Zm1000"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="glx"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_WIN32"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_WIN32;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,8 +110,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="first_app.dir\Release"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -147,14 +147,11 @@
 				AdditionalOptions=" /Zm1000"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="&quot;C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\include&quot;;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;Release\&quot;"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_WIN32;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
 				ExceptionHandling="1"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
-				AssemblerListingLocation="Release"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/Release/first_app.pdb"
 				WarningLevel="3"
 				CompileAs="2"
 			/>
@@ -173,208 +170,13 @@
 				Name="VCLinkerTool"
 				AdditionalOptions=" /STACK:10000000 /machine:I386"
 				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  OPENGL32.lib GLU32.lib "
-				OutputFile="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\Release\first_app.exe"
-				Version="0.0"
+				OutputFile="../bin/stc_gl.exe"
+				Version=""
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib\$(OutDir),..\lib"
+				AdditionalLibraryDirectories=""
 				GenerateManifest="true"
-				ProgramDatabaseFile="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/Release/first_app.pdb"
 				SubSystem="2"
-				ImportLibrary="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\Release\first_app.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="MinSizeRel|Win32"
-			OutputDirectory="MinSizeRel"
-			IntermediateDirectory="first_app.dir\MinSizeRel"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
-				MkTypLibCompatible="false"
-				TargetEnvironment="1"
-				GenerateStublessProxies="true"
-				TypeLibraryName="$(InputName).tlb"
-				OutputDirectory="$(IntDir)"
-				HeaderFileName="$(InputName).h"
-				DLLDataFileName=""
-				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				Optimization="1"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="&quot;C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\include&quot;;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
-				ExceptionHandling="1"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="true"
-				AssemblerListingLocation="MinSizeRel"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/MinSizeRel/first_app.pdb"
-				WarningLevel="3"
-				CompileAs="2"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
-				AdditionalIncludeDirectories="&quot;C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\include&quot;;"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  OPENGL32.lib GLU32.lib "
-				OutputFile="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\MinSizeRel\first_app.exe"
-				Version="0.0"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib\$(OutDir),..\lib"
-				GenerateManifest="true"
-				ProgramDatabaseFile="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/MinSizeRel/first_app.pdb"
-				SubSystem="2"
-				ImportLibrary="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\MinSizeRel\first_app.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="RelWithDebInfo|Win32"
-			OutputDirectory="RelWithDebInfo"
-			IntermediateDirectory="first_app.dir\RelWithDebInfo"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
-				MkTypLibCompatible="false"
-				TargetEnvironment="1"
-				GenerateStublessProxies="true"
-				TypeLibraryName="$(InputName).tlb"
-				OutputDirectory="$(IntDir)"
-				HeaderFileName="$(InputName).h"
-				DLLDataFileName=""
-				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				Optimization="2"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="&quot;C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\include&quot;;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
-				ExceptionHandling="1"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="true"
-				AssemblerListingLocation="RelWithDebInfo"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/RelWithDebInfo/first_app.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				CompileAs="2"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,_WIN32,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
-				AdditionalIncludeDirectories="&quot;C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\include&quot;;"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  OPENGL32.lib GLU32.lib "
-				OutputFile="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\RelWithDebInfo\first_app.exe"
-				Version="0.0"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\lib\$(OutDir),..\lib"
-				GenerateManifest="true"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="C:/Users/luke/Desktop/BOGLGP Source/boglgp/Source/OpenGL 3.0/chapter_2/first_app/vc++/RelWithDebInfo/first_app.pdb"
-				SubSystem="2"
-				ImportLibrary="C:\Users\luke\Desktop\BOGLGP Source\boglgp\Source\OpenGL 3.0\chapter_2\first_app\vc++\RelWithDebInfo\first_app.lib"
+				ImportLibrary=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -402,18 +204,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="glx"
-			>
-			<File
-				RelativePath="..\src\glx\glext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\glx\glxext.h"
-				>
-			</File>
-		</Filter>
 		<Filter
 			Name="wgl"
 			>

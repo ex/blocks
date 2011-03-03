@@ -116,6 +116,11 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
 
     case WM_KEYDOWN:
+        // Process only the first WM_KEYDOWN notification.
+        if ((lParam & (1 << 30)) != 0) {
+            break;
+        }
+
         switch (wParam) {
         case VK_ESCAPE: // If the escape key was pressed
             DestroyWindow(mHandleWindow); // Send a WM_DESTROY message
@@ -278,7 +283,7 @@ int PlatformGL::init(Game *game) {
                                    "GLClass",      // class name
                                    "stc - OpenGL", // app name
                                    dwStyle | WS_CLIPCHILDREN |WS_CLIPSIBLINGS,
-                                   0, 0,   // x,y coordinate
+                                   200, 100,       // initial position
                                    mWindowRect.right - mWindowRect.left,
                                    mWindowRect.bottom - mWindowRect.top, // width, height
                                    NULL,   // handle to parent
@@ -371,9 +376,14 @@ int PlatformGL::init(Game *game) {
 
     // Create arrays for drawing the sprites
     mSpriteTexCoord = new GLfloat[8];
-    mSpriteVertices = new GLfloat[12];
 
-    // We don't change textures or 2D mode, so do this only once.
+    mSpriteVertices = new GLfloat[12];
+    mSpriteVertices[2] = 0.f;   // Z coordinates are all zero
+    mSpriteVertices[5] = 0.f;
+    mSpriteVertices[8] = 0.f;
+    mSpriteVertices[11] = 0.f;
+
+    // We don't change textures neither 2D view mode, so do this only once.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glBindTexture(GL_TEXTURE_2D, mTextureId);
@@ -418,48 +428,58 @@ void PlatformGL::setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int
     coords[7] = (TEXTURE_SIZE - y) / GLfloat(TEXTURE_SIZE);
 }
 
-// Draw a tile from a tetromino
+// Draw a tile from a tetromino.
+// Tile sprites start in the top-left corner of the compounded image. 
 void PlatformGL::drawTile(int x, int y, int tile, bool shadow) {
+
     mSpriteVertices[0] = GLfloat(x);             // down-left
     mSpriteVertices[1] = GLfloat(y + TILE_SIZE);
-    mSpriteVertices[2] = 0.f;
     mSpriteVertices[3] = GLfloat(x + TILE_SIZE); // down-right
     mSpriteVertices[4] = GLfloat(y + TILE_SIZE);
-    mSpriteVertices[5] = 0.f;
     mSpriteVertices[6] = GLfloat(x);             // up-left
     mSpriteVertices[7] = GLfloat(y);
-    mSpriteVertices[8] = 0.f;
     mSpriteVertices[9] = GLfloat(x + TILE_SIZE); // up-right
     mSpriteVertices[10] = GLfloat(y);
-    mSpriteVertices[11] = 0.f;
 
-    setSpriteTextureCoord(mSpriteTexCoord, TILE_SIZE * tile, (TILE_SIZE + 1) * shadow, TILE_SIZE + 1, TILE_SIZE + 1);
+    setSpriteTextureCoord(mSpriteTexCoord, 
+                          TILE_SIZE * (shadow? Game::TETROMINO_TYPES + tile + 1: tile), 0,
+                          TILE_SIZE, TILE_SIZE);
 
     glVertexPointer(3, GL_FLOAT, 0, mSpriteVertices);
     glTexCoordPointer(2, GL_FLOAT, 0, mSpriteTexCoord);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, mTextureIndexes);
 }
 
-// Draw a number on the given position
+// Draw a number on the given position.
+// Number sprites start at the left below the sprites for tiles. 
 void PlatformGL::drawNumber(int x, int y, long number, int length, int color) {
-    //SDL_Rect recDestine;
-    //SDL_Rect recSource;
+    // Y coordinates don't change
+    mSpriteVertices[1] = GLfloat(y + NUMBER_HEIGHT); // down-left
+    mSpriteVertices[4] = GLfloat(y + NUMBER_HEIGHT); // down-right
+    mSpriteVertices[7] = GLfloat(y);                 // up-left
+    mSpriteVertices[10] = GLfloat(y);                // up-right
 
-    //recSource.y = NUMBER_HEIGHT * color;
-    //recSource.w = NUMBER_WIDTH;
-    //recSource.h = NUMBER_HEIGHT;
-    //recDestine.y = y;
+    int pos = 0;
+    do {
+        int px = x + NUMBER_WIDTH * (length - pos);
+        mSpriteVertices[0] = GLfloat(px);                // down-left
+        mSpriteVertices[3] = GLfloat(px + NUMBER_WIDTH); // down-right
+        mSpriteVertices[6] = GLfloat(px);                // up-left
+        mSpriteVertices[9] = GLfloat(px + NUMBER_WIDTH); // up-right
 
-    //int pos = 0;
-    //do {
-    //    recDestine.x = x + NUMBER_WIDTH * (length - pos);
-    //    recSource.x = NUMBER_WIDTH * (Sint16)(number % 10);
-    //    SDL_BlitSurface(mBmpNumbers, &recSource, mScreen, &recDestine);
-    //    number /= 10;
-    //} while (++pos < length);
+        setSpriteTextureCoord(mSpriteTexCoord, 
+                              NUMBER_WIDTH * (number % 10), 1 + TILE_SIZE + NUMBER_HEIGHT * color,
+                              NUMBER_WIDTH, NUMBER_HEIGHT);
+
+        glVertexPointer(3, GL_FLOAT, 0, mSpriteVertices);
+        glTexCoordPointer(2, GL_FLOAT, 0, mSpriteTexCoord);
+        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, mTextureIndexes);
+
+        number /= 10;
+    } while (++pos < length);
 }
 
-// Render the state of the game using platform functions
+// Render the state of the game using platform functions.
 void PlatformGL::renderGame() {
     int i, j;
 

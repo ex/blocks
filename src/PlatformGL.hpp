@@ -79,7 +79,7 @@ class PlatformGL : public Platform {
     static const int SCREEN_BIT_DEPTH = 32;
 
     /* Sleep time (in milliseconds) */
-    static const int SLEEP_TIME = 30;
+    static const int SLEEP_TIME = 16;
 
     /* Texture size of compounded images */
     static const int TEXTURE_SIZE = 512;

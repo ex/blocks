@@ -1,0 +1,147 @@
+// !$*UTF8*$!
+{
+	1D6058900D05DD3D006BFB54 /* stc-iphone */ = {
+		activeExec = 0;
+		executables = (
+			B9BD6C13131FF8BD006FE2B9 /* stc-iphone */,
+		);
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = B9BD6C13131FF8BD006FE2B9 /* stc-iphone */;
+		activeSDKPreference = iphonesimulator4.2;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* stc-iphone */;
+		addToTargets = (
+			1D6058900D05DD3D006BFB54 /* stc-iphone */,
+		);
+		breakpoints = (
+		);
+		codeSenseManager = B9BD6C18131FF8D0006FE2B9 /* Code sense */;
+		executables = (
+			B9BD6C13131FF8BD006FE2B9 /* stc-iphone */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					480,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFindDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					200,
+					494,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFindDataSource_MessageID,
+					PBXFindDataSource_LocationID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 320871101;
+			PBXWorkspaceStateSaveDate = 320871101;
+		};
+		perUserProjectItems = {
+			B909CD3013201B4C00F8BECF /* PlistBookmark */ = B909CD3013201B4C00F8BECF /* PlistBookmark */;
+			B909CD3113201B4C00F8BECF /* PBXBookmark */ = B909CD3113201B4C00F8BECF /* PBXBookmark */;
+			B909CD3213201B4C00F8BECF /* PBXTextBookmark */ = B909CD3213201B4C00F8BECF /* PBXTextBookmark */;
+		};
+		sourceControlManager = B9BD6C17131FF8D0006FE2B9 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	B909CD1813201AD500F8BECF /* main.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {658, 510}}";
+			sepNavSelRange = "{231, 0}";
+			sepNavVisRange = "{0, 231}";
+		};
+	};
+	B909CD3013201B4C00F8BECF /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* stc_iphone-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleName,
+		);
+		name = "/Users/exdev/stc/branches/iphone/stc_iphone-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775807;
+	};
+	B909CD3113201B4C00F8BECF /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = B909CD1813201AD500F8BECF /* main.m */;
+	};
+	B909CD3213201B4C00F8BECF /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B909CD1813201AD500F8BECF /* main.m */;
+		name = "main.m: 12";
+		rLen = 0;
+		rLoc = 231;
+		rType = 0;
+		vrLen = 231;
+		vrLoc = 0;
+	};
+	B9BD6C13131FF8BD006FE2B9 /* stc-iphone */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = "stc-iphone";
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	B9BD6C17131FF8D0006FE2B9 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	B9BD6C18131FF8D0006FE2B9 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+}

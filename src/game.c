@@ -469,7 +469,7 @@ void gameUpdate(StcGame *game) {
     int timeDelta;
 
     /* Read user input */
-    platformReadInput(game);
+    platformProcessEvents(game);
 
     /* Update game state */
     if (game->data->isOver != 0) {

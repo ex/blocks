@@ -145,7 +145,7 @@ void PlatformSdl::drawTile(int x, int y, int tile, bool shadow) {
     recDestine.x = x;
     recDestine.y = y;
     recSource.x = TILE_SIZE * tile;
-    recSource.y = (TILE_SIZE + 1) * shadow;
+    recSource.y = (TILE_SIZE + 1) * (shadow? 1 : 0);
     recSource.w = TILE_SIZE + 1;
     recSource.h = TILE_SIZE + 1;
     SDL_BlitSurface(mBmpTiles, &recSource, mScreen, &recDestine);

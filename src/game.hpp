@@ -254,7 +254,7 @@ class Game {
 
     /* Game events are stored in bits in this variable.
      * It must be cleared to EVENT_NONE after being used */
-    int mEvents;
+    unsigned int mEvents;
 
     /* Matrix that holds the cells (tilemap) */
     int mMap[BOARD_TILEMAP_WIDTH][BOARD_TILEMAP_HEIGHT];

@@ -96,7 +96,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="../bin"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -152,6 +152,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				OutputManifestFile="$(IntDir)\$(ProjectName)\$(TargetFileName).embed.manifest"
+				ManifestResourceFile="$(IntDir)\$(ProjectName)\$(TargetFileName).embed.manifest.res"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"

@@ -39,26 +39,20 @@
 /*   OTHER DEALINGS IN THE SOFTWARE.                                          */
 /* -------------------------------------------------------------------------- */
 
-#include <stdlib.h>
-#include <new>
-#include "game.hpp"
 #include "sdl/sdl_game.hpp"
-
-using Stc::Game;
-using Stc::PlatformSdl;
 
 int main(int argc, char *argv[]) {
     /* Game object */
-    Game game;
+    Stc::Game game;
 
     /* Platform object */
-    PlatformSdl platform;
+    Stc::PlatformSdl platform;
 
     /* Start the game */
     game.init(&platform);
 
     /* Loop until some error happens or the user quits */
-    while (game.errorCode() == Game::ERROR_NONE) {
+    while (game.errorCode() == Stc::Game::ERROR_NONE) {
         game.update();
     }
 

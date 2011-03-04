@@ -23,8 +23,8 @@ class PlatformObjC : public Platform {
      */
 
     /* Screen size */
-    static const int SCREEN_WIDTH  = 480;
-    static const int SCREEN_HEIGHT = 320;
+    static const int SCREEN_WIDTH  = 320;
+    static const int SCREEN_HEIGHT = 480;
 
     /* Size of square tile */
     static const int TILE_SIZE = 12;
@@ -80,6 +80,10 @@ class PlatformObjC : public Platform {
     /* Texture size of compounded images */
     static const int TEXTURE_SIZE = 512;
 
+    /* Sizes of background on texture */
+    static const int BACKGROUND_WIDTH  = 480;    
+    static const int BACKGROUND_HEIGHT = 272;    
+    
   public:
     PlatformObjC(id controller);
 
@@ -97,7 +101,9 @@ class PlatformObjC : public Platform {
     inline void setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int h);
 
     Game *mGame;
+    
     id mController;
+    double mTimeStart;
 
     TargaImage  *mTexture;
     unsigned int mTextureId;

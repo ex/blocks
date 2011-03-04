@@ -15,6 +15,8 @@ PlatformObjC::PlatformObjC(id controller) {
     mGame = NULL;
     mTexture = NULL;
     mController = controller;
+    NSDate *now = [NSDate date];
+    mTimeStart = [now timeIntervalSince1970];
 }
 
 void PlatformObjC::processEvents() {
@@ -38,7 +40,7 @@ int PlatformObjC::init(Game *game) {
 	glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Setup image texture
     // -------------------------------------------------------------------------
@@ -74,24 +76,24 @@ int PlatformObjC::init(Game *game) {
     mBackgroundTexCoord = new GLfloat[8];
     mBackgroundTexCoord[0] = 0.f;
     mBackgroundTexCoord[1] = 0.f;
-    mBackgroundTexCoord[2] = SCREEN_WIDTH / GLfloat(TEXTURE_SIZE);
+    mBackgroundTexCoord[2] = BACKGROUND_WIDTH / GLfloat(TEXTURE_SIZE);
     mBackgroundTexCoord[3] = 0.f;
     mBackgroundTexCoord[4] = 0.f;
-    mBackgroundTexCoord[5] = SCREEN_HEIGHT / GLfloat(TEXTURE_SIZE);
-    mBackgroundTexCoord[6] = SCREEN_WIDTH / GLfloat(TEXTURE_SIZE);
-    mBackgroundTexCoord[7] = SCREEN_HEIGHT / GLfloat(TEXTURE_SIZE);
+    mBackgroundTexCoord[5] = BACKGROUND_HEIGHT / GLfloat(TEXTURE_SIZE);
+    mBackgroundTexCoord[6] = BACKGROUND_WIDTH / GLfloat(TEXTURE_SIZE);
+    mBackgroundTexCoord[7] = BACKGROUND_HEIGHT / GLfloat(TEXTURE_SIZE);
 
     mBackgroundVertices = new GLfloat[12];
     mBackgroundVertices[0] = 0.f;                    // down-left
-    mBackgroundVertices[1] = GLfloat(SCREEN_HEIGHT);
+    mBackgroundVertices[1] = GLfloat(BACKGROUND_HEIGHT);
     mBackgroundVertices[2] = 0.f;
-    mBackgroundVertices[3] = GLfloat(SCREEN_WIDTH);  // down-right
-    mBackgroundVertices[4] = GLfloat(SCREEN_HEIGHT);
+    mBackgroundVertices[3] = GLfloat(BACKGROUND_WIDTH);  // down-right
+    mBackgroundVertices[4] = GLfloat(BACKGROUND_HEIGHT);
     mBackgroundVertices[5] = 0.f;
     mBackgroundVertices[6] = 0.f;                    // up-left
     mBackgroundVertices[7] = 0.f;
     mBackgroundVertices[8] = 0.f;
-    mBackgroundVertices[9] = GLfloat(SCREEN_WIDTH);  // up-right
+    mBackgroundVertices[9] = GLfloat(BACKGROUND_WIDTH);  // up-right
     mBackgroundVertices[10] = 0.f;
     mBackgroundVertices[11] = 0.f;
 
@@ -115,6 +117,10 @@ int PlatformObjC::init(Game *game) {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    // Rotate view for landscape mode
+    glRotatef(90.f, 0.f, 0.f, 1.f);
+    glTranslatef(0.f, 0.5f * (SCREEN_WIDTH - BACKGROUND_HEIGHT) - SCREEN_WIDTH, 0.0f);
+    
     // Save reference to game and return that everything is OK
     mGame = game;
     return Game::ERROR_NONE;
@@ -278,17 +284,13 @@ void PlatformObjC::renderGame() {
 
         // Inform the game that we are done with the changed state
         mGame->onChangeProcessed();
-
-        // Swap video buffers
-        ////SwapBuffers(mHandleDeviceContext);
     }
-
-    // Resting game
-    ////Sleep(SLEEP_TIME);
 }
 
 long PlatformObjC::getSystemTime() {
-    return 0;////
+    NSDate *now = [NSDate date];
+    double seconds = [now timeIntervalSince1970];
+    return 1000 * (seconds - mTimeStart);
 }
 
 void PlatformObjC::seedRandom(long seed) {

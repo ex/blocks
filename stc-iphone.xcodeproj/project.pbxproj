@@ -15,8 +15,12 @@
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		B909CD1D13201AD500F8BECF /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1713201AD500F8BECF /* EAGLView.m */; };
 		B909CD1E13201AD500F8BECF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1813201AD500F8BECF /* main.m */; };
-		B909CD1F13201AD500F8BECF /* stcAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1A13201AD500F8BECF /* stcAppDelegate.m */; };
-		B909CD2013201AD500F8BECF /* stcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1C13201AD500F8BECF /* stcViewController.m */; };
+		B909CD1F13201AD500F8BECF /* stcAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1A13201AD500F8BECF /* stcAppDelegate.mm */; };
+		B909CD2013201AD500F8BECF /* stcViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B909CD1C13201AD500F8BECF /* stcViewController.mm */; };
+		B91AD31C132027460045DE81 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B91AD319132027460045DE81 /* game.cpp */; };
+		B91AD31E13205B460045DE81 /* PlatformObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B91AD31D13205B460045DE81 /* PlatformObjC.mm */; };
+		B91AD32513205F830045DE81 /* TargaImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B91AD32313205F830045DE81 /* TargaImage.cpp */; };
+		B91AD329132066BB0045DE81 /* back.tga in Resources */ = {isa = PBXBuildFile; fileRef = B91AD328132066BB0045DE81 /* back.tga */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,9 +37,17 @@
 		B909CD1713201AD500F8BECF /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		B909CD1813201AD500F8BECF /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B909CD1913201AD500F8BECF /* stcAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stcAppDelegate.h; sourceTree = "<group>"; };
-		B909CD1A13201AD500F8BECF /* stcAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = stcAppDelegate.m; sourceTree = "<group>"; };
+		B909CD1A13201AD500F8BECF /* stcAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stcAppDelegate.mm; sourceTree = "<group>"; };
 		B909CD1B13201AD500F8BECF /* stcViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stcViewController.h; sourceTree = "<group>"; };
-		B909CD1C13201AD500F8BECF /* stcViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = stcViewController.m; sourceTree = "<group>"; };
+		B909CD1C13201AD500F8BECF /* stcViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stcViewController.mm; sourceTree = "<group>"; };
+		B91AD319132027460045DE81 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ../../trunk/src/game.cpp; sourceTree = SOURCE_ROOT; };
+		B91AD31A132027460045DE81 /* game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = game.hpp; path = ../../trunk/src/game.hpp; sourceTree = SOURCE_ROOT; };
+		B91AD31B132027460045DE81 /* platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = platform.hpp; path = ../../trunk/src/platform.hpp; sourceTree = SOURCE_ROOT; };
+		B91AD31D13205B460045DE81 /* PlatformObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformObjC.mm; sourceTree = "<group>"; };
+		B91AD32013205D280045DE81 /* PlatformObjC.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlatformObjC.hpp; sourceTree = "<group>"; };
+		B91AD32313205F830045DE81 /* TargaImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TargaImage.cpp; sourceTree = "<group>"; };
+		B91AD32413205F830045DE81 /* TargaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TargaImage.h; sourceTree = "<group>"; };
+		B91AD328132066BB0045DE81 /* back.tga */ = {isa = PBXFileReference; lastKnownFileType = file; name = back.tga; path = ../OpenGL/bin/back.tga; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +76,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				B91AD32213205F830045DE81 /* targa */,
+				B91AD30D1320271B0045DE81 /* stc */,
 				B909CD1513201AD500F8BECF /* src */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -84,6 +98,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B91AD328132066BB0045DE81 /* back.tga */,
 				28EC4C5811D54ECE0027AA9F /* stc_iphoneViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* stc_iphone-Info.plist */,
@@ -105,16 +120,38 @@
 		B909CD1513201AD500F8BECF /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B91AD32013205D280045DE81 /* PlatformObjC.hpp */,
+				B91AD31D13205B460045DE81 /* PlatformObjC.mm */,
 				B909CD1613201AD500F8BECF /* EAGLView.h */,
 				B909CD1713201AD500F8BECF /* EAGLView.m */,
 				B909CD1813201AD500F8BECF /* main.m */,
 				B909CD1913201AD500F8BECF /* stcAppDelegate.h */,
-				B909CD1A13201AD500F8BECF /* stcAppDelegate.m */,
+				B909CD1A13201AD500F8BECF /* stcAppDelegate.mm */,
 				B909CD1B13201AD500F8BECF /* stcViewController.h */,
-				B909CD1C13201AD500F8BECF /* stcViewController.m */,
+				B909CD1C13201AD500F8BECF /* stcViewController.mm */,
 			);
 			path = src;
 			sourceTree = "<group>";
+		};
+		B91AD30D1320271B0045DE81 /* stc */ = {
+			isa = PBXGroup;
+			children = (
+				B91AD319132027460045DE81 /* game.cpp */,
+				B91AD31A132027460045DE81 /* game.hpp */,
+				B91AD31B132027460045DE81 /* platform.hpp */,
+			);
+			name = stc;
+			sourceTree = "<group>";
+		};
+		B91AD32213205F830045DE81 /* targa */ = {
+			isa = PBXGroup;
+			children = (
+				B91AD32313205F830045DE81 /* TargaImage.cpp */,
+				B91AD32413205F830045DE81 /* TargaImage.h */,
+			);
+			name = targa;
+			path = ../OpenGL/src/targa;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -167,6 +204,7 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				28EC4C5A11D54ECE0027AA9F /* stc_iphoneViewController.xib in Resources */,
+				B91AD329132066BB0045DE81 /* back.tga in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,8 +217,11 @@
 			files = (
 				B909CD1D13201AD500F8BECF /* EAGLView.m in Sources */,
 				B909CD1E13201AD500F8BECF /* main.m in Sources */,
-				B909CD1F13201AD500F8BECF /* stcAppDelegate.m in Sources */,
-				B909CD2013201AD500F8BECF /* stcViewController.m in Sources */,
+				B909CD1F13201AD500F8BECF /* stcAppDelegate.mm in Sources */,
+				B909CD2013201AD500F8BECF /* stcViewController.mm in Sources */,
+				B91AD31C132027460045DE81 /* game.cpp in Sources */,
+				B91AD31E13205B460045DE81 /* PlatformObjC.mm in Sources */,
+				B91AD32513205F830045DE81 /* TargaImage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

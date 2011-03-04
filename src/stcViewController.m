@@ -5,19 +5,6 @@
 #import "stcViewController.h"
 #import "EAGLView.h"
 
-// Uniform index.
-enum {
-    UNIFORM_TRANSLATE,
-    NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
-
-// Attribute index.
-enum {
-    ATTRIB_VERTEX,
-    ATTRIB_COLOR,
-    NUM_ATTRIBUTES
-};
 
 @interface stcViewController ()
 @property (nonatomic, retain) EAGLContext *context;
@@ -46,6 +33,10 @@ enum {
     animating = FALSE;
     animationFrameInterval = 1;
     self.displayLink = nil;
+    
+    mGame = new Stc::Game();
+    mPlatformObjC = new Stc::PlatformObjC(self);
+    mGame->init(mPlatformObjC);
 }
 
 - (void)dealloc {
@@ -65,13 +56,11 @@ enum {
 
 - (void)viewWillAppear:(BOOL)animated {
     [self startAnimation];
-    
     [super viewWillAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [self stopAnimation];
-    
     [super viewWillDisappear:animated];
 }
 
@@ -114,9 +103,12 @@ enum {
 
 - (void)startAnimation {
     if (!animating) {
-        CADisplayLink *aDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawFrame)];
+        CADisplayLink *aDisplayLink = [CADisplayLink displayLinkWithTarget:self 
+													 selector:@selector(drawFrame)];
+		
         [aDisplayLink setFrameInterval:animationFrameInterval];
-        [aDisplayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        [aDisplayLink addToRunLoop:[NSRunLoop currentRunLoop] 
+								forMode:NSDefaultRunLoopMode];
         self.displayLink = aDisplayLink;
         
         animating = TRUE;
@@ -134,6 +126,7 @@ enum {
 - (void)drawFrame {
     [(EAGLView *)self.view setFramebuffer];
     
+    /*
     // Replace the implementation of this method to do your own custom drawing.
     static const GLfloat squareVertices[] = {
         -0.5f, -0.33f,
@@ -167,8 +160,7 @@ enum {
     glEnableClientState(GL_COLOR_ARRAY);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    
-    [(EAGLView *)self.view presentFramebuffer];
+   */ [(EAGLView *)self.view presentFramebuffer];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -23,72 +23,67 @@ void PlatformObjC::processEvents() {
     
     UIEvent *event = [mController performSelector:@selector(getEventsTouchStart)];
     if (event != nil) {
-        UITouch *touch = [[event allTouches] anyObject];
-        float tx = [touch locationInView:touch.view].x;
-        float ty = [touch locationInView:touch.view].y;
+
+        for (int i = 0; i < [[event allTouches] count]; i++) {
         
-        if (tx < TX_1) {
+            UITouch *touch = [[[event allTouches] allObjects] objectAtIndex: i];
+            float tx = [touch locationInView:touch.view].x;
+            float ty = [touch locationInView:touch.view].y;
+            
             if (ty < TY_1) {
-                mGame->onEventStart(Game::EVENT_SHOW_NEXT);
+                if (tx < TX_1) {
+                    mGame->onEventStart(Game::EVENT_SHOW_NEXT);
+                }
+                else if (tx < TX_2) {
+                    mGame->onEventStart(Game::EVENT_MOVE_LEFT);                    
+                }
+                else {
+                    mGame->onEventStart(Game::EVENT_RESTART);
+                }
             }
             else if (ty < TY_2) {
-                mGame->onEventStart(Game::EVENT_DROP);
+                if (tx < TX_DROP) {
+                    mGame->onEventStart(Game::EVENT_DROP);
+                }
+                else if (tx < TX_DOWN) {
+                    mGame->onEventStart(Game::EVENT_MOVE_DOWN);
+                }
+                else {
+                    mGame->onEventStart(Game::EVENT_ROTATE_CW);
+                }
             }
             else {
+                if (tx < TX_1) {
 #ifdef STC_SHOW_GHOST_PIECE
-                mGame->onEventStart(Game::EVENT_SHOW_SHADOW);
+                    mGame->onEventStart(Game::EVENT_SHOW_SHADOW);
 #endif
+                }
+                else if (tx < TX_2) {
+                    mGame->onEventStart(Game::EVENT_MOVE_RIGHT);
+                }
+                else {
+                    mGame->onEventStart(Game::EVENT_PAUSE);
+                }
             }
+            NSLog(@"-- touchStart: %d %d", int(tx), int(ty));
+            [mController performSelector:@selector(clearEventsTouchStart)];
         }
-        else if (tx < TX_2) {
-            if (ty < TY_1) {
-                mGame->onEventStart(Game::EVENT_MOVE_LEFT);
-            }
-            else if (ty < TY_2) {
-                mGame->onEventStart(Game::EVENT_MOVE_DOWN);
-            }
-            else {
-                mGame->onEventStart(Game::EVENT_MOVE_RIGHT);
-            }
-        }
-        else {
-            if (ty < TY_1) {
-                mGame->onEventStart(Game::EVENT_RESTART);
-            }
-            else if (ty < TY_2) {
-                mGame->onEventStart(Game::EVENT_ROTATE_CW);
-            }
-            else {
-                mGame->onEventStart(Game::EVENT_PAUSE);
-            }
-        }
-        NSLog(@"-- touchStart: %d %d", int(tx), int(ty));
-        [mController performSelector:@selector(clearEventsTouchStart)];
     }
     
-    UIEvent *event2 = [mController performSelector:@selector(getEventsTouchEnd)];
+    event = [mController performSelector:@selector(getEventsTouchEnd)];
     if (event != nil) {
-        UITouch *touch = [[event2 allTouches] anyObject];
+        UITouch *touch = [[event allTouches] anyObject];
         float tx = [touch locationInView:touch.view].x;
-        float ty = [touch locationInView:touch.view].y;
+        float ty = [touch locationInView:touch.view].y; 
+        NSLog(@"-- touchEnd: %d %d", int(tx), int(ty));    
         
-        if (ty < TY_1) {
-            mGame->onEventEnd(Game::EVENT_MOVE_LEFT);
-        }
-        else if (ty > TY_2) {
-            mGame->onEventEnd(Game::EVENT_MOVE_RIGHT);
-        }
-        else {
-            if (tx > TX_2) {
+        // Just cancel any continuos action by now
+        mGame->onEventEnd(Game::EVENT_MOVE_LEFT);
+        mGame->onEventEnd(Game::EVENT_MOVE_RIGHT);
+        mGame->onEventEnd(Game::EVENT_MOVE_DOWN);
 #ifdef STC_AUTO_ROTATION
-                mGame->onEventEnd(Game::EVENT_ROTATE_CW);
+        mGame->onEventEnd(Game::EVENT_ROTATE_CW);
 #endif    
-            }
-            else {
-                mGame->onEventEnd(Game::EVENT_MOVE_DOWN);
-            }
-        }
-        NSLog(@"-- touchEnd: %d %d", int(tx), int(ty));
         [mController performSelector:@selector(clearEventsTouchEnd)];
     }    
 }

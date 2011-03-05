@@ -256,6 +256,11 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = stc_iphone_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					STC_AUTO_ROTATION,
+					STC_WALL_KICK_ENABLED,
+					STC_SHOW_GHOST_PIECE,
+				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = "stc_iphone-Info.plist";
 				PRODUCT_NAME = "stc-iphone";

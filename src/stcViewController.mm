@@ -34,6 +34,7 @@
     animationFrameInterval = 1;
     self.displayLink = nil;
     
+    self.view.multipleTouchEnabled = TRUE;
     mEventTouchStart = nil;
     mEventTouchEnd = nil;
     

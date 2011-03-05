@@ -88,6 +88,9 @@ class PlatformObjC : public Platform {
     static const int TX_1 = 50;    
     static const int TX_2 = 270;    
 
+    static const int TX_DROP = 70;    
+    static const int TX_DOWN = 250;    
+    
     static const int TY_1 = 160;    
     static const int TY_2 = 320;    
     

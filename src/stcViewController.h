@@ -9,15 +9,17 @@
 #include "PlatformObjC.hpp"
 
 @interface stcViewController : UIViewController {
+@private    
     EAGLContext *context;
-    GLuint program;
-    
     BOOL animating;
     NSInteger animationFrameInterval;
     CADisplayLink *displayLink;
-
+    
     Stc::Game *mGame; 
-    Stc::PlatformObjC *mPlatformObjC; 
+    Stc::PlatformObjC *mPlatformObjC;
+    
+    UIEvent *mEventTouchStart;
+    UIEvent *mEventTouchEnd;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
@@ -25,5 +27,11 @@
 
 - (void)startAnimation;
 - (void)stopAnimation;
+
+- (UIEvent *)getEventsTouchStart;
+- (void)clearEventsTouchStart;
+
+- (UIEvent *)getEventsTouchEnd;
+- (void)clearEventsTouchEnd;
 
 @end

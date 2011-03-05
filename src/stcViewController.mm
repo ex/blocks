@@ -34,23 +34,20 @@
     animationFrameInterval = 1;
     self.displayLink = nil;
     
+    mEventTouchStart = nil;
+    mEventTouchEnd = nil;
+    
     mGame = new Stc::Game();
     mPlatformObjC = new Stc::PlatformObjC(self);
     mGame->init(mPlatformObjC);
 }
 
 - (void)dealloc {
-    if (program) {
-        glDeleteProgram(program);
-        program = 0;
-    }
-    
     // Tear down context.
     if ([EAGLContext currentContext] == context)
         [EAGLContext setCurrentContext:nil];
     
     [context release];
-    
     [super dealloc];
 }
 
@@ -67,11 +64,6 @@
 - (void)viewDidUnload {
 	[super viewDidUnload];
 	
-    if (program) {
-        glDeleteProgram(program);
-        program = 0;
-    }
-
     // Tear down context.
     if ([EAGLContext currentContext] == context)
         [EAGLContext setCurrentContext:nil];
@@ -138,6 +130,30 @@
     
     // Release any cached data, images, etc. that aren't in use.
     NSLog(@"-- Memory warning");
+}
+
+- (UIEvent *)getEventsTouchStart {
+    return mEventTouchStart;
+}
+
+- (void)clearEventsTouchStart {
+    mEventTouchStart = nil;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    mEventTouchStart = event;
+}
+
+- (UIEvent *)getEventsTouchEnd {
+    return mEventTouchEnd;
+}
+
+- (void)clearEventsTouchEnd {
+    mEventTouchEnd = nil;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    mEventTouchEnd = event;
 }
 
 @end

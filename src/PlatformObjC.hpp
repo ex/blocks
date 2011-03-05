@@ -80,9 +80,16 @@ class PlatformObjC : public Platform {
     /* Texture size of compounded images */
     static const int TEXTURE_SIZE = 512;
 
-    /* Sizes of background on texture */
+    /* Size of background inside texture */
     static const int BACKGROUND_WIDTH  = 480;    
     static const int BACKGROUND_HEIGHT = 272;    
+
+    /* Touch zones limits */
+    static const int TX_1 = 50;    
+    static const int TX_2 = 270;    
+
+    static const int TY_1 = 160;    
+    static const int TY_2 = 320;    
     
   public:
     PlatformObjC(id controller);

@@ -345,7 +345,7 @@ void Game::moveTetromino(int x, int y) {
                 /* Check if the landing tetromino has created full rows */
                 int numFilledRows = 0;
                 for (j = 1; j < BOARD_TILEMAP_HEIGHT; ++j) {
-                    int hasFullRow = true;
+                    bool hasFullRow = true;
                     for (i = 0; i < BOARD_TILEMAP_WIDTH; ++i) {
                         if (mMap[i][j] == EMPTY_CELL) {
                             hasFullRow = false;

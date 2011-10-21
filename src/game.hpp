@@ -233,6 +233,9 @@ class Game {
     /* Return true if the game is paused, false otherwise */
     bool isPaused()     { return mIsPaused; }
 
+    /* Return true if the game has finished, false otherwise */
+    bool isOver()       { return mIsOver; }
+	
     /* Return true if we must show preview tetromino */    
     bool showPreview()  { return mShowPreview; }
 

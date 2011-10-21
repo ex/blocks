@@ -443,6 +443,12 @@ void Game::update() {
         }
     }
     else {
+		/* Always handle restart event */
+        if ((mEvents & EVENT_RESTART) != 0) {
+            start();
+			return;
+        }
+		
         long currentTime = mPlatform->getSystemTime();
 
         /* Process delayed autoshift */

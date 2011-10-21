@@ -10,6 +10,9 @@
 - (BOOL)application:(UIApplication *)application 
 					 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self.window addSubview:self.viewController.view];
+	
+	[[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight];
+
     return YES;
 }
 

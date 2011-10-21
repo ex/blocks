@@ -15,7 +15,7 @@
 
 @synthesize animating, context, displayLink;
 
-- (void)awakeFromNib {
+- (void) awakeFromNib {
     
     EAGLContext *aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
     
@@ -37,13 +37,15 @@
     self.view.multipleTouchEnabled = TRUE;
     mEventTouchStart = nil;
     mEventTouchEnd = nil;
-    
+	mAlertPaused = nil;
+	mAlertRestart = nil;
+
     mGame = new Stc::Game();
     mPlatformObjC = new Stc::PlatformObjC(self);
     mGame->init(mPlatformObjC);
 }
 
-- (void)dealloc {
+- (void) dealloc {
     // Tear down context.
     if ([EAGLContext currentContext] == context)
         [EAGLContext setCurrentContext:nil];
@@ -52,17 +54,17 @@
     [super dealloc];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void) viewWillAppear:(BOOL)animated {
     [self startAnimation];
     [super viewWillAppear:animated];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void) viewWillDisappear:(BOOL)animated {
     [self stopAnimation];
     [super viewWillDisappear:animated];
 }
 
-- (void)viewDidUnload {
+- (void) viewDidUnload {
 	[super viewDidUnload];
 	
     // Tear down context.
@@ -71,11 +73,11 @@
 	self.context = nil;	
 }
 
-- (NSInteger)animationFrameInterval {
+- (NSInteger) animationFrameInterval {
     return animationFrameInterval;
 }
 
-- (void)setAnimationFrameInterval:(NSInteger)frameInterval {
+- (void) setAnimationFrameInterval:(NSInteger)frameInterval {
     /*
 	 Frame interval defines how many display frames must pass between each time 
 	 the display link fires. The display link will only fire 30 times a second 
@@ -94,7 +96,7 @@
     }
 }
 
-- (void)startAnimation {
+- (void) startAnimation {
     if (!animating) {
         CADisplayLink *aDisplayLink = [CADisplayLink displayLinkWithTarget:self 
 													 selector:@selector(drawFrame)];
@@ -108,7 +110,7 @@
     }
 }
 
-- (void)stopAnimation {
+- (void) stopAnimation {
     if (animating) {
         [self.displayLink invalidate];
         self.displayLink = nil;
@@ -116,16 +118,15 @@
     }
 }
 
-- (void)drawFrame {
+- (void) drawFrame {
     [(EAGLView *)self.view setFramebuffer];
-
-    mGame->update();
-    //mPlatformObjC->renderGame();
+    
+	mGame->update();
     
     [(EAGLView *)self.view presentFramebuffer];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -133,28 +134,62 @@
     NSLog(@"-- Memory warning");
 }
 
-- (UIEvent *)getEventsTouchStart {
+- (UIEvent *) getEventsTouchStart {
     return mEventTouchStart;
 }
 
-- (void)clearEventsTouchStart {
+- (void) clearEventsTouchStart {
     mEventTouchStart = nil;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     mEventTouchStart = event;
 }
 
-- (UIEvent *)getEventsTouchEnd {
+- (UIEvent *) getEventsTouchEnd {
     return mEventTouchEnd;
 }
 
-- (void)clearEventsTouchEnd {
+- (void) clearEventsTouchEnd {
     mEventTouchEnd = nil;
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     mEventTouchEnd = event;
+}
+
+- (UIAlertView *) alertPaused {
+    return mAlertPaused; 
+}
+
+- (void) setAlertPaused:(UIAlertView *)alertPaused {
+	[alertPaused retain];
+	[mAlertPaused release];
+    mAlertPaused = alertPaused;
+}
+
+- (UIAlertView *) alertRestart {
+    return mAlertRestart; 
+}
+
+- (void) setAlertRestart:(UIAlertView *)alertRestart {
+	[alertRestart retain];
+	[mAlertRestart release];
+    mAlertRestart = alertRestart;
+}
+
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	if (alertView == mAlertPaused) {
+		mGame->onEventStart(Stc::Game::EVENT_PAUSE);
+	}
+	if (alertView == mAlertRestart) {
+		if (buttonIndex == 0) {
+			mGame->onEventStart(Stc::Game::EVENT_PAUSE);
+		}
+		else {
+			mGame->onEventStart(Stc::Game::EVENT_RESTART);
+		}		
+	}
 }
 
 @end

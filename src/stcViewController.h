@@ -8,7 +8,7 @@
 
 #include "PlatformObjC.hpp"
 
-@interface stcViewController : UIViewController {
+@interface stcViewController : UIViewController <UIAlertViewDelegate> {
 @private    
     EAGLContext *context;
     BOOL animating;
@@ -20,18 +20,27 @@
     
     UIEvent *mEventTouchStart;
     UIEvent *mEventTouchEnd;
+
+	UIAlertView *mAlertPaused;
+	UIAlertView *mAlertRestart;	
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
 @property (nonatomic) NSInteger animationFrameInterval;
 
-- (void)startAnimation;
-- (void)stopAnimation;
+- (void) startAnimation;
+- (void) stopAnimation;
 
-- (UIEvent *)getEventsTouchStart;
-- (void)clearEventsTouchStart;
+- (UIEvent *) getEventsTouchStart;
+- (void) clearEventsTouchStart;
 
-- (UIEvent *)getEventsTouchEnd;
-- (void)clearEventsTouchEnd;
+- (UIEvent *) getEventsTouchEnd;
+- (void) clearEventsTouchEnd;
+
+- (UIAlertView *) alertPaused;
+- (void) setAlertPaused:(UIAlertView *)alertPaused;
+
+- (UIAlertView *) alertRestart;
+- (void) setAlertRestart:(UIAlertView *)alertRestart;
 
 @end

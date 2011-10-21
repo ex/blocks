@@ -38,7 +38,17 @@ void PlatformObjC::processEvents() {
                     mGame->onEventStart(Game::EVENT_MOVE_LEFT);                    
                 }
                 else {
-                    mGame->onEventStart(Game::EVENT_RESTART);
+					if (mGame->isOver()) {
+						mGame->onEventStart(Game::EVENT_RESTART);
+					}
+					else {
+						mGame->onEventStart(Game::EVENT_PAUSE);
+
+						[mController setAlertRestart: [[UIAlertView alloc] initWithTitle:@"Warning" message:@"Do you want to restart?"
+																				delegate:mController cancelButtonTitle:@"Cancel" 
+																	   otherButtonTitles:@"Restart", nil]];
+						[[mController alertRestart] show];
+					}
                 }
             }
             else if (ty < TY_2) {
@@ -62,6 +72,11 @@ void PlatformObjC::processEvents() {
                     mGame->onEventStart(Game::EVENT_MOVE_RIGHT);
                 }
                 else {
+					[mController setAlertPaused: [[UIAlertView alloc] initWithTitle:@"Simple Tetris Clone" message:@"Game is paused"
+												                            delegate:mController cancelButtonTitle:@"Continue" 
+                                                                            otherButtonTitles:nil, nil]];
+					[[mController alertPaused] show];
+					
                     mGame->onEventStart(Game::EVENT_PAUSE);
                 }
             }
@@ -277,6 +292,8 @@ void PlatformObjC::renderGame() {
 
     // Check if the game state has changed, if so redraw
     if (mGame->hasChanged()) {
+		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw background
         glVertexPointer(3, GL_FLOAT, 0, mBackgroundVertices);

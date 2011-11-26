@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="../bin"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="stcpp.$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -96,7 +96,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="../bin"
-			IntermediateDirectory="$(ConfigurationName)/$(ProjectName)"
+			IntermediateDirectory="stcpp.$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -139,7 +139,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="sdl.lib  sdlmain.lib SDL_image.lib"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

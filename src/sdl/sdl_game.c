@@ -53,7 +53,7 @@ int platformInit(StcGame *game) {
 }
 
 /* Return the current system time in milliseconds */
-long platformGetSystemTime() {
+long platformGetSystemTime(void) {
     return SDL_GetTicks();
 }
 
@@ -273,7 +273,7 @@ void platformSeedRandom(long seed) {
 }
 
 /* Return a random positive integer number */
-int platformRandom() {
+int platformRandom(void) {
     return rand();
 }
 

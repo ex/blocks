@@ -62,6 +62,10 @@ Platform = {
     
     m_blocks = nil;
     m_numbers = nil;
+
+    m_musicLoop = nil;
+    m_musicIntro = nil;
+    m_musicMute = nil;
 };
     
 -- Initializes platform.
@@ -76,6 +80,15 @@ function Platform:init()
     self.m_bmpBlocks:setFilter("nearest", "nearest");    
     local w = self.m_bmpBlocks:getWidth();
     local h = self.m_bmpBlocks:getHeight();
+
+    -- Load music.
+	self.m_musicIntro = love.audio.newSource("stc_theme_intro.ogg");
+	self.m_musicIntro:setVolume(0.5);
+	self.m_musicIntro:play();
+	self.m_musicLoop = love.audio.newSource("stc_theme_loop.ogg", "stream");
+	self.m_musicLoop:setLooping(true);
+	self.m_musicLoop:setVolume(0.5);
+	m_musicMute = false;
 
     -- Create quads for blocks
     self.m_blocks = {};
@@ -106,7 +119,7 @@ end
 -- Process events and notify game.
 function Platform:onKeyDown(key)
     if (key == "escape") then
-        love.event.push("q");
+        love.event.push("quit");
     end
     if ((key == "left") or (key == "a")) then
         Game:onEventStart(Game.Event.MOVE_LEFT);
@@ -149,6 +162,22 @@ function Platform:onKeyUp(key)
     end
     if ((key == "up") or (key == "w")) then
         Game:onEventEnd(Game.Event.ROTATE_CW);
+    end
+    if (key == "f4") then
+		if (self.m_musicMute) then
+			if (self.m_musicIntro) then
+				self.m_musicIntro:resume();
+			else
+				self.m_musicLoop:resume();
+			end
+		else
+			if (self.m_musicIntro) then
+				self.m_musicIntro:pause();
+			else
+				self.m_musicLoop:pause();
+			end
+		end
+		self.m_musicMute = not self.m_musicMute;
     end
 end
 
@@ -237,6 +266,14 @@ function Platform:renderGame()
 
         Platform:drawNumber(PIECES_X, PIECES_Y, Game:stats().totalPieces, PIECES_LENGTH, Game.Cell.WHITE);
     end
+
+	-- Adding music loop check here for convenience.
+	if (self.m_musicIntro) then
+		if (self.m_musicIntro:isStopped()) then
+			self.m_musicIntro = nil;
+			self.m_musicLoop:play();
+		end
+	end
 end
 
 function Platform:getSystemTime()

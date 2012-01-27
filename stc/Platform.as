@@ -18,6 +18,9 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.geom.Point;
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundTransform;
 import flash.text.TextField;
 import flash.text.Font;
 import flash.text.TextFieldAutoSize;
@@ -93,6 +96,9 @@ public class Platform {
     private static const FLA_POPUP_PAUSE:String = "mcPopUpPaused";
     private static const FLA_POPUP_OVER:String = "mcPopUpOver";
 
+    /* Symbol names */
+    private static const MUSIC_VOLUME:Number = 0.4;
+
     /* Platform data */
     private var mPopUp:Sprite;
     private var mPopUpLabel:TextField;
@@ -101,6 +107,10 @@ public class Platform {
     private var mBmpBlocks:BitmapData;
     private var mBmpNumbers:BitmapData;
     private var mGame:Game;
+
+    private var mMusicSound:Sound;
+    private var mMusicChannel:SoundChannel;
+    private var mMusicPosition:Number = 0;
 
     /*
      * Initializes platform.
@@ -162,6 +172,11 @@ public class Platform {
         mGame.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         mGame.stage.addEventListener(KeyboardEvent.KEY_DOWN, readInput);
         mGame.stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+
+        /* Play music background */
+        className = Assets.musicLoop;
+        mMusicSound = new className() as Sound;
+        mMusicChannel = mMusicSound.play(0, int.MAX_VALUE, new SoundTransform(MUSIC_VOLUME));
     }
 
     /* Return the current system time in milliseconds */
@@ -224,6 +239,16 @@ public class Platform {
             break;
         case Keyboard.F3:
             mGame.events |= Game.EVENT_SHOW_SHADOW;
+            break;
+        case Keyboard.F4:
+            if (mMusicChannel) {
+                mMusicPosition = mMusicChannel.position;
+                mMusicChannel.stop();
+                mMusicChannel = null;
+            }
+            else if (!mGame.isPaused) {
+                mMusicChannel = mMusicSound.play(mMusicPosition, int.MAX_VALUE, new SoundTransform(MUSIC_VOLUME));
+            }
             break;
         }
     }

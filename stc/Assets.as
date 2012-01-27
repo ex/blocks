@@ -20,11 +20,16 @@ public class Assets {
     [Embed(source = "../res/numbers.png")]
     public static const mcBmpNumbers:Class;
 
-    /* Source: http://www.proggyfonts.com/index.php?menu=download */
-    [Embed(systemFont = "ProggyCleanTTSZ",
+    /* Source: http://www.proggyfonts.com/download/download_bridge.php?get=ProggyCleanSZ.ttf.zip */
+    [Embed(source='../res/ProggyCleanSZ.ttf',
            fontName = "EmbeddedProggy",
            unicodeRange = "U+0041-U+005A", /* A-Z */
+           embedAsCFF='true',
            mimeType="application/x-font")]
     public static const fontProggy:Class;
+
+    [Embed(source = "../res/stc_theme_loop.mp3")]
+    public static const musicLoop:Class;
+
 }
 }

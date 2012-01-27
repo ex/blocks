@@ -620,9 +620,9 @@ public class Game extends MovieClip {
 
     /* This event is called when the falling tetromino is moved */
     private function onTetrominoMoved():void {
-        var y:int = 0;
+        var y:int = 1;
         /* Calculate number of cells where shadow tetromino would be */
-        while (!checkCollision(0, ++y));
+        while (!checkCollision(0, y)) { y += 1; };
         shadowGap = y - 1;
 
         stateChanged = true;

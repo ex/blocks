@@ -7,8 +7,6 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-#define STC_SHOW_GHOST_PIECE
-
 using System;
 using UnityEngine;
 
@@ -83,12 +81,10 @@ public class Platform
         {
             m_game.OnEventStart(Game.Event.SHOW_NEXT);
         }
-#if STC_SHOW_GHOST_PIECE
         if (Input.GetKeyDown(KeyCode.F3))
         {
             m_game.OnEventStart(Game.Event.SHOW_SHADOW);
         }
-#endif
 
         if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.A))
         {
@@ -204,9 +200,8 @@ public class Platform
                 }
             }
 
-#if STC_SHOW_GHOST_PIECE
             // Draw shadow tetromino
-            if (m_game.showShadow && (m_game.shadowGap > 0))
+            if (m_game.showShadow && (m_game.shadowGap >= 0))
             {
                 for (i = 0; i < Game.TETROMINO_SIZE; ++i)
                 {
@@ -226,9 +221,9 @@ public class Platform
                     }
                 }
             }
-#endif
+
             // Inform to the game that we are done with the move.
-            m_game.onMoveProcessed();
+            m_game.OnMoveProcessed();
         }
 
         // Check if the game state has changed, if so redraw.
@@ -294,7 +289,7 @@ public class Platform
             }
 
             // Inform to the game that we are done with the changed state.
-            m_game.onChangeProcessed();
+            m_game.OnChangeProcessed();
         }
     }
 

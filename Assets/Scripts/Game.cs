@@ -9,7 +9,6 @@
 /* -------------------------------------------------------------------------- */
 
 #define STC_AUTO_ROTATION
-#define STC_SHOW_GHOST_PIECE
 #define STC_WALL_KICK_ENABLED
 
 namespace Stc
@@ -26,7 +25,7 @@ public class Game
     public const int BOARD_TILEMAP_HEIGHT = 22;
 
     // Initial time delay (in milliseconds) between falling moves.
-    public const int INIT_DELAY_FALL = 1000;
+    private const int INIT_DELAY_FALL = 1000;
 
     // Score points given by filled rows (we use the original NES * 10)
     // http://tetris.wikia.com/wiki/Scoring
@@ -72,6 +71,9 @@ public class Game
     // Don't need to change this section unless you're changing the gameplay.
     //--------------------------------------------------------------------------
 
+    // Number of tetromino types.
+    private const int TETROMINO_TYPES = 7;
+
     // Error codes.
     public enum Error
     { 
@@ -104,9 +106,6 @@ public class Game
     // We are going to store the tetromino cells in a square matrix
     // of this size (this is the size of the biggest tetromino).
     public const int TETROMINO_SIZE  = 4;
-
-    // Number of tetromino types.
-    private const int TETROMINO_TYPES = 7;
 
     // Tetromino definitions.
     // They are indexes and must be between: 0 - [TETROMINO_TYPES - 1]
@@ -202,10 +201,10 @@ public class Game
     };
 
     // The platform must call this method after processing a changed state.
-    public void onChangeProcessed()          { m_stateChanged = false; }
+    public void OnChangeProcessed()          { m_stateChanged = false; }
 
     // The platform must call this method after processing a tetramino move.
-    public void onMoveProcessed()            { m_stateMoved = false; }
+    public void OnMoveProcessed()            { m_stateMoved = false; }
 
     // Return the cell at the specified position.
     public Cell GetCell(int column, int row) { return m_map[column, row]; }
@@ -234,13 +233,11 @@ public class Game
     // Return true if we must show preview tetromino.
     public bool showPreview                  { get { return m_showPreview; } }
 
-#if STC_SHOW_GHOST_PIECE
     // Return true if we must show ghost shadow.
     public bool showShadow                   { get { return m_showShadow; } }
 
     // Return height gap between shadow and falling tetromino.
     public int shadowGap                     { get { return m_shadowGap; } }
-#endif
 
     // Set matrix elements to indicated value.
     private void SetMatrixCells(Cell[,] matrix, int width, int height, Cell value)
@@ -330,10 +327,8 @@ public class Game
         m_isPaused = false;
         m_showPreview = true;
         m_events = Event.NONE;
-        m_FallingDelay = INIT_DELAY_FALL;
-#if STC_SHOW_GHOST_PIECE
+        m_fallingDelay = INIT_DELAY_FALL;
         m_showShadow = true;
-#endif
 
         // Initialize game statistics.
         m_stats.score = 0;
@@ -538,13 +533,13 @@ public class Game
             {
                 if (m_fallingBlock.cells[i, j] != Cell.EMPTY)
                 {
-                    // Check the tetromino would be inside the left, right and bottom borders.
+                    // Check that tetromino would be inside the left, right and bottom borders.
                     if ((newx + i < 0) || (newx + i >= BOARD_TILEMAP_WIDTH)
                                        || (newy + j >= BOARD_TILEMAP_HEIGHT))
                     {
                         return true;
                     }
-                    // Check the tetromino won't collide with existing cells in the map.
+                    // Check that tetromino won't collide with existing cells in the map.
                     if (m_map[newx + i, newy + j] != Cell.EMPTY) 
                     {
                         return true;
@@ -587,7 +582,7 @@ public class Game
             m_stats.level++;
 
             // Increase speed for falling tetrominoes.
-            m_FallingDelay = (int)(DELAY_FACTOR_FOR_LEVEL_UP * m_FallingDelay 
+            m_fallingDelay = (int)(DELAY_FACTOR_FOR_LEVEL_UP * m_fallingDelay 
                                   / DELAY_DIVISOR_FOR_LEVEL_UP);
         }
     }
@@ -701,9 +696,11 @@ public class Game
     // Hard drop.
     private void DropTetromino()
     {
-#if STC_SHOW_GHOST_PIECE
-        MoveTetromino(0, m_shadowGap);
-        MoveTetromino(0, 1); // Force lock.
+        // Shadow has already calculated the landing position.
+        m_fallingBlock.y += m_shadowGap;
+
+        // Force lock.
+        MoveTetromino(0, 1); 
 
         // Update score.
         if (m_showShadow)
@@ -716,18 +713,16 @@ public class Game
             m_stats.score += (long)(SCORE_2_FILLED_ROW * (m_stats.level + 1)
                                    / SCORE_DROP_DIVISOR);
         }
-#else
-        int y = 0;
-        // Calculate number of cells to drop.
-        while (!CheckCollision(0, ++y));
-        MoveTetromino(0, y - 1);
-        MoveTetromino(0, 1); // Force lock.
+    }
 
-        // Update score.
-        m_stats.score += (long)(SCORE_2_FILLED_ROW * (m_stats.level + 1) 
-                               / SCORE_DROP_DIVISOR);
-#endif
-        m_stateChanged = true;
+    // This event is called when the falling tetromino is moved.
+    private void OnTetrominoMoved()
+    {
+        int y = 0;
+        // Calculate number of cells where shadow tetromino would be.
+        while (!CheckCollision(0, ++y));
+        m_shadowGap = y - 1;
+        m_stateMoved = true;
     }
 
     // Main game function called every frame.
@@ -812,13 +807,11 @@ public class Game
                         m_showPreview = !m_showPreview;
                         m_stateChanged = true;
                     }
-#if STC_SHOW_GHOST_PIECE
                     if ((m_events & Event.SHOW_SHADOW) != 0)
                     {
                         m_showShadow = !m_showShadow;
                         m_stateChanged = true;
                     }
-#endif
                     if ((m_events & Event.DROP) != 0) 
                     {
                         DropTetromino();
@@ -848,7 +841,7 @@ public class Game
                     m_events = Event.NONE;
                 }
                 // Check if it's time to move downwards the falling tetromino.
-                if (currentTime - m_lastFallTime >= m_FallingDelay) 
+                if (currentTime - m_lastFallTime >= m_fallingDelay) 
                 {
                     MoveTetromino(0, 1);
                     m_lastFallTime = currentTime;
@@ -859,18 +852,6 @@ public class Game
         }
         // Draw game state.
         m_platform.RenderGame();
-    }
-
-    // This event is called when the falling tetromino is moved.
-    private void OnTetrominoMoved()
-    {
-#if STC_SHOW_GHOST_PIECE
-        int y = 0;
-        // Calculate number of cells where shadow tetromino would be.
-        while (!CheckCollision(0, ++y));
-        m_shadowGap = y - 1;
-#endif
-        m_stateMoved = true;
     }
 
     // Process a key down event.
@@ -950,13 +931,11 @@ public class Game
     private bool  m_isOver;         // true if the game is over
     private bool  m_showPreview;    // true if we must show the preview block
 
-#if STC_SHOW_GHOST_PIECE
     private bool m_showShadow; // true if we must show the shadow block
     private int  m_shadowGap;  // distance between falling block and shadow
-#endif
 
     private long m_systemTime;   // system time in milliseconds
-    private int  m_FallingDelay; // delay time for falling tetrominoes
+    private int  m_fallingDelay; // delay time for falling tetrominoes
     private long m_lastFallTime; // last time the falling tetromino dropped
 
     // For delayed autoshift: http://tetris.wikia.com/wiki/DAS

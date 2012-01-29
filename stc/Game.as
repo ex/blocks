@@ -165,6 +165,15 @@ public class Game {
 
     public var shadowGap:int;    // height gap between shadow and falling tetromino
 
+    // "Master mode" aka invisible board mode.
+    private const MASTER_FACTOR:int = 5;
+    private var mMasterMode:Boolean = false;
+    public function get masterMode():Boolean { return mMasterMode; }
+    public function set masterMode(mode:Boolean):void {
+        mMasterMode = mode;
+        stateChanged = true;
+    }
+
     // Game events are stored in bits in this variable.
     // must be cleared to EVENT_NONE after being used.
     public var events:int;
@@ -404,22 +413,29 @@ public class Game {
         stats.lines += filledRows;
 
         // Increase score accordingly to the number of filled rows
+        var score:Number;
         switch (filledRows) {
         case 1:
-            stats.score += (SCORE_1_FILLED_ROW * (stats.level + 1));
+            score = (SCORE_1_FILLED_ROW * (stats.level + 1));
             break;
         case 2:
-            stats.score += (SCORE_2_FILLED_ROW * (stats.level + 1));
+            score = (SCORE_2_FILLED_ROW * (stats.level + 1));
             break;
         case 3:
-            stats.score += (SCORE_3_FILLED_ROW * (stats.level + 1));
+            score = (SCORE_3_FILLED_ROW * (stats.level + 1));
             break;
         case 4:
-            stats.score += (SCORE_4_FILLED_ROW * (stats.level + 1));
+            score = (SCORE_4_FILLED_ROW * (stats.level + 1));
             break;
         default:
             errorCode = GAME_ERROR_ASSERT;    // This can't happen
+            return;
         }
+        if (mMasterMode) {
+            score *= MASTER_FACTOR;
+        }
+        stats.score += score;
+
         // Check if we need to update level
         if (stats.lines >= FILLED_ROWS_FOR_LEVEL_UP * (stats.level + 1)) {
             stats.level++;
@@ -457,6 +473,7 @@ public class Game {
                             }
                         }
                     }
+                    platform.refreshBoard();
 
                     // Check if the landing tetromino has created full rows
                     numFilledRows = 0;

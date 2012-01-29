@@ -118,6 +118,9 @@ public class Platform extends MovieClip {
     private var mMusicChannel:SoundChannel;
     private var mMusicPosition:Number = 0;
 
+    private var mRefreshBoard:Boolean;
+    private var mRefreshFrames:int;
+
     // Initializes platform.
     public function init():void {
         stage.quality = "HIGH";
@@ -164,7 +167,7 @@ public class Platform extends MovieClip {
         textFormat.color = 0xBBBBBB;
 
         mPopUpLabel = new TextField();
-        mPopUpLabel.embedFonts = true;  // This field text uses a embedded font
+        mPopUpLabel.embedFonts = true;
         mPopUpLabel.selectable = false;
         mPopUpLabel.autoSize = TextFieldAutoSize.CENTER;
         mPopUpLabel.defaultTextFormat = textFormat;
@@ -179,7 +182,7 @@ public class Platform extends MovieClip {
         creditFormat.color = 0xFFFFFF;
 
         mPopUpCredits = new TextField();
-        mPopUpCredits.embedFonts = true;  // This field text uses a embedded font
+        mPopUpCredits.embedFonts = true;
         mPopUpCredits.selectable = false;
         mPopUpCredits.autoSize = TextFieldAutoSize.CENTER;
         mPopUpCredits.defaultTextFormat = creditFormat;
@@ -202,6 +205,13 @@ public class Platform extends MovieClip {
         mMusicSound = new className() as Sound;
         mMusicChannel = mMusicSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
         mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+
+        mRefreshBoard = false;
+        mRefreshFrames = 0;
+    }
+
+    public function refreshBoard():void {
+        mRefreshBoard = true;
     }
 
     // Makes the background music to loop in section
@@ -297,6 +307,12 @@ public class Platform extends MovieClip {
                 mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
             }
             break;
+        case Keyboard.ENTER:
+        case Keyboard.NUMPAD_ENTER:
+            if (!mGame.isOver) {
+                mGame.masterMode = !mGame.masterMode;
+            }
+            break;
         }
     }
 
@@ -305,6 +321,7 @@ public class Platform extends MovieClip {
             mPopUpLabel.text = "GAME OVER";
         }
         mPopUp.visible = isOver;
+        mGame.masterMode = false;
     }
 
     public function onGamePaused(isPaused:Boolean):void {
@@ -341,6 +358,12 @@ public class Platform extends MovieClip {
 
     // Render the state of the game using platform functions
     public function renderGame():void {
+        if (mRefreshFrames > 0) {
+            if (--mRefreshFrames == 0) {
+                mGame.stateChanged = true;
+            }
+        }
+
         // Don't draw if it's not necessary
         if (mGame.stateChanged) {
             var i:int, j:int;
@@ -372,11 +395,27 @@ public class Platform extends MovieClip {
                 }
             }
             // Draw the cells in the board
-            for (i = 0; i < Game.BOARD_WIDTH; ++i) {
-                for (j = 0; j < Game.BOARD_HEIGHT; ++j) {
-                    if (mGame.map[i][j] != Game.EMPTY_CELL) {
-                        drawTile(BOARD_X + (TILE_SIZE * i),
-                                BOARD_Y + (TILE_SIZE * j), mGame.map[i][j]);
+            if (mGame.masterMode) {
+                if (mRefreshBoard) {
+                    for (i = 0; i < Game.BOARD_WIDTH; ++i) {
+                        for (j = 0; j < Game.BOARD_HEIGHT; ++j) {
+                            if (mGame.map[i][j] != Game.EMPTY_CELL) {
+                                drawTile(BOARD_X + (TILE_SIZE * i),
+                                        BOARD_Y + (TILE_SIZE * j), mGame.map[i][j]);
+                            }
+                        }
+                    }
+                    mRefreshBoard = false;
+                    mRefreshFrames = 10;
+                }
+            }
+            else {
+                for (i = 0; i < Game.BOARD_WIDTH; ++i) {
+                    for (j = 0; j < Game.BOARD_HEIGHT; ++j) {
+                        if (mGame.map[i][j] != Game.EMPTY_CELL) {
+                            drawTile(BOARD_X + (TILE_SIZE * i),
+                                    BOARD_Y + (TILE_SIZE * j), mGame.map[i][j]);
+                        }
                     }
                 }
             }

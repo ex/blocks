@@ -5,7 +5,7 @@
     <movie outputType="Application" />
     <movie input="" />
     <movie path="bin\fstc.swf" />
-    <movie fps="30" />
+    <movie fps="60" />
     <movie width="480" />
     <movie height="272" />
     <movie version="10" />
@@ -71,7 +71,7 @@
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="stc\Game.as" />
+    <compile path="stc\Platform.as" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>

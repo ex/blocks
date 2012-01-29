@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Platform.as                                                              */
 /*   This class contains Flash/Flex especific code.                           */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
@@ -29,42 +29,46 @@ import flash.ui.Keyboard;
 import flash.utils.getDefinitionByName;
 import flash.utils.getTimer;
 
-/* Flash platform implementation for tetris game */
-public class Platform {
-    /*
-     * UI layout (quantities are expressed in pixels)
-     */
+// Compiled with Flex 4.0
+[SWF(backgroundColor="#FFFFFF", frameRate="60", width="480", height="272")]
+[Frame(factoryClass="stc.Preloader")]
 
-    /* Size of square tile */
+// Flash platform implementation for tetris game
+public class Platform extends MovieClip {
+    // -------------------------------------------------------------------------
+    // UI layout (quantities are expressed in pixels)
+    // -------------------------------------------------------------------------
+
+    // Size of square tile
     private static const TILE_SIZE:int = 12;
 
     private static const SCREEN_WIDTH:int = 480;
     private static const SCREEN_HEIGHT:int = 272;
 
-    /* Board up-left corner coordinates */
+    // Board up-left corner coordinates
     private static const BOARD_X:int = 180;
     private static const BOARD_Y:int = 4;
 
-    /* Preview tetromino position */
+    // Preview tetromino position
     private static const PREVIEW_X:int = 112;
     private static const PREVIEW_Y:int = 210;
 
-    /* Score position and length on screen */
+    // Score position and length on screen
     private static const SCORE_X:int = 72;
     private static const SCORE_Y:int = 52;
     private static const SCORE_LENGTH:int = 10;
 
-    /* Lines position and length on screen */
+    // Lines position and length on screen
     private static const LINES_X:int = 108;
     private static const LINES_Y:int = 34;
     private static const LINES_LENGTH:int = 5;
 
-    /* Level position and length on screen */
+    // Level position and length on screen
     private static const LEVEL_X:int = 108;
     private static const LEVEL_Y:int = 16;
     private static const LEVEL_LENGTH:int = 5;
 
-    /* Tetromino subtotals position */
+    // Tetromino subtotals position
     private static const TETROMINO_X:int = 425;
     private static const TETROMINO_L_Y:int = 53;
     private static const TETROMINO_I_Y:int = 77;
@@ -75,33 +79,35 @@ public class Platform {
     private static const TETROMINO_J_Y:int = 197;
     private static const TETROMINO_LENGTH:int = 5;
 
-    /* Tetromino total position */
+    // Tetromino total position
     private static const PIECES_X:int = 418;
     private static const PIECES_Y:int = 221;
     private static const PIECES_LENGTH:int = 6;
 
-    /* Size of number */
+    // Size of number
     private static const NUMBER_WIDTH:int = 7;
     private static const NUMBER_HEIGHT:int = 9;
 
-    /* Keyboard codes */
+    // Keyboard codes
     private static const KEY_A:int = "A".charCodeAt();
     private static const KEY_W:int = "W".charCodeAt();
     private static const KEY_S:int = "S".charCodeAt();
     private static const KEY_D:int = "D".charCodeAt();
 
-    /* Symbol names */
+    // Symbol names
     private static const BMP_BACK:String = "mcBmpBack";
     private static const BMP_TILE_BLOCKS:String = "mcBmpBlocks";
     private static const FLA_POPUP_PAUSE:String = "mcPopUpPaused";
     private static const FLA_POPUP_OVER:String = "mcPopUpOver";
 
-    /* Symbol names */
-    private static const MUSIC_VOLUME:Number = 0.4;
+    // Symbol names
+    private static const MUSIC_VOLUME:Number = 0.5;
+    private static const MUSIC_LOOP_START:int = 3693;
 
-    /* Platform data */
+    // Platform data
     private var mPopUp:Sprite;
     private var mPopUpLabel:TextField;
+    private var mPopUpCredits:TextField;
     private var mBmpCanvas:BitmapData;
     private var mBmpTextCanvas:BitmapData;
     private var mBmpBlocks:BitmapData;
@@ -112,84 +118,112 @@ public class Platform {
     private var mMusicChannel:SoundChannel;
     private var mMusicPosition:Number = 0;
 
-    /*
-     * Initializes platform.
-     */
-    public function Platform(game:Game):void {
-        /* Platform Setup */
-        mGame = game;
-        mGame.stage.quality = "MEDIUM";
+    // Initializes platform.
+    public function init():void {
+        stage.quality = "HIGH";
 
-        /* Load background and add it to scene */
+        // Platform Setup
+        mGame = new Game();
+        mGame.platform = this;
+        mGame.startGame();
+
+        // Load background and add it to scene
         var className:Class = Assets.mcBmpBack;
         var bmpData:BitmapData = new className().bitmapData as BitmapData;
-        mGame.addChild(new Bitmap(bmpData));
+        addChild(new Bitmap(bmpData));
 
-        /* Create canvas for drawing tiles */
+        // Create canvas for drawing tiles
         mBmpCanvas = new BitmapData(SCREEN_WIDTH, SCREEN_HEIGHT, true, 0);
-        mGame.addChild(new Bitmap(mBmpCanvas));
+        addChild(new Bitmap(mBmpCanvas));
 
-        /* Create canvas for drawing text info */
+        // Create canvas for drawing text info
         mBmpTextCanvas = new BitmapData(SCREEN_WIDTH, SCREEN_HEIGHT, true, 0);
-        mGame.addChild(new Bitmap(mBmpTextCanvas));
+        addChild(new Bitmap(mBmpTextCanvas));
 
-        /* Load tile images */
+        // Load tile images
         className = Assets.mcBmpBlocks;
         mBmpBlocks = new className().bitmapData as BitmapData;
 
-        /* Load number images */
+        // Load number images
         className = Assets.mcBmpNumbers;
         mBmpNumbers = new className().bitmapData as BitmapData;
 
-        /* Create popup */
+        // Create popup
         mPopUp = new MovieClip();
         var popupBack:Sprite = new Sprite;
         popupBack.graphics.beginFill(0x000000);
         popupBack.graphics.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         popupBack.graphics.endFill();
-        popupBack.alpha = 0.5;
+        popupBack.alpha = 0.6;
         mPopUp.addChild(popupBack);
 
         var textFormat:TextFormat = new TextFormat();
-        textFormat.font = "EmbeddedProggy";
-        textFormat.size = 30;
+        textFormat.font = "ConsoleEx";
+        textFormat.size = 28;
         textFormat.letterSpacing = 3;
-        textFormat.color = 0xCCCCCC;
+        textFormat.color = 0xBBBBBB;
 
         mPopUpLabel = new TextField();
-        mPopUpLabel.embedFonts = true;  /* This field text uses a embedded font */
+        mPopUpLabel.embedFonts = true;  // This field text uses a embedded font
         mPopUpLabel.selectable = false;
         mPopUpLabel.autoSize = TextFieldAutoSize.CENTER;
         mPopUpLabel.defaultTextFormat = textFormat;
         mPopUpLabel.x = SCREEN_WIDTH / 2;
-        mPopUpLabel.y = SCREEN_HEIGHT / 2 - 15;
+        mPopUpLabel.y = SCREEN_HEIGHT / 2 - 20;
         mPopUp.addChild(mPopUpLabel);
 
+        var creditFormat:TextFormat = new TextFormat();
+        creditFormat.font = "ConsoleEx";
+        creditFormat.size = 13;
+        creditFormat.letterSpacing = 1.5;
+        creditFormat.color = 0xFFFFFF;
+
+        mPopUpCredits = new TextField();
+        mPopUpCredits.embedFonts = true;  // This field text uses a embedded font
+        mPopUpCredits.selectable = false;
+        mPopUpCredits.autoSize = TextFieldAutoSize.CENTER;
+        mPopUpCredits.defaultTextFormat = creditFormat;
+        mPopUpCredits.text = "Programming: Laurens Rodriguez\n"
+                            +"      Music: Jarno Alanko";
+        mPopUpCredits.x = SCREEN_WIDTH / 2 - 140;
+        mPopUpCredits.y = SCREEN_HEIGHT / 2 + 65;
+        mPopUp.addChild(mPopUpCredits);
+
         mPopUp.visible = false;
-        mGame.addChild(mPopUp);
+        addChild(mPopUp);
 
-        /* Registering events */
-        mGame.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        mGame.stage.addEventListener(KeyboardEvent.KEY_DOWN, readInput);
-        mGame.stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+        // Registering events
+        stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, readInput);
+        stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 
-        /* Play music background */
+        // Play music background
         className = Assets.musicLoop;
         mMusicSound = new className() as Sound;
-        mMusicChannel = mMusicSound.play(0, int.MAX_VALUE, new SoundTransform(MUSIC_VOLUME));
+        mMusicChannel = mMusicSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
+        mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
     }
 
-    /* Return the current system time in milliseconds */
+    // Makes the background music to loop in section
+    public function onSoundComplete(event:Event):void {
+        if (mMusicChannel) {
+            mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+            mMusicChannel = mMusicSound.play(MUSIC_LOOP_START, 0, new SoundTransform(MUSIC_VOLUME));
+            mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+        }
+    }
+
+    // Return the current system time in milliseconds
     public function getSystemTime():Number {
         return getTimer();
     }
 
-    /* Called every frame */
+    // Called every frame
     public function onEnterFrame(event:Event):void {
         mGame.gameUpdate();
     }
 
-    /* Called on mouse click */
+    // Called on mouse click
     public function onMouseClick(event:MouseEvent):void {
         if (mGame.isPaused) {
             mGame.events |= Game.EVENT_PAUSE;
@@ -199,12 +233,12 @@ public class Platform {
         }
     }
 
-    /* Read input device and notify game */
+    // Read input device and notify game
     public function readInput(event:KeyboardEvent):void {
 
-        /* On key pressed */
+        // On key pressed
         switch (event.keyCode) {
-        /* On quit game */
+        // On quit game
         case Keyboard.ESCAPE:
             mGame.isOver = true;
             onGameOver(mGame.isOver);
@@ -229,6 +263,17 @@ public class Platform {
             mGame.events |= Game.EVENT_DROP;
             break;
         case Keyboard.F5:
+            if (mGame.isOver) {
+                // Restart music game if game was over.
+                if (mMusicChannel) {
+                    mMusicPosition = mMusicChannel.position;
+                    mMusicChannel.stop();
+                    mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+                }
+                mMusicChannel = mMusicSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
+                mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+            }
+
             mGame.events |= Game.EVENT_RESTART;
             break;
         case Keyboard.F1:
@@ -244,10 +289,12 @@ public class Platform {
             if (mMusicChannel) {
                 mMusicPosition = mMusicChannel.position;
                 mMusicChannel.stop();
+                mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
-            else if (!mGame.isPaused) {
-                mMusicChannel = mMusicSound.play(mMusicPosition, int.MAX_VALUE, new SoundTransform(MUSIC_VOLUME));
+            else {
+                mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
+                mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
             }
             break;
         }
@@ -267,7 +314,7 @@ public class Platform {
         mPopUp.visible = isPaused;
     }
 
-    /* Draw a tile from a tetromino */
+    // Draw a tile from a tetromino
     private function drawTile(x:int, y:int, tile:int, shadow:int = 0):void {
         var recSource:Rectangle = new Rectangle();
         recSource.x = TILE_SIZE * tile;
@@ -277,7 +324,7 @@ public class Platform {
         mBmpCanvas.copyPixels(mBmpBlocks, recSource, new Point(x, y));
     }
 
-    /* Draw a number on the given position */
+    // Draw a number on the given position
     private function drawNumber(x:int, y:int, number:int, length:int, color:int):void {
         var recSource:Rectangle = new Rectangle();
         recSource.y = NUMBER_HEIGHT * color;
@@ -292,18 +339,16 @@ public class Platform {
         } while (++pos < length);
     }
 
-    /*
-     * Render the state of the game using platform functions
-     */
+    // Render the state of the game using platform functions
     public function renderGame():void {
-        /* Don't draw if it's not necessary */
+        // Don't draw if it's not necessary
         if (mGame.stateChanged) {
             var i:int, j:int;
 
-            /* Clear background */
+            // Clear background
             mBmpCanvas.fillRect(new Rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
-            /* Draw preview block */
+            // Draw preview block
             if (mGame.showPreview) {
                 for (i = 0; i < 4; ++i) {
                     for (j = 0; j < 4; ++j) {
@@ -314,7 +359,7 @@ public class Platform {
                     }
                 }
             }
-            /* Draw shadow tetromino */
+            // Draw shadow tetromino
             if (mGame.showShadow && mGame.shadowGap > 0) {
                 for (i = 0; i<4; ++i) {
                     for (j = 0; j < 4; ++j) {
@@ -326,7 +371,7 @@ public class Platform {
                     }
                 }
             }
-            /* Draw the cells in the board */
+            // Draw the cells in the board
             for (i = 0; i < Game.BOARD_WIDTH; ++i) {
                 for (j = 0; j < Game.BOARD_HEIGHT; ++j) {
                     if (mGame.map[i][j] != Game.EMPTY_CELL) {
@@ -335,7 +380,7 @@ public class Platform {
                     }
                 }
             }
-            /* Draw falling tetromino */
+            // Draw falling tetromino
             for (i = 0; i<4; ++i) {
                 for (j = 0; j < 4; ++j) {
                     if (mGame.fallingBlock.cells[i][j] != Game.EMPTY_CELL) {
@@ -347,7 +392,7 @@ public class Platform {
             }
             mGame.stateChanged = false;
         }
-        /* Update game statistic data */
+        // Update game statistic data
         if (mGame.scoreChanged) {
 
             drawNumber(LEVEL_X, LEVEL_Y, mGame.stats.level, LEVEL_LENGTH, Game.COLOR_WHITE);

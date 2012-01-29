@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Assets.as                                                                */
 /*   This class contains the resources used by our game.                      */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
@@ -20,11 +20,11 @@ public class Assets {
     [Embed(source = "../res/numbers.png")]
     public static const mcBmpNumbers:Class;
 
-    /* Source: http://www.proggyfonts.com/download/download_bridge.php?get=ProggyCleanSZ.ttf.zip */
-    [Embed(source='../res/ProggyCleanSZ.ttf',
-           fontName = "EmbeddedProggy",
-           unicodeRange = "U+0041-U+005A", /* A-Z */
-           embedAsCFF='true',
+    // Embedded font with ascii printable characters.
+    [Embed(source = '../res/luconex.ttf',
+           fontName = "ConsoleEx",
+           unicodeRange = "U+0021-U+007E",
+           embedAsCFF='false',
            mimeType="application/x-font")]
     public static const fontProggy:Class;
 

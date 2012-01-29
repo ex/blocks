@@ -115,6 +115,7 @@ public class Platform extends MovieClip {
     private var mGame:Game;
 
     private var mMusicSound:Sound;
+    private var mRowSound:Sound;
     private var mMusicChannel:SoundChannel;
     private var mMusicPosition:Number = 0;
 
@@ -201,10 +202,14 @@ public class Platform extends MovieClip {
         stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 
         // Play music background
-        className = Assets.musicLoop;
+        className = Assets.musicGame;
         mMusicSound = new className() as Sound;
         mMusicChannel = mMusicSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
         mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+
+        // Load sound effects
+        className = Assets.soundRow;
+        mRowSound = new className() as Sound;
 
         mRefreshBoard = false;
         mRefreshFrames = 0;
@@ -212,6 +217,10 @@ public class Platform extends MovieClip {
 
     public function refreshBoard():void {
         mRefreshBoard = true;
+    }
+
+    public function onFilledRows():void {
+        mRowSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
     }
 
     // Makes the background music to loop in section

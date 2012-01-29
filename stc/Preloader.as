@@ -67,6 +67,7 @@ public class Preloader extends MovieClip {
     }
 
     private function drawProgressBar(percent:Number):void {
+        trace(percent);
         graphics.clear();
         graphics.lineStyle(1, BORDER_COLOR);
         graphics.drawRect(mX, mY, mWidth, HEIGHT);

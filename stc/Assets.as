@@ -29,7 +29,9 @@ public class Assets {
     public static const fontProggy:Class;
 
     [Embed(source = "../res/stc_theme_loop.mp3")]
-    public static const musicLoop:Class;
+    public static const musicGame:Class;
 
+    [Embed(source = "../res/fx_line.mp3")]
+    public static const soundRow:Class;
 }
 }

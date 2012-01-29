@@ -443,6 +443,8 @@ public class Game {
             // Increase speed for falling tetrominoes
             delay *= DELAY_FACTOR_FOR_LEVEL_UP;
         }
+
+        platform.onFilledRows();
     }
 
     // Move tetromino in the direction especified by (x, y) (in tile units)

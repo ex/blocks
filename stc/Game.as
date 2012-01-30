@@ -178,11 +178,15 @@ public class Game {
     // must be cleared to EVENT_NONE after being used.
     public var events:int;
 
-    // Platform implementation
-    public var platform:Platform;
-
     // Statistic data
     public var stats:StcStats;
+
+    // Platform implementation
+    private var mPlatform:PlatformBase;
+
+    public function Game(platform:*) {
+        mPlatform = platform;
+    }
 
     // Set matrix elements to indicated value
     private function setMatrixCells(matrix:Array, value:int):void {
@@ -271,7 +275,7 @@ public class Game {
         nextBlock = new StcTetromino();
         fallingBlock = new StcTetromino();
         errorCode = GAME_ERROR_NONE;
-        systemTime = platform.getSystemTime();
+        systemTime = mPlatform.getSystemTime();
         lastFallTime = systemTime;
         isOver = false;
         isPaused = false;
@@ -444,7 +448,7 @@ public class Game {
             delay *= DELAY_FACTOR_FOR_LEVEL_UP;
         }
 
-        platform.onFilledRows();
+        mPlatform.onFilledRows();
     }
 
     // Move tetromino in the direction especified by (x, y) (in tile units)
@@ -462,7 +466,7 @@ public class Game {
                 // tetromino is on the 1st or 2nd row
                 if (fallingBlock.y <= 1) {
                     isOver = true;   // if this happens the game is over
-                    platform.onGameOver(isOver);
+                    mPlatform.onGameOver(isOver);
                 }
                 else {
                     // The falling tetromino has reached the bottom,
@@ -475,7 +479,7 @@ public class Game {
                             }
                         }
                     }
-                    platform.refreshBoard();
+                    mPlatform.onTetrominoLand();
 
                     // Check if the landing tetromino has created full rows
                     numFilledRows = 0;
@@ -556,25 +560,25 @@ public class Game {
     }
 
     // Main function game called every frame
-    public function gameUpdate():void {
+    public function update():void {
         var sysTime:Number;
 
         // Update game state
         if (isOver) {
             if (events & EVENT_RESTART) {
                 isOver = false;
-                platform.onGameOver(isOver);
+                mPlatform.onGameOver(isOver);
                 startGame();
             }
         }
         else {
-            sysTime = platform.getSystemTime();
+            sysTime = mPlatform.getSystemTime();
 
             // Always handle pause event
             if (events & EVENT_PAUSE) {
                 isPaused = !isPaused;
                 events = EVENT_NONE;
-                platform.onGamePaused(isPaused);
+                mPlatform.onGamePaused(isPaused);
             }
 
             // Check if the game is paused
@@ -623,7 +627,7 @@ public class Game {
             systemTime = sysTime;
         }
         // Draw game state
-        platform.renderGame();
+        mPlatform.renderGame();
     }
 
     // This event is called when the falling tetromino is moved

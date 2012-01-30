@@ -26,28 +26,16 @@ import flash.text.Font;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.ui.Keyboard;
-import flash.utils.getDefinitionByName;
-import flash.utils.getTimer;
 
-// Compiled with Flex 4.0
-[SWF(backgroundColor="#FFFFFF", frameRate="60", width="480", height="272")]
+// Below is the "magic" line that allow us to load our resources in the second frame.
+// http://blogs.adobe.com/rgonzalez/2006/06/modular_applications_part_2.html
 [Frame(factoryClass="stc.Preloader")]
 
 // Flash platform implementation for tetris game
-public class Platform extends MovieClip {
+public class Platform extends PlatformBase {
     // -------------------------------------------------------------------------
     // UI layout (quantities are expressed in pixels)
     // -------------------------------------------------------------------------
-
-    // Size of square tile
-    private static const TILE_SIZE:int = 12;
-
-    private static const SCREEN_WIDTH:int = 480;
-    private static const SCREEN_HEIGHT:int = 272;
-
-    // Board up-left corner coordinates
-    private static const BOARD_X:int = 180;
-    private static const BOARD_Y:int = 4;
 
     // Preview tetromino position
     private static const PREVIEW_X:int = 112;
@@ -88,12 +76,6 @@ public class Platform extends MovieClip {
     private static const NUMBER_WIDTH:int = 7;
     private static const NUMBER_HEIGHT:int = 9;
 
-    // Keyboard codes
-    private static const KEY_A:int = "A".charCodeAt();
-    private static const KEY_W:int = "W".charCodeAt();
-    private static const KEY_S:int = "S".charCodeAt();
-    private static const KEY_D:int = "D".charCodeAt();
-
     // Symbol names
     private static const BMP_BACK:String = "mcBmpBack";
     private static const BMP_TILE_BLOCKS:String = "mcBmpBlocks";
@@ -101,7 +83,7 @@ public class Platform extends MovieClip {
     private static const FLA_POPUP_OVER:String = "mcPopUpOver";
 
     // Symbol names
-    private static const MUSIC_VOLUME:Number = 0.5;
+    private static const MUSIC_VOLUME:Number = 0.2;
     private static const MUSIC_LOOP_START:int = 3693;
 
     // Platform data
@@ -112,23 +94,32 @@ public class Platform extends MovieClip {
     private var mBmpTextCanvas:BitmapData;
     private var mBmpBlocks:BitmapData;
     private var mBmpNumbers:BitmapData;
-    private var mGame:Game;
 
     private var mMusicSound:Sound;
     private var mRowSound:Sound;
     private var mMusicChannel:SoundChannel;
-    private var mMusicPosition:Number = 0;
+    private var mMusicPosition:Number;
+    private var mIsMuted:Boolean;
 
     private var mRefreshBoard:Boolean;
     private var mRefreshFrames:int;
 
+    public function Platform() {
+        if (stage) {
+            init(null);
+        }
+        else {
+            addEventListener(Event.ADDED_TO_STAGE, init);
+        }
+    }
+
     // Initializes platform.
-    public function init():void {
+    public function init(event:Event):void {
+        removeEventListener(Event.ADDED_TO_STAGE, init);
         stage.quality = "HIGH";
 
         // Platform Setup
-        mGame = new Game();
-        mGame.platform = this;
+        mGame = new Game(this);
         mGame.startGame();
 
         // Load background and add it to scene
@@ -145,7 +136,7 @@ public class Platform extends MovieClip {
         addChild(new Bitmap(mBmpTextCanvas));
 
         // Load tile images
-        className = Assets.mcBmpBlocks;
+        className = Preloader.mcBmpBlocks;
         mBmpBlocks = new className().bitmapData as BitmapData;
 
         // Load number images
@@ -197,15 +188,17 @@ public class Platform extends MovieClip {
         addChild(mPopUp);
 
         // Registering events
-        stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, readInput);
-        stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+        stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, readInput, false, 0, true);
+        stage.addEventListener(MouseEvent.CLICK, onMouseClick, false, 0, true);
 
         // Play music background
         className = Assets.musicGame;
         mMusicSound = new className() as Sound;
         mMusicChannel = mMusicSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
         mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+        mMusicPosition = 0;
+        mIsMuted = false;
 
         // Load sound effects
         className = Assets.soundRow;
@@ -215,11 +208,13 @@ public class Platform extends MovieClip {
         mRefreshFrames = 0;
     }
 
-    public function refreshBoard():void {
+    // Called if it's necessary to redraw the board.
+    override public function onTetrominoLand():void {
         mRefreshBoard = true;
     }
 
-    public function onFilledRows():void {
+    // Called when a row is filled.
+    override public function onFilledRows():void {
         mRowSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
     }
 
@@ -232,14 +227,9 @@ public class Platform extends MovieClip {
         }
     }
 
-    // Return the current system time in milliseconds
-    public function getSystemTime():Number {
-        return getTimer();
-    }
-
     // Called every frame
     public function onEnterFrame(event:Event):void {
-        mGame.gameUpdate();
+        mGame.update();
     }
 
     // Called on mouse click
@@ -254,7 +244,6 @@ public class Platform extends MovieClip {
 
     // Read input device and notify game
     public function readInput(event:KeyboardEvent):void {
-
         // On key pressed
         switch (event.keyCode) {
         // On quit game
@@ -282,10 +271,9 @@ public class Platform extends MovieClip {
             mGame.events |= Game.EVENT_DROP;
             break;
         case Keyboard.F5:
-            if (mGame.isOver) {
-                // Restart music game if game was over.
+            if (!mIsMuted && mGame.isOver) {
+                // Restart music if the game was over.
                 if (mMusicChannel) {
-                    mMusicPosition = mMusicChannel.position;
                     mMusicChannel.stop();
                     mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 }
@@ -305,15 +293,19 @@ public class Platform extends MovieClip {
             mGame.events |= Game.EVENT_SHOW_SHADOW;
             break;
         case Keyboard.F4:
-            if (mMusicChannel) {
-                mMusicPosition = mMusicChannel.position;
-                mMusicChannel.stop();
-                mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
-                mMusicChannel = null;
-            }
-            else {
-                mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
-                mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+            if (!mGame.isOver && !mGame.isPaused) {
+                mIsMuted = !mIsMuted;
+
+                if (mMusicChannel) {
+                    mMusicPosition = mMusicChannel.position;
+                    mMusicChannel.stop();
+                    mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+                    mMusicChannel = null;
+                }
+                else {
+                    mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
+                    mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+                }
             }
             break;
         case Keyboard.ENTER:
@@ -325,17 +317,34 @@ public class Platform extends MovieClip {
         }
     }
 
-    public function onGameOver(isOver:Boolean):void {
+    // Called when game is finished/restarted.
+    override public function onGameOver(isOver:Boolean):void {
         if (isOver) {
+            if (mMusicChannel) {
+                mMusicChannel.stop();
+                mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+                mMusicChannel = null;
+            }
             mPopUpLabel.text = "GAME OVER";
         }
         mPopUp.visible = isOver;
         mGame.masterMode = false;
     }
 
-    public function onGamePaused(isPaused:Boolean):void {
+    // Called when game is paused/resumed.
+    override public function onGamePaused(isPaused:Boolean):void {
         if (isPaused) {
+            if (mMusicChannel) {
+                mMusicPosition = mMusicChannel.position;
+                mMusicChannel.stop();
+                mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+                mMusicChannel = null;
+            }
             mPopUpLabel.text = "GAME PAUSED";
+        }
+        else if (!mIsMuted) {
+            mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
+            mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
         }
         mPopUp.visible = isPaused;
     }
@@ -366,7 +375,7 @@ public class Platform extends MovieClip {
     }
 
     // Render the state of the game using platform functions
-    public function renderGame():void {
+    override public function renderGame():void {
         if (mRefreshFrames > 0) {
             if (--mRefreshFrames == 0) {
                 mGame.stateChanged = true;

@@ -14,9 +14,6 @@ public class Assets {
     [Embed(source = "../res/back.png")]
     public static const mcBmpBack:Class;
 
-    [Embed(source = "../res/blocks.png")]
-    public static const mcBmpBlocks:Class;
-
     [Embed(source = "../res/numbers.png")]
     public static const mcBmpNumbers:Class;
 

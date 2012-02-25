@@ -436,8 +436,11 @@ static void moveTetromino(StcGame *game, int x, int y) {
 /* Hard drop */
 static void dropTetromino(StcGame *game) {
 #ifdef STC_SHOW_GHOST_PIECE
-    moveTetromino(game, 0, game->shadowGap);
-    moveTetromino(game, 0, 1); /* Force lock */
+    /* Shadow has already calculated the landing position. */
+    game->fallingBlock.y += game->shadowGap;
+
+    /* Force lock. */
+    moveTetromino(game, 0, 1); 
 
     /* Update score */
     if (game->showShadow) {

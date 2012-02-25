@@ -266,7 +266,7 @@ bool Game::checkCollision(int dx, int dy) {
             if (mFallingBlock.cells[i][j] != EMPTY_CELL) {
                 /* Check the tetromino would be inside the left, right and bottom borders */
                 if ((newx + i < 0) || (newx + i >= BOARD_TILEMAP_WIDTH)
-                    || (newy + j >= BOARD_TILEMAP_HEIGHT)) {
+                                   || (newy + j >= BOARD_TILEMAP_HEIGHT)) {
                     return true;
                 }
                 /* Check the tetromino won't collide with existing cells in the map */
@@ -402,8 +402,11 @@ void Game::moveTetromino(int x, int y) {
 /* Hard drop */
 void Game::dropTetromino() {
 #ifdef STC_SHOW_GHOST_PIECE
-    moveTetromino(0, mShadowGap);
-    moveTetromino(0, 1); /* Force lock */
+    /* Shadow has already calculated the landing position. */
+    mFallingBlock.y += mShadowGap;
+
+    /* Force lock. */
+    moveTetromino(0, 1); 
 
     /* Update score */
     if (mShowShadow) {

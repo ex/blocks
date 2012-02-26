@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stc-cocos2dx", "stc.vcproj", "{CD8D72EC-EBD5-4884-B043-A79A1F49940D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A175223-DA5C-4928-898D-6DC294C177BB}"
+	ProjectSection(SolutionItems) = preProject
+		compile.txt = compile.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD8D72EC-EBD5-4884-B043-A79A1F49940D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD8D72EC-EBD5-4884-B043-A79A1F49940D}.Debug|Win32.Build.0 = Debug|Win32
+		{CD8D72EC-EBD5-4884-B043-A79A1F49940D}.Release|Win32.ActiveCfg = Release|Win32
+		{CD8D72EC-EBD5-4884-B043-A79A1F49940D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

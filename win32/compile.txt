@@ -1,0 +1,9 @@
+
+- Download and compile cocos2d-x libraries in debug and release mode.
+
+- Set the user environment variable: COCOS2DX pointing to the path of your local cocos2d-x folder.
+  (Tip: http://www.chem.gla.ac.uk/~louis/software/faq/q1.html)
+
+- Verify than the compiled libraries (*.lib) were created in COCOS2DX/Debug.win32 and COCOS2DX/Release.win32 folders.
+
+- Check that in the Visual Studio project's properties the Debugging -> Working Directory is set to $(TargetDir)

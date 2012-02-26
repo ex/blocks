@@ -20,7 +20,7 @@ namespace Stc {
 int PlatformSdl::init(Game *game)
 {
     // Initialize the random number generator
-    srand(time(NULL));
+    srand((unsigned int)(time(NULL)));
 
     // Start video system
     if (SDL_Init(SDL_INIT_VIDEO) < 0)

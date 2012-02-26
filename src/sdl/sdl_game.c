@@ -4,18 +4,22 @@
 /*   Simple pure SDL implementation. (No sound, no fonts)                     */
 /*   Using SDL for game state rendering, user input and timing.               */
 /*                                                                            */
-/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
 #include "sdl_game.h"
 #include <stdlib.h>
+#include <time.h>
 
 /*
  * Initialize platform, if there are no problems return ERROR_NONE.
  */
 int platformInit(StcGame *game) {
+
+    /* Initialize the random number generator */
+    srand((unsigned int)(time(NULL)));
 
     /* First we initialize the platform data */
     game->platform = (StcPlatform *) malloc(sizeof(StcPlatform));
@@ -265,11 +269,6 @@ void platformRenderGame(StcGame *game) {
 
     /* Resting game */
     SDL_Delay(SLEEP_TIME);
-}
-
-/* Initialize the random number generator */
-void platformSeedRandom(long seed) {
-    srand(seed);
 }
 
 /* Return a random positive integer number */

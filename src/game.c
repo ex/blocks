@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game logic implementation.                                               */
 /*                                                                            */
-/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -128,9 +128,6 @@ static void startGame(StcGame *game) {
     for (i = 0; i < TETROMINO_TYPES; ++i) {
         game->stats.pieces[i] = 0;
     }
-
-    /* Initialize random generator */
-    platformSeedRandom(game->data->systemTime);
 
     /* Initialize game tile map */
     setMatrixCells(&game->map[0][0], BOARD_TILEMAP_WIDTH, BOARD_TILEMAP_HEIGHT, EMPTY_CELL);

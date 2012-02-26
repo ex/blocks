@@ -47,14 +47,14 @@
 #include "PlatformGL.hpp"
 #include "../../../trunk/src/game.hpp"
 
-using Stc::Game;
-using Stc::PlatformGL;
+using stc::Game;
+using stc::PlatformGL;
 
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR cmdLine,
-                   int cmdShow) {
-
+                   int cmdShow)
+{
     // Game object.
     Game game;
 

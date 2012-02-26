@@ -1,7 +1,7 @@
 /* ========================================================================== */
 /*                          STC - SIMPLE TETRIS CLONE                         */
 /* -------------------------------------------------------------------------- */
-/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -10,33 +10,39 @@
 #include <assert.h>
 #include <GL/glu.h>
 #include "wgl/wglext.h"
-
+#include <ctime>
 
 typedef HGLRC (APIENTRYP PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC, HGLRC, const int*);
 
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
 
-namespace Stc {
+namespace stc
+{
 
-PlatformGL::PlatformGL(HINSTANCE hInstance) {
+PlatformGL::PlatformGL(HINSTANCE hInstance)
+{
     mHandleInstance = hInstance;
     mGame = NULL;
     mTexture = NULL;
 }
 
-void PlatformGL::processEvents() {
+void PlatformGL::processEvents()
+{
     MSG msg;
 
     // While there are messages in the queue, store them in msg
-    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    {
         // Process the messages one-by-one
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 }
 
-LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
+LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg)
+    {
     case WM_CREATE: // Window creation
         {
             mHandleDeviceContext = GetDC(hWnd);
@@ -81,11 +87,13 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC) wglGetProcAddress("wglCreateContextAttribsARB");
 
             // If this is NULL then OpenGL 3.0 is not supported
-            if (!wglCreateContextAttribsARB) {
+            if (!wglCreateContextAttribsARB)
+            {
 			    // OpenGL 3.0 is not supported, falling back to GL 2.1
                 mHandleRenderContext = tmpContext;
             } 
-		    else {
+		    else
+            {
 			    // Create an OpenGL 3.0 context using the new function
 			    mHandleRenderContext = wglCreateContextAttribsARB(mHandleDeviceContext, 0, attribs);
 			    // Delete the temporary context
@@ -117,11 +125,13 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     case WM_KEYDOWN:
         // Process only the first WM_KEYDOWN notification.
-        if ((lParam & (1 << 30)) != 0) {
+        if ((lParam & (1 << 30)) != 0)
+        {
             break;
         }
 
-        switch (wParam) {
+        switch (wParam)
+        {
         case VK_ESCAPE: // If the escape key was pressed
             DestroyWindow(mHandleWindow); // Send a WM_DESTROY message
             break;
@@ -158,12 +168,13 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case VK_F3:
             mGame->onEventStart(Game::EVENT_SHOW_SHADOW);
             break;
-#endif /* STC_SHOW_GHOST_PIECE */
+#endif // STC_SHOW_GHOST_PIECE
         }
         break;
 
     case WM_KEYUP:
-        switch (wParam) {
+        switch (wParam)
+        {
         case 'S':
         case VK_DOWN:
             mGame->onEventEnd(Game::EVENT_MOVE_DOWN);
@@ -181,7 +192,7 @@ LRESULT PlatformGL::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case VK_UP:
             mGame->onEventEnd(Game::EVENT_ROTATE_CW);
             break;
-#endif /* STC_AUTO_ROTATION */
+#endif // STC_AUTO_ROTATION
         }
         break;
     }
@@ -212,7 +223,11 @@ LRESULT CALLBACK PlatformGL::StaticWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     return window->WndProc(hWnd, uMsg, wParam, lParam);
 }
 
-int PlatformGL::init(Game *game) {
+int PlatformGL::init(Game *game)
+{
+    // Initialize random generator
+    srand((unsigned int)(time(NULL)));
+
     // Create the window.
     // -------------------------------------------------------------------------
     DWORD dwExStyle;       // Window Extended Style
@@ -241,12 +256,14 @@ int PlatformGL::init(Game *game) {
     mWindowClass.hIconSm         = LoadIcon(NULL, IDI_WINLOGO);      // windows logo small icon
 
     // Register the windows class
-    if (!RegisterClassEx(&mWindowClass)) {
+    if (!RegisterClassEx(&mWindowClass))
+    {
         return Game::ERROR_PLATFORM;
     }
 
     // If we are fullscreen, we need to change the display mode
-    if (mIsFullscreen) {
+    if (mIsFullscreen)
+    {
         DEVMODE dmScreenSettings; // device mode
         
         memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
@@ -257,7 +274,8 @@ int PlatformGL::init(Game *game) {
         dmScreenSettings.dmBitsPerPel = SCREEN_BIT_DEPTH; // bits per pixel
         dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-        if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
+        if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+        {
             // Setting display mode failed, switch to windowed
             MessageBox(NULL, "Full screen display mode failed", NULL, MB_OK);
             mIsFullscreen = false; 
@@ -265,12 +283,14 @@ int PlatformGL::init(Game *game) {
     }
 
     // Are we still in fullscreen mode?
-    if (mIsFullscreen) {
+    if (mIsFullscreen)
+    {
         dwExStyle = WS_EX_APPWINDOW; // Window extended style
         dwStyle = WS_POPUP;          // Windows style
         ShowCursor(false);           // Hide mouse pointer
     }
-    else {
+    else
+    {
         dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE; // Window extended style
         dwStyle = WS_OVERLAPPEDWINDOW;                  // Windows style
     }
@@ -292,7 +312,8 @@ int PlatformGL::init(Game *game) {
                                    this);  // we pass a pointer to the PlatformGL here
 
     // Check if window creation failed (handle equal NULL)
-    if (mHandleWindow == NULL) {
+    if (mHandleWindow == NULL)
+    {
         MessageBox(NULL, "Unable to create the OpenGL Window", "An error occurred", MB_ICONERROR | MB_OK);
         end(); // Reset the display and exit
         return Game::ERROR_PLATFORM;
@@ -329,7 +350,8 @@ int PlatformGL::init(Game *game) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     mTexture = new TargaImage();
-    if (!mTexture->load("back.tga")) {
+    if (!mTexture->load("back.tga"))
+    {
         MessageBox(NULL, "Unable to load texture", "An error occurred", MB_ICONERROR | MB_OK);
         end(); // Reset the display and exit
         return Game::ERROR_NO_IMAGES;
@@ -395,9 +417,11 @@ int PlatformGL::init(Game *game) {
     return Game::ERROR_NONE;
 }
 
-void PlatformGL::end() {
+void PlatformGL::end()
+{
     // Destroy the program window
-    if (mIsFullscreen) {
+    if (mIsFullscreen)
+    {
         ChangeDisplaySettings(NULL, 0); // if so switch back to the desktop
         ShowCursor(true);               // show mouse pointer
     }
@@ -413,7 +437,8 @@ void PlatformGL::end() {
 }
 
 // Set the texture coordinates used for rendering a sprite.
-void PlatformGL::setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int h) {
+void PlatformGL::setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int h)
+{
     // down-left
     coords[0] = x / GLfloat(TEXTURE_SIZE);   
     coords[1] = (TEXTURE_SIZE - y - h) / GLfloat(TEXTURE_SIZE);
@@ -430,7 +455,8 @@ void PlatformGL::setSpriteTextureCoord(GLfloat *coords, int x, int y, int w, int
 
 // Draw a tile from a tetromino.
 // Tile sprites start in the top-left corner of the compounded image. 
-void PlatformGL::drawTile(int x, int y, int tile, bool shadow) {
+void PlatformGL::drawTile(int x, int y, int tile, bool shadow)
+{
 
     mSpriteVertices[0] = GLfloat(x);             // down-left
     mSpriteVertices[1] = GLfloat(y + TILE_SIZE);
@@ -452,7 +478,8 @@ void PlatformGL::drawTile(int x, int y, int tile, bool shadow) {
 
 // Draw a number on the given position.
 // Number sprites start at the left below the sprites for tiles. 
-void PlatformGL::drawNumber(int x, int y, long number, int length, int color) {
+void PlatformGL::drawNumber(int x, int y, long number, int length, int color)
+{
     // Y coordinates don't change
     mSpriteVertices[1] = GLfloat(y + NUMBER_HEIGHT); // down-left
     mSpriteVertices[4] = GLfloat(y + NUMBER_HEIGHT); // down-right
@@ -460,7 +487,8 @@ void PlatformGL::drawNumber(int x, int y, long number, int length, int color) {
     mSpriteVertices[10] = GLfloat(y);                // up-right
 
     int pos = 0;
-    do {
+    do
+    {
         int px = x + NUMBER_WIDTH * (length - pos);
         mSpriteVertices[0] = GLfloat(px);                // down-left
         mSpriteVertices[3] = GLfloat(px + NUMBER_WIDTH); // down-right
@@ -476,26 +504,32 @@ void PlatformGL::drawNumber(int x, int y, long number, int length, int color) {
         glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, mTextureIndexes);
 
         number /= 10;
+
     } while (++pos < length);
 }
 
 // Render the state of the game using platform functions.
-void PlatformGL::renderGame() {
+void PlatformGL::renderGame()
+{
     int i, j;
 
     // Check if the game state has changed, if so redraw
-    if (mGame->hasChanged()) {
-
+    if (mGame->hasChanged())
+    {
         // Draw background
         glVertexPointer(3, GL_FLOAT, 0, mBackgroundVertices);
         glTexCoordPointer(2, GL_FLOAT, 0, mBackgroundTexCoord);
         glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, mTextureIndexes);
 
         // Draw preview block
-        if (mGame->showPreview()) {
-            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                    if (mGame->nextBlock().cells[i][j] != Game::EMPTY_CELL) {
+        if (mGame->showPreview())
+        {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+            {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+                {
+                    if (mGame->nextBlock().cells[i][j] != Game::EMPTY_CELL)
+                    {
                         drawTile(PREVIEW_X + (TILE_SIZE * i),
                                  PREVIEW_Y + (TILE_SIZE * j),
                                  mGame->nextBlock().cells[i][j], false);
@@ -503,12 +537,17 @@ void PlatformGL::renderGame() {
                 }
             }
         }
+
 #ifdef STC_SHOW_GHOST_PIECE
         // Draw shadow tetromino
-        if (mGame->showShadow() && mGame->shadowGap() > 0) {
-            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                    if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+        if (mGame->showShadow() && mGame->shadowGap() > 0)
+        {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+            {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+                {
+                    if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL)
+                    {
                         drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
                                  BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + mGame->shadowGap() + j)),
                                  mGame->fallingBlock().cells[i][j], true);
@@ -518,9 +557,12 @@ void PlatformGL::renderGame() {
         }
 #endif
         // Draw the cells in the board
-        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; ++i) {
-            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; ++j) {
-                if (mGame->getCell(i, j) != Game::EMPTY_CELL) {
+        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; ++i)
+        {
+            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; ++j)
+            {
+                if (mGame->getCell(i, j) != Game::EMPTY_CELL)
+                {
                     drawTile(BOARD_X + (TILE_SIZE * i),
                              BOARD_Y + (TILE_SIZE * j),
                              mGame->getCell(i, j), false);
@@ -529,9 +571,12 @@ void PlatformGL::renderGame() {
         }
 
         // Draw falling tetromino
-        for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-            for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+        for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+        {
+            for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+            {
+                if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL)
+                {
                     drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
                              BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + j)),
                              mGame->fallingBlock().cells[i][j], false);
@@ -539,8 +584,9 @@ void PlatformGL::renderGame() {
             }
         }
 
-        /* Draw game statistic data */
-        if (!mGame->isPaused()) {
+        // Draw game statistic data
+        if (!mGame->isPaused())
+        {
             drawNumber(LEVEL_X, LEVEL_Y, mGame->stats().level, LEVEL_LENGTH, Game::COLOR_WHITE);
             drawNumber(LINES_X, LINES_Y, mGame->stats().lines, LINES_LENGTH, Game::COLOR_WHITE);
             drawNumber(SCORE_X, SCORE_Y, mGame->stats().score, SCORE_LENGTH, Game::COLOR_WHITE);
@@ -567,12 +613,9 @@ void PlatformGL::renderGame() {
     Sleep(SLEEP_TIME);
 }
 
-long PlatformGL::getSystemTime() {
+long PlatformGL::getSystemTime()
+{
     return GetTickCount();
-}
-
-void PlatformGL::seedRandom(long seed) {
-    srand(seed);
 }
 
 int PlatformGL::random() {

@@ -11,7 +11,7 @@
 #include "game.hpp"
 #include <stdlib.h>
 
-namespace Stc
+namespace stc
 {
 
 // Set matrix elements to indicated value

@@ -11,7 +11,7 @@
 #ifndef STC_SRC_PLATFORM_HPP_
 #define STC_SRC_PLATFORM_HPP_
 
-namespace Stc
+namespace stc
 {
 
 // Game class forward declaration

@@ -16,7 +16,7 @@
 // Game name
 #define STC_GAME_NAME    "STC: simple tetris clone"
 
-namespace Stc
+namespace stc
 {
 
 class Game 

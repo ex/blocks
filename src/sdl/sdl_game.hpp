@@ -15,7 +15,7 @@
 
 #include <SDL.h>
 
-namespace Stc
+namespace stc
 {
 
 // Image files

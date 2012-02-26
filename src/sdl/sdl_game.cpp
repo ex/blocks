@@ -14,7 +14,8 @@
 #include <ctime>
 #include <SDL_image.h>
 
-namespace Stc {
+namespace stc
+{
 
 // Initializes platform, if there are no problems returns ERROR_NONE.
 int PlatformSdl::init(Game *game)

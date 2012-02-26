@@ -44,16 +44,16 @@
 int main(int argc, char *argv[])
 {
     // Game object
-    Stc::Game game;
+    stc::Game game;
 
     // Platform object
-    Stc::PlatformSdl platform;
+    stc::PlatformSdl platform;
 
     // Start the game
     game.init(&platform);
 
     // Loop until some error happens or the user quits
-    while (game.errorCode() == Stc::Game::ERROR_NONE)
+    while (game.errorCode() == stc::Game::ERROR_NONE)
     {
         game.update();
     }

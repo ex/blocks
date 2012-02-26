@@ -10,37 +10,43 @@
 /* -------------------------------------------------------------------------- */
 
 #include "sdl_game.hpp"
-#include <stdlib.h>
+#include <cstdlib>
+#include <ctime>
 #include <SDL_image.h>
 
 namespace Stc {
 
-/*
- * Initializes platform, if there are no problems returns ERROR_NONE.
- */
-int PlatformSdl::init(Game *game) {
-    /* Start video system */
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+// Initializes platform, if there are no problems returns ERROR_NONE.
+int PlatformSdl::init(Game *game)
+{
+    // Initialize the random number generator
+    srand(time(NULL));
+
+    // Start video system
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
         return Game::ERROR_NO_VIDEO;
     }
 
-    /* Create game video surface */
+    // Create game video surface
     mScreen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT,
                               SCREEN_BIT_DEPTH,
                               SCREEN_VIDEO_MODE);
-    if (mScreen == NULL) {
+    if (mScreen == NULL)
+    {
         return Game::ERROR_NO_VIDEO;
     }
 
-    /* Set window caption */
+    // Set window caption
     SDL_WM_SetCaption(STC_GAME_NAME " (C++)", STC_GAME_NAME);
 
-    /* Load images for blocks and background */
+    // Load images for blocks and background
     mBmpTiles = IMG_Load(STC_BMP_TILE_BLOCKS);
     mBmpBack = IMG_Load(STC_BMP_BACKGROUND);
     mBmpNumbers = IMG_Load(STC_BMP_NUMBERS);
 
-    if (mBmpTiles == NULL || mBmpBack == NULL || mBmpNumbers == NULL) {
+    if (mBmpTiles == NULL || mBmpBack == NULL || mBmpNumbers == NULL)
+    {
         return Game::ERROR_NO_IMAGES;
     }
 
@@ -48,25 +54,30 @@ int PlatformSdl::init(Game *game) {
     return Game::ERROR_NONE;
 }
 
-/* Return the current system time in milliseconds */
-long PlatformSdl::getSystemTime() {
+// Return the current system time in milliseconds
+long PlatformSdl::getSystemTime()
+{
     return SDL_GetTicks();
 }
 
-/* Process events and notify game */
-void PlatformSdl::processEvents() {
+// Process events and notify game
+void PlatformSdl::processEvents()
+{
     SDL_Event event;
 
-    /* Grab events in the queue */
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-        /* On quit game */
+    // Grab events in the queue
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+        // On quit game
         case SDL_QUIT:
             mGame->onEventStart(Game::EVENT_QUIT);
             break;
-        /* On key pressed */
+        // On key pressed
         case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
+            switch (event.key.keysym.sym)
+            {
             case SDLK_ESCAPE:
                 mGame->onEventStart(Game::EVENT_QUIT);
                 break;
@@ -102,14 +113,15 @@ void PlatformSdl::processEvents() {
             case SDLK_F3:
                 mGame->onEventStart(Game::EVENT_SHOW_SHADOW);
                 break;
-#endif /* STC_SHOW_GHOST_PIECE */
+#endif // STC_SHOW_GHOST_PIECE
             default:
                 break;
             }
             break;
-        /* On key released */
+        // On key released
         case SDL_KEYUP:
-            switch (event.key.keysym.sym) {
+            switch (event.key.keysym.sym)
+            {
             case SDLK_s:
             case SDLK_DOWN:
                 mGame->onEventEnd(Game::EVENT_MOVE_DOWN);
@@ -127,7 +139,7 @@ void PlatformSdl::processEvents() {
             case SDLK_UP:
                 mGame->onEventEnd(Game::EVENT_ROTATE_CW);
                 break;
-#endif /* STC_AUTO_ROTATION */
+#endif // STC_AUTO_ROTATION
             default:
                 break;
             }
@@ -137,8 +149,9 @@ void PlatformSdl::processEvents() {
     }
 }
 
-/* Draw a tile from a tetromino */
-void PlatformSdl::drawTile(int x, int y, int tile, bool shadow) {
+// Draw a tile from a tetromino
+void PlatformSdl::drawTile(int x, int y, int tile, bool shadow)
+{
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
@@ -151,8 +164,9 @@ void PlatformSdl::drawTile(int x, int y, int tile, bool shadow) {
     SDL_BlitSurface(mBmpTiles, &recSource, mScreen, &recDestine);
 }
 
-/* Draw a number on the given position */
-void PlatformSdl::drawNumber(int x, int y, long number, int length, int color) {
+// Draw a number on the given position
+void PlatformSdl::drawNumber(int x, int y, long number, int length, int color)
+{
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
@@ -162,7 +176,8 @@ void PlatformSdl::drawNumber(int x, int y, long number, int length, int color) {
     recDestine.y = y;
 
     int pos = 0;
-    do {
+    do
+    {
         recDestine.x = x + NUMBER_WIDTH * (length - pos);
         recSource.x = NUMBER_WIDTH * (Sint16)(number % 10);
         SDL_BlitSurface(mBmpNumbers, &recSource, mScreen, &recDestine);
@@ -170,22 +185,26 @@ void PlatformSdl::drawNumber(int x, int y, long number, int length, int color) {
     } while (++pos < length);
 }
 
-/*
- * Render the state of the game using platform functions
- */
-void PlatformSdl::renderGame() {
+// Render the state of the game using platform functions
+void PlatformSdl::renderGame()
+{
     int i, j;
 
-    /* Check if the game state has changed, if so redraw */
-    if (mGame->hasChanged()) {
-        /* Draw background */
+    // Check if the game state has changed, if so redraw
+    if (mGame->hasChanged())
+    {
+        // Draw background
         SDL_BlitSurface(mBmpBack, NULL, mScreen, NULL);
 
-        /* Draw preview block */
-        if (mGame->showPreview()) {
-            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                    if (mGame->nextBlock().cells[i][j] != Game::EMPTY_CELL) {
+        // Draw preview block
+        if (mGame->showPreview())
+        {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+            {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+                {
+                    if (mGame->nextBlock().cells[i][j] != Game::EMPTY_CELL)
+                    {
                         drawTile(PREVIEW_X + (TILE_SIZE * i),
                                  PREVIEW_Y + (TILE_SIZE * j),
                                  mGame->nextBlock().cells[i][j], false);
@@ -194,11 +213,15 @@ void PlatformSdl::renderGame() {
             }
         }
 #ifdef STC_SHOW_GHOST_PIECE
-        /* Draw shadow tetromino */
-        if (mGame->showShadow() && mGame->shadowGap() > 0) {
-            for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-                for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                    if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+        // Draw shadow tetromino
+        if (mGame->showShadow() && mGame->shadowGap() > 0)
+        {
+            for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+            {
+                for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+                {
+                    if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL)
+                    {
                         drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
                                  BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + mGame->shadowGap() + j)),
                                  mGame->fallingBlock().cells[i][j], true);
@@ -207,10 +230,13 @@ void PlatformSdl::renderGame() {
             }
         }
 #endif
-        /* Draw the cells in the board */
-        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; ++i) {
-            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; ++j) {
-                if (mGame->getCell(i, j) != Game::EMPTY_CELL) {
+        // Draw the cells in the board
+        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; ++i)
+        {
+            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; ++j)
+            {
+                if (mGame->getCell(i, j) != Game::EMPTY_CELL)
+                {
                     drawTile(BOARD_X + (TILE_SIZE * i),
                              BOARD_Y + (TILE_SIZE * j),
                              mGame->getCell(i, j), false);
@@ -218,10 +244,13 @@ void PlatformSdl::renderGame() {
             }
         }
 
-        /* Draw falling tetromino */
-        for (i = 0; i < Game::TETROMINO_SIZE; ++i) {
-            for (j = 0; j < Game::TETROMINO_SIZE; ++j) {
-                if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL) {
+        // Draw falling tetromino
+        for (i = 0; i < Game::TETROMINO_SIZE; ++i)
+        {
+            for (j = 0; j < Game::TETROMINO_SIZE; ++j)
+            {
+                if (mGame->fallingBlock().cells[i][j] != Game::EMPTY_CELL)
+                {
                     drawTile(BOARD_X + (TILE_SIZE * (mGame->fallingBlock().x + i)),
                              BOARD_Y + (TILE_SIZE * (mGame->fallingBlock().y + j)),
                              mGame->fallingBlock().cells[i][j], false);
@@ -229,8 +258,9 @@ void PlatformSdl::renderGame() {
             }
         }
 
-        /* Draw game statistic data */
-        if (!mGame->isPaused()) {
+        // Draw game statistic data
+        if (!mGame->isPaused())
+        {
             drawNumber(LEVEL_X, LEVEL_Y, mGame->stats().level, LEVEL_LENGTH, Game::COLOR_WHITE);
             drawNumber(LINES_X, LINES_Y, mGame->stats().lines, LINES_LENGTH, Game::COLOR_WHITE);
             drawNumber(SCORE_X, SCORE_Y, mGame->stats().score, SCORE_LENGTH, Game::COLOR_WHITE);
@@ -246,38 +276,33 @@ void PlatformSdl::renderGame() {
             drawNumber(PIECES_X, PIECES_Y, mGame->stats().totalPieces, PIECES_LENGTH, Game::COLOR_WHITE);
         }
 
-        /* Inform the game that we are done with the changed state */
+        // Inform the game that we are done with the changed state
         mGame->onChangeProcessed();
 
-        /* Swap video buffers */
+        // Swap video buffers
         SDL_Flip(mScreen);
     }
 
-    /* Resting game */
+    // Resting game
     SDL_Delay(SLEEP_TIME);
 }
 
-/* Initialize the random number generator */
-void PlatformSdl::seedRandom(long seed) {
-    srand(seed);
-}
-
-/* Return a random positive integer number */
-int PlatformSdl::random() {
+// Return a random positive integer number
+int PlatformSdl::random()
+{
     return rand();
 }
 
-/*
- * Release platform allocated resources
- */
-void PlatformSdl::end() {
-    /* Free all the created surfaces */
+// Release platform allocated resources
+void PlatformSdl::end()
+{
+    // Free all the created surfaces
     SDL_FreeSurface(mBmpTiles);
     SDL_FreeSurface(mBmpBack);
     SDL_FreeSurface(mBmpNumbers);
     SDL_FreeSurface(mScreen);
 
-    /* Shut down SDL */
+    // Shut down SDL
     SDL_Quit();
 }
 }

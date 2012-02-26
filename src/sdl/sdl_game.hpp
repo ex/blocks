@@ -15,55 +15,50 @@
 
 #include <SDL.h>
 
-namespace Stc {
+namespace Stc
+{
 
-/*
- * Image files
- */
+// Image files
 #define STC_BMP_TILE_BLOCKS     "sdl/blocks.png"
 #define STC_BMP_BACKGROUND      "sdl/back.png"
 #define STC_BMP_NUMBERS         "sdl/numbers.png"
 
-/*
- * SDL platform implementation
- */
-class PlatformSdl : public Platform {
-  public:
-    /*
-     * UI layout (quantities are expressed in pixels)
-     */
+// SDL platform implementation
+class PlatformSdl : public Platform
+{
+    // UI layout (quantities are expressed in pixels)
 
-    /* Screen size */
+    // Screen size
     static const int SCREEN_WIDTH  = 480;
     static const int SCREEN_HEIGHT = 272;
 
-    /* Size of square tile */
+    // Size of square tile
     static const int TILE_SIZE = 12;
 
-    /* Board up-left corner coordinates */
+    // Board up-left corner coordinates
     static const int BOARD_X = 180;
     static const int BOARD_Y = 4;
 
-    /* Preview tetromino position */
+    // Preview tetromino position
     static const int PREVIEW_X = 112;
     static const int PREVIEW_Y = 210;
 
-    /* Score position and length on screen */
+    // Score position and length on screen
     static const int SCORE_X      = 72;
     static const int SCORE_Y      = 52;
     static const int SCORE_LENGTH = 10;
 
-    /* Lines position and length on screen */
+    // Lines position and length on screen
     static const int LINES_X      = 108;
     static const int LINES_Y      = 34;
     static const int LINES_LENGTH = 5;
 
-    /* Level position and length on screen */
+    // Level position and length on screen
     static const int LEVEL_X      = 108;
     static const int LEVEL_Y      = 16;
     static const int LEVEL_LENGTH = 5;
 
-    /* Tetromino subtotals position */
+    // Tetromino subtotals position
     static const int TETROMINO_X   = 425;
     static const int TETROMINO_L_Y = 53;
     static const int TETROMINO_I_Y = 77;
@@ -73,49 +68,48 @@ class PlatformSdl : public Platform {
     static const int TETROMINO_O_Y = 173;
     static const int TETROMINO_J_Y = 197;
 
-    /* Size of subtotals */
+    // Size of subtotals
     static const int TETROMINO_LENGTH = 5;
 
-    /* Tetromino total position */
+    // Tetromino total position
     static const int PIECES_X      = 418;
     static const int PIECES_Y      = 221;
     static const int PIECES_LENGTH = 6;
 
-    /* Size of number */
+    // Size of number
     static const int NUMBER_WIDTH  = 7;
     static const int NUMBER_HEIGHT = 9;
 
-    /* Use 32 bits per pixel */
+    // Use 32 bits per pixel
     static const int SCREEN_BIT_DEPTH = 32;
 
-    /* Use video hardware and double buffering */
+    // Use video hardware and double buffering
     static const int SCREEN_VIDEO_MODE = (SDL_HWSURFACE | SDL_DOUBLEBUF);
 
-    /* Sleep time (in milliseconds) */
+    // Sleep time (in milliseconds)
     static const int SLEEP_TIME = 40;
 
-    /* Initializes platform */
+public:
+
+    // Initializes platform
     virtual int init(Game *game);
 
-    /* Clear resources used by platform */
+    // Clear resources used by platform
     virtual void end();
 
-    /* Read input device and notify game */
+    // Read input device and notify game
     virtual void processEvents();
 
-    /* Render the state of the game */
+    // Render the state of the game
     virtual void renderGame();
 
-    /* Return the current system time in milliseconds */
+    // Return the current system time in milliseconds
     virtual long getSystemTime();
 
-    /* Initialize the random number generator */
-    virtual void seedRandom(long seed);
-
-    /* Return a random positive integer number */
+    // Return a random positive integer number
     virtual int random();
 
-  private:
+private:
 
     SDL_Surface* mScreen;
     SDL_Surface* mBmpTiles;
@@ -129,4 +123,4 @@ class PlatformSdl : public Platform {
 };
 }
 
-#endif /* STC_SDL_GAME_HPP_ */
+#endif // STC_SDL_GAME_HPP_

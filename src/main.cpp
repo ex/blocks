@@ -15,7 +15,7 @@
 /*                              the falling piece.                            */
 /*                                                                            */
 /* -------------------------------------------------------------------------- */
-/*   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /*                                                                            */
 /*   Permission is hereby granted, free of charge, to any person              */
 /*   obtaining a copy of this software and associated documentation           */
@@ -41,24 +41,26 @@
 
 #include "sdl/sdl_game.hpp"
 
-int main(int argc, char *argv[]) {
-    /* Game object */
+int main(int argc, char *argv[])
+{
+    // Game object
     Stc::Game game;
 
-    /* Platform object */
+    // Platform object
     Stc::PlatformSdl platform;
 
-    /* Start the game */
+    // Start the game
     game.init(&platform);
 
-    /* Loop until some error happens or the user quits */
-    while (game.errorCode() == Stc::Game::ERROR_NONE) {
+    // Loop until some error happens or the user quits
+    while (game.errorCode() == Stc::Game::ERROR_NONE)
+    {
         game.update();
     }
 
-    /* Game was interrupted or an error happened, end the game */
+    // Game was interrupted or an error happened, end the game
     game.end();
 
-    /* Return to the system */
+    // Return to the system
     return game.errorCode();
 }

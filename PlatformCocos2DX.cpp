@@ -5,7 +5,7 @@
 #include "../../trunk/src/game.hpp"
 
 using namespace cocos2d;
-using namespace Stc;
+using namespace stc;
 
 PlatformCocos2DX::PlatformCocos2DX()
 {
@@ -55,6 +55,9 @@ bool PlatformCocos2DX::init()
     
     // Set this to avoid blurry rendering of sprites.
     CCDirector::sharedDirector()->setProjection(kCCDirectorProjection2D);
+
+    // Disable FPS label.
+    CCDirector::sharedDirector()->setDisplayFPS(false); 
 
     // Get game view size.
     CCSize size = CCDirector::sharedDirector()->getWinSize();
@@ -248,10 +251,10 @@ void PlatformCocos2DX::processEvents()
 {
 }
 
-int PlatformCocos2DX::init(Stc::Game *game)
+int PlatformCocos2DX::init(Game *game)
 {
     // Platform was already initialized.
-    return Stc::Game::ERROR_NONE;
+    return Game::ERROR_NONE;
 }
 
 void PlatformCocos2DX::end()

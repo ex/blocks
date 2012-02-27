@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(COCOS2DX)\cocos2dx&quot;;&quot;$(COCOS2DX)\cocos2dx\include&quot;;&quot;$(COCOS2DX)\cocos2dx\platform&quot;;&quot;$(COCOS2DX)\cocos2dx\platform\third_party\win32\OGLES&quot;;&quot;$(COCOS2DX)\CocosDenshion\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;COCOS2D_DEBUG;STC_SHOW_GHOST_PIECE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;COCOS2D_DEBUG;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -90,7 +90,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying resources and DLLs"
-				CommandLine="copy /Y &quot;$(ProjectDir)..\Resource\*.*&quot; &quot;$(TargetDir)&quot;&#x0D;&#x0A;copy /Y &quot;$(COCOS2DX)\Debug.win32\*.dll&quot; &quot;$(TargetDir)&quot;"
+				CommandLine="copy /Y &quot;$(ProjectDir)..\Resource\*.*&quot; &quot;$(TargetDir)&quot;&#x0D;&#x0A;copy /Y &quot;$(COCOS2DX)\Debug.win32\*.dll&quot; &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -121,7 +121,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;$(COCOS2DX)\cocos2dx&quot;;&quot;$(COCOS2DX)\cocos2dx\include&quot;;&quot;$(COCOS2DX)\cocos2dx\platform&quot;;&quot;$(COCOS2DX)\cocos2dx\platform\third_party\win32\OGLES&quot;;&quot;$(COCOS2DX)\CocosDenshion\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 				AdditionalDependencies="libcocos2d.lib  libCocosDenshion.lib"
 				OutputFile="bin\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(COCOS2DX)\lib\win32\release&quot;"
+				AdditionalLibraryDirectories="&quot;$(COCOS2DX)\Release.win32&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -169,7 +169,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy /Y &quot;$(ProjectDir)..\Resource\*.*&quot; &quot;$(OutDir)&quot;"
+				Description="Copying resources and DLLs"
+				CommandLine="copy /Y &quot;$(ProjectDir)..\Resource\*.*&quot; &quot;$(TargetDir)&quot;&#x0D;&#x0A;copy /Y &quot;$(COCOS2DX)\Release.win32\*.dll&quot; &quot;$(TargetDir)&quot;"
 			/>
 		</Configuration>
 	</Configurations>

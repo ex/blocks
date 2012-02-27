@@ -5,7 +5,7 @@
 #include <cocos2d.h>
 #include "../../trunk/src/game.hpp"
 
-class PlatformCocos2DX : public cocos2d::CCLayerColor, public Stc::Platform
+class PlatformCocos2DX : public cocos2d::CCLayerColor, public stc::Platform
 {
     // UI layout (quantities are expressed in pixels)
 
@@ -76,7 +76,7 @@ public:
     PlatformCocos2DX();
     ~PlatformCocos2DX();
 
-    virtual int init(Stc::Game *game);
+    virtual int init(stc::Game *game);
     virtual void end();
     virtual void processEvents();
     virtual void renderGame();
@@ -112,15 +112,15 @@ private:
 
     int                        m_yOffset;
 
-    Stc::Game                * m_game;
+    stc::Game                * m_game;
 
     // We draw the game state onver this rendering target object.
     cocos2d::CCRenderTexture * m_canvas;
 
     // Array of sprites for drawing, there is one more color than tetromino types.
-    cocos2d::CCSprite        * m_tiles[Stc::Game::TETROMINO_TYPES + 1];
-    cocos2d::CCSprite        * m_shadows[Stc::Game::TETROMINO_TYPES + 1];
-    cocos2d::CCSprite        * m_numbers[Stc::Game::TETROMINO_TYPES + 1][10];
+    cocos2d::CCSprite        * m_tiles[stc::Game::TETROMINO_TYPES + 1];
+    cocos2d::CCSprite        * m_shadows[stc::Game::TETROMINO_TYPES + 1];
+    cocos2d::CCSprite        * m_numbers[stc::Game::TETROMINO_TYPES + 1][10];
 };
 
 #endif // __PLATFORM_COCOS2D_X_H__

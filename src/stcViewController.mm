@@ -40,8 +40,8 @@
 	mAlertPaused = nil;
 	mAlertRestart = nil;
 
-    mGame = new Stc::Game();
-    mPlatformObjC = new Stc::PlatformObjC(self);
+    mGame = new stc::Game();
+    mPlatformObjC = new stc::PlatformObjC(self);
     mGame->init(mPlatformObjC);
 }
 
@@ -180,16 +180,24 @@
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	if (alertView == mAlertPaused) {
-		mGame->onEventStart(Stc::Game::EVENT_PAUSE);
+		mGame->onEventStart(stc::Game::EVENT_PAUSE);
 	}
 	if (alertView == mAlertRestart) {
 		if (buttonIndex == 0) {
-			mGame->onEventStart(Stc::Game::EVENT_PAUSE);
+			mGame->onEventStart(stc::Game::EVENT_PAUSE);
 		}
 		else {
-			mGame->onEventStart(Stc::Game::EVENT_RESTART);
+			mGame->onEventStart(stc::Game::EVENT_RESTART);
 		}		
 	}
+}
+
+- (void)didPresentAlertView:(UIAlertView *)alertView
+{
+    [UIView beginAnimations:@"" context:nil];
+    [UIView setAnimationDuration:0.1];
+    alertView.transform = CGAffineTransformRotate(alertView.transform, 3.14159265356 / 2);
+    [UIView commitAnimations];
 }
 
 @end

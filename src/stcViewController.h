@@ -15,8 +15,8 @@
     NSInteger animationFrameInterval;
     CADisplayLink *displayLink;
     
-    Stc::Game *mGame; 
-    Stc::PlatformObjC *mPlatformObjC;
+    stc::Game *mGame; 
+    stc::PlatformObjC *mPlatformObjC;
     
     UIEvent *mEventTouchStart;
     UIEvent *mEventTouchEnd;

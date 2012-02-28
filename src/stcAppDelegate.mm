@@ -11,9 +11,16 @@
 					 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self.window addSubview:self.viewController.view];
 	
+	// Try to set the orientation to landscape (right)
+	//[[UIDevice currentDevice] setOrientation:UIInterfaceOrientationLandscapeRight];
+
 	[[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight];
 
     return YES;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return (interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

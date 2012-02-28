@@ -9,7 +9,7 @@
 
 #include <assert.h>
 
-namespace Stc {
+namespace stc {
 
 PlatformObjC::PlatformObjC(id controller) {
     mGame = NULL;

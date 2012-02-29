@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Platform definition for Objective-C bridge.                              */
 /*                                                                            */
-/*   Copyright (c) 2010 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -31,25 +31,25 @@ class PlatformObjC : public Platform
 
     // Board up-left corner coordinates
     static const int BOARD_X = 180;
-    static const int BOARD_Y = 4;
+    static const int BOARD_Y = 28;
 
     // Preview tetromino position
     static const int PREVIEW_X = 112;
-    static const int PREVIEW_Y = 210;
+    static const int PREVIEW_Y = 232;
 
     // Score position and length on screen
     static const int SCORE_X      = 72;
-    static const int SCORE_Y      = 52;
+    static const int SCORE_Y      = 86;
     static const int SCORE_LENGTH = 10;
 
     // Lines position and length on screen
     static const int LINES_X      = 108;
-    static const int LINES_Y      = 34;
+    static const int LINES_Y      = 68;
     static const int LINES_LENGTH = 5;
 
     // Level position and length on screen
     static const int LEVEL_X      = 108;
-    static const int LEVEL_Y      = 16;
+    static const int LEVEL_Y      = 50;
     static const int LEVEL_LENGTH = 5;
 
     // Tetromino subtotals position
@@ -82,7 +82,7 @@ class PlatformObjC : public Platform
 
     // Size of background inside texture
     static const int BACKGROUND_WIDTH  = 480;    
-    static const int BACKGROUND_HEIGHT = 272;    
+    static const int BACKGROUND_HEIGHT = 320;    
 
     // Touch zones limits
     static const int TX_1 = 50;    

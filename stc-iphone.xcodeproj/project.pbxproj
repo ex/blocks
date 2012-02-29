@@ -49,7 +49,7 @@
 		B91AD32013205D280045DE81 /* PlatformObjC.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlatformObjC.hpp; sourceTree = "<group>"; };
 		B91AD32313205F830045DE81 /* TargaImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TargaImage.cpp; sourceTree = "<group>"; };
 		B91AD32413205F830045DE81 /* TargaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TargaImage.h; sourceTree = "<group>"; };
-		B91AD328132066BB0045DE81 /* back.tga */ = {isa = PBXFileReference; lastKnownFileType = file; name = back.tga; path = ../OpenGL/bin/back.tga; sourceTree = SOURCE_ROOT; };
+		B91AD328132066BB0045DE81 /* back.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = back.tga; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

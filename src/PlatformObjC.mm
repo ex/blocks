@@ -45,8 +45,8 @@ void PlatformObjC::processEvents() {
 						mGame->onEventStart(Game::EVENT_PAUSE);
 
 						[mController setAlertRestart: [[UIAlertView alloc] initWithTitle:@"Warning" message:@"Do you want to restart?"
-																				delegate:mController cancelButtonTitle:@"Cancel" 
-																	   otherButtonTitles:@"Restart", nil]];
+                                                    delegate:mController cancelButtonTitle:@"Cancel" 
+                                                                       otherButtonTitles:@"Restart", nil]];
 						[[mController alertRestart] show];
 					}
                 }
@@ -73,8 +73,8 @@ void PlatformObjC::processEvents() {
                 }
                 else {
 					[mController setAlertPaused: [[UIAlertView alloc] initWithTitle:@"Simple Tetris Clone" message:@"Game is paused"
-												                            delegate:mController cancelButtonTitle:@"Continue" 
-                                                                            otherButtonTitles:nil, nil]];
+                                                                           delegate:mController cancelButtonTitle:@"Continue" 
+                                                                  otherButtonTitles:nil, nil]];
 					[[mController alertPaused] show];
 					
                     mGame->onEventStart(Game::EVENT_PAUSE);

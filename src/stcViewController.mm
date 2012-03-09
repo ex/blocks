@@ -39,6 +39,7 @@
     mEventTouchEnd = nil;
 	mAlertPaused = nil;
 	mAlertRestart = nil;
+    mRotateAlertView = FALSE;
 
     mGame = new stc::Game();
     mPlatformObjC = new stc::PlatformObjC(self);
@@ -192,12 +193,17 @@
 	}
 }
 
-- (void)didPresentAlertView:(UIAlertView *)alertView
-{
-    [UIView beginAnimations:@"" context:nil];
-    [UIView setAnimationDuration:0.1];
-    alertView.transform = CGAffineTransformRotate(alertView.transform, 3.14159265356 / 2);
-    [UIView commitAnimations];
+- (void)didPresentAlertView:(UIAlertView *)alertView {
+    // Avoid initial UIAlertView rotation if app starts in landscape mode
+    if (!mRotateAlertView && ([[UIDevice currentDevice] orientation] != UIInterfaceOrientationLandscapeRight)) {
+        mRotateAlertView = TRUE;
+    }
+    if (mRotateAlertView) {
+        [UIView beginAnimations:@"" context:nil];
+        [UIView setAnimationDuration:0.1];
+        alertView.transform = CGAffineTransformRotate(alertView.transform, 3.14159265356 / 2);
+        [UIView commitAnimations];
+    }
 }
 
 @end

@@ -23,6 +23,8 @@
 
 	UIAlertView *mAlertPaused;
 	UIAlertView *mAlertRestart;	
+    
+    BOOL mRotateAlertView;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;

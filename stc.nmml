@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- metadata, make sure 'package' is at least 2 segments (ie. com.myproject) -->
+	<app file="stcnme" title="stc-nme" main="Platform" package="com.ex.stcnme"
+		version="1.0.0" company="" />
+		
+	<!-- output -->
+    <window width="480" height="320" if="desktop" />
+    <window width="480" height="320" if="flash" />
+	<window fps="60" />
+	<window orientation="landscape" />
+
+	<set name="BUILD_DIR" value="bin" />
+	
+	<!-- classpath, haxe libs -->
+	<classpath name="src" />
+	<haxelib name="nme" />
+	
+	<!-- assets -->
+	<icon name="assets/nme.svg" />
+
+	<assets path="assets/fonts" include="*.ttf" />
+	<assets path="assets/images" include="*" />
+
+	<assets path="assets/sounds" if="web">
+		<sound path="fx_line.mp3" id="fx_line" />
+		<music path="stc_theme_loop.mp3" id="stc_theme_loop" />
+	</assets>
+	
+	<assets path="assets/sounds" unless="web">
+		<sound path="fx_line.wav" id="fx_line" />
+		<music path="stc_theme_loop.ogg" id="stc_theme_loop" />
+	</assets>
+
+	<!-- DLLs -->
+	<ndll name="std" />
+	<ndll name="regexp" />
+	<ndll name="zlib" />
+	<ndll name="nme" haxelib="nme" />
+	
+	<!-- Windows app: hide console -->
+	<!--<setenv name="no_console" value="1" />-->
+</project>

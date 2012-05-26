@@ -2,7 +2,7 @@
 function love.conf(t)
     t.title = "STC - " .. _VERSION -- The title of the window the game is in (string)
     t.author = "Laurens Rodriguez" -- The author of the game (string)
-    t.identity = stc		       -- The name of the save directory (string)
+    t.identity = "stc"          -- The name of the save directory (string)
     t.version = "0.8.0"         -- The L0VE version this game was made for (number)
     t.console = false           -- Attach a console (boolean, Windows only)
     t.screen.width = 480        -- The window width (number)

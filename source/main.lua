@@ -29,25 +29,25 @@
 --   OTHER DEALINGS IN THE SOFTWARE.                                          --
 -- -------------------------------------------------------------------------- --
 
-require("game");
+require("game")
 require("platform")
 
 function love.load()
-    Game:init();
+    Game:init()
 end
 
 function love.update(dt)
-    Game:update();
+    Game:update()
 end
 
 function love.draw()
-    Platform:renderGame();
+    Platform:renderGame()
 end
 
 function love.keypressed(key, unicode)
-    Platform:onKeyDown(key);
+    Platform:onKeyDown(key)
 end
 
 function love.keyreleased(key)
-    Platform:onKeyUp(key);
+    Platform:onKeyUp(key)
 end

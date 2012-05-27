@@ -84,6 +84,7 @@ public class Platform extends PlatformBase {
 
     // Symbol names
     private static const MUSIC_VOLUME:Number = 0.2;
+    private static const LINE_VOLUME:Number = 0.5;
     private static const MUSIC_LOOP_START:int = 3693;
 
     // Platform data
@@ -96,6 +97,7 @@ public class Platform extends PlatformBase {
     private var mBmpNumbers:BitmapData;
 
     private var mMusicSound:Sound;
+    private var mDropSound:Sound;
     private var mRowSound:Sound;
     private var mMusicChannel:SoundChannel;
     private var mMusicPosition:Number;
@@ -203,6 +205,8 @@ public class Platform extends PlatformBase {
         // Load sound effects
         className = Assets.soundRow;
         mRowSound = new className() as Sound;
+        className = Assets.soundDrop;
+        mDropSound = new className() as Sound;
 
         mRefreshBoard = false;
         mRefreshFrames = 0;
@@ -211,11 +215,12 @@ public class Platform extends PlatformBase {
     // Called if it's necessary to redraw the board.
     override public function onTetrominoLand():void {
         mRefreshBoard = true;
+        mDropSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
     }
 
     // Called when a row is filled.
     override public function onFilledRows():void {
-        mRowSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
+        mRowSound.play(0, 0, new SoundTransform(LINE_VOLUME));
     }
 
     // Makes the background music to loop in section

@@ -28,6 +28,9 @@ public class Assets {
     [Embed(source = "../res/stc_theme_loop.mp3")]
     public static const musicGame:Class;
 
+    [Embed(source = "../res/fx_drop.mp3")]
+    public static const soundDrop:Class;
+
     [Embed(source = "../res/fx_line.mp3")]
     public static const soundRow:Class;
 }

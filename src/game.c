@@ -165,7 +165,7 @@ void gameInit(StcGame *game) {
         /* Initialize platform */
         game->errorCode = platformInit(game);
 
-        if (game->errorCode != ERROR_NONE) {
+        if (game->errorCode == ERROR_NONE) {
             /* If platform was correctly initialized, start the game */
             startGame(game);
         }

@@ -41,13 +41,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="../../lib/sdl/include;../../lib/sdl_image"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
 				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
+				WarningLevel="4"
 				DebugInformationFormat="4"
 				CompileAs="1"
 			/>
@@ -63,7 +64,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sdl.lib  sdlmain.lib"
-				LinkIncremental="2"
+				AdditionalLibraryDirectories="../../lib/sdl/lib;../../lib/sdl_image/lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
@@ -117,12 +118,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../lib/sdl/include;../../lib/sdl_image"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;STC_SHOW_GHOST_PIECE;STC_WALL_KICK_ENABLED;STC_AUTO_ROTATION"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
+				WarningLevel="4"
 				CompileAs="1"
 			/>
 			<Tool
@@ -137,10 +138,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sdl.lib  sdlmain.lib"
-				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../lib/sdl/lib;../../lib/sdl_image/lib"
 				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -201,24 +200,6 @@
 			<File
 				RelativePath="..\src\sdl\sdl_game.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\src\sdl\sdl_game.h"

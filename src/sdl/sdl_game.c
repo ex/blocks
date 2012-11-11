@@ -150,9 +150,9 @@ static void drawTile(StcGame *game, int x, int y, int tile) {
     SDL_Rect recDestine;
     SDL_Rect recSource;
 
-    recDestine.x = x;
-    recDestine.y = y;
-    recSource.x = TILE_SIZE * tile;
+    recDestine.x = (Sint16)x;
+    recDestine.y = (Sint16)y;
+    recSource.x = (Sint16)(TILE_SIZE * tile);
     recSource.y = 0;
     recSource.w = TILE_SIZE;
     recSource.h = TILE_SIZE;
@@ -165,14 +165,14 @@ static void drawNumber(StcGame *game, int x, int y, long number, int length, int
     SDL_Rect recSource;
     int pos;
 
-    recSource.y = NUMBER_HEIGHT * color;
+    recSource.y = (Sint16)(NUMBER_HEIGHT * color);
     recSource.w = NUMBER_WIDTH;
     recSource.h = NUMBER_HEIGHT;
-    recDestine.y = y;
+    recDestine.y = (Sint16)y;
 
     pos = 0;
     do {
-        recDestine.x = x + NUMBER_WIDTH * (length - pos);
+        recDestine.x = (Sint16)(x + NUMBER_WIDTH * (length - pos));
         recSource.x = NUMBER_WIDTH * (Sint16)(number % 10);
         SDL_BlitSurface(game->platform->bmpNumbers, &recSource, game->platform->screen, &recDestine);
         number /= 10;

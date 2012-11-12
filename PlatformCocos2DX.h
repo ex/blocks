@@ -1,8 +1,17 @@
+/* ========================================================================== */
+/*   PlatformCocos2DX.h                                                       */
+/*   Define: STC_COCOS2DX_USE_OGLES2    for OGLES 2 devices                   */
+/* -------------------------------------------------------------------------- */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   This code is licensed under the MIT license:                             */
+/*   http://www.opensource.org/licenses/mit-license.php                       */
+/* -------------------------------------------------------------------------- */
 
-#ifndef __PLATFORM_COCOS2D_X_H__
-#define __PLATFORM_COCOS2D_X_H__
+#ifndef __PLATFORM_COCOS2DX_H__
+#define __PLATFORM_COCOS2DX_H__
 
-#include <cocos2d.h>
+#include "cocos2d.h"
+#include <vector>
 #include "../../trunk/src/game.hpp"
 
 class PlatformCocos2DX : public cocos2d::CCLayerColor, public stc::Platform
@@ -76,7 +85,7 @@ public:
     PlatformCocos2DX();
     ~PlatformCocos2DX();
 
-    virtual int init(stc::Game *game);
+    virtual int init(stc::Game* game);
     virtual void end();
     virtual void processEvents();
     virtual void renderGame();
@@ -105,22 +114,33 @@ public:
 private:
 
     void drawTile(int x, int y, int tile, bool shadow);
-
     void drawNumber(int x, int y, long number, int length, int color);
 
-    long                       m_elapsedTime;
+    long       m_elapsedTime; // Used to store the time passed.
+    int        m_yOffset;     // Used to correct rendering positions.
 
-    int                        m_yOffset;
+    stc::Game* m_game;  // The game instance.
 
-    stc::Game                * m_game;
-
-    // We draw the game state onver this rendering target object.
-    cocos2d::CCRenderTexture * m_canvas;
+#ifdef STC_COCOS2DX_USE_OGLES2
 
     // Array of sprites for drawing, there is one more color than tetromino types.
-    cocos2d::CCSprite        * m_tiles[stc::Game::TETROMINO_TYPES + 1];
-    cocos2d::CCSprite        * m_shadows[stc::Game::TETROMINO_TYPES + 1];
-    cocos2d::CCSprite        * m_numbers[stc::Game::TETROMINO_TYPES + 1][10];
+    cocos2d::CCSprite* m_tiles[stc::Game::TETROMINO_TYPES + 1];
+    cocos2d::CCSprite* m_shadows[stc::Game::TETROMINO_TYPES + 1];
+    cocos2d::CCSprite* m_numbers[stc::Game::TETROMINO_TYPES + 1][10];
+
+    // We draw the game state over this rendering target object.
+    cocos2d::CCRenderTexture *m_canvas;
+
+#else
+
+    std::vector<cocos2d::CCSprite*> m_board;     // Board sprites.
+    std::vector<cocos2d::CCSprite*> m_tetromino; // Falling tetromino sprites.
+    std::vector<cocos2d::CCSprite*> m_shadow;    // Shadow tetromino sprites.
+    std::vector<cocos2d::CCSprite*> m_next;      // Next tetromino sprites.
+
+    cocos2d::CCSprite* getTile(int x, int y, int id, bool shadow);
+
+#endif
 };
 
 #endif // __PLATFORM_COCOS2D_X_H__

@@ -1,8 +1,14 @@
+/* ========================================================================== */
+/*   PlatformCocos2DX.cpp                                                     */
+/* -------------------------------------------------------------------------- */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   This code is licensed under the MIT license:                             */
+/*   http://www.opensource.org/licenses/mit-license.php                       */
+/* -------------------------------------------------------------------------- */
 
 #include "PlatformCocos2DX.h"
 
-#include <SimpleAudioEngine.h>
-#include "../../trunk/src/game.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace cocos2d;
 using namespace stc;
@@ -42,7 +48,7 @@ CCScene * PlatformCocos2DX::scene()
 bool PlatformCocos2DX::init()
 {
 	// First init super class.
-    if (!CCLayerColor::initWithColor(ccc4(255,255,255,255)))
+    if (!CCLayerColor::initWithColor(ccc4f(255,255,255,255)))
     {
         return false;
     }
@@ -64,7 +70,7 @@ bool PlatformCocos2DX::init()
 
     // Calculate offset for drawing. (the origin in cocos2d-x is the bottom-left
     // corner and UI original postions were done for a 272x480 screen size)
-    m_yOffset = size.height - (size.height - BACKGROUND_HEIGHT) / 2;
+    m_yOffset = int(size.height - (size.height - BACKGROUND_HEIGHT) / 2);
 
     //--------------------------------------------------------------------------
     // Add background image.
@@ -76,6 +82,7 @@ bool PlatformCocos2DX::init()
 	// Add the background as a child to this layer.
 	addChild(pBackground, 0);
 
+#ifdef STC_COCOS2DX_USE_OGLES2
     //--------------------------------------------------------------------------
     // Create a render texture to draw the game state.
     m_canvas = CCRenderTexture::renderTextureWithWidthAndHeight(size.width, size.height);
@@ -126,6 +133,18 @@ bool PlatformCocos2DX::init()
             m_numbers[k][i]->retain();
         }
     }
+#else
+    for (int k = 0; k < Game::TETROMINO_SIZE * Game::TETROMINO_SIZE; k += 1)
+    {
+        m_tetromino.push_back(NULL);
+        m_shadow.push_back(NULL);
+        m_next.push_back(NULL);
+    }
+    for (int k = 0; k < Game::BOARD_TILEMAP_WIDTH * Game::BOARD_TILEMAP_HEIGHT; k += 1)
+    {
+        m_board.push_back(NULL);
+    }
+#endif
 
     //--------------------------------------------------------------------------
 	// Add a "close" icon to exit the game, it's an autorelease object.
@@ -143,13 +162,38 @@ bool PlatformCocos2DX::init()
 
     //--------------------------------------------------------------------------
     // Schedule update event.
-    this->schedule(schedule_selector(PlatformCocos2DX:: update));
+    this->schedule(schedule_selector(PlatformCocos2DX::update));
 
     // Connect game with this platform. 
     m_game->init(this);
 
 	return true;
 }
+
+#ifndef STC_COCOS2DX_USE_OGLES2
+// Return a sprite for a tetromino tile.
+CCSprite* PlatformCocos2DX::getTile(int x, int y, int id, bool shadow)
+{
+    CCSprite* tile;
+    if (!shadow)
+    {
+        // Images for tiles have 2 extra pixels
+        tile = CCSprite::spriteWithFile("blocks.png", 
+                                        CCRectMake((TILE_SIZE + 2) * id, 0, 
+                                                    TILE_SIZE + 2, TILE_SIZE + 2));
+        tile->setPosition(CCPoint(x + TILE_SIZE / 2, m_yOffset - y - TILE_SIZE / 2));
+    }
+    else
+    {
+        // Images for shadows have 2 pixels less
+        tile = CCSprite::spriteWithFile("blocks.png", 
+                                        CCRectMake((TILE_SIZE  + 2) * id, TILE_SIZE + 2, 
+                                                    TILE_SIZE - 2, TILE_SIZE - 2));
+        tile->setPosition(CCPoint(x + TILE_SIZE / 2 - 1, m_yOffset - y - TILE_SIZE / 2));
+    }
+    return tile;
+}
+#endif
 
 void PlatformCocos2DX::menuCloseCallback(CCObject* pSender)
 {
@@ -165,8 +209,8 @@ void PlatformCocos2DX::ccTouchesBegan(CCSet * touches, CCEvent * event)
     for (CCSetIterator it = touches->begin(); it != touches->end(); ++it) 
     {
         CCTouch * touch = (CCTouch *)(*it);
-        float tx = touch->locationInView(touch->view()).x;
-        float ty = touch->locationInView(touch->view()).y;
+        float tx = touch->locationInView().x;
+        float ty = touch->locationInView().y;
         
         if (tx < TX_1)
         {
@@ -219,13 +263,13 @@ void PlatformCocos2DX::ccTouchesBegan(CCSet * touches, CCEvent * event)
     }
 }
 
-void PlatformCocos2DX::ccTouchesEnded(CCSet * touches, CCEvent * event)
+void PlatformCocos2DX::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
     for (CCSetIterator it = touches->begin(); it != touches->end(); ++it) 
     {
-        CCTouch * touch = (CCTouch *)(*it);
-        float tx = touch->locationInView(touch->view()).x;
-        float ty = touch->locationInView(touch->view()).y;
+        CCTouch* touch = (CCTouch *)(*it);
+        float tx = touch->locationInView().x;
+        float ty = touch->locationInView().y;
         CCLOG("-- touchEnd: %d %d", int(tx), int(ty));    
         
         // Just cancel any continuos action by now
@@ -265,6 +309,7 @@ void PlatformCocos2DX::end()
 // Tile sprites start in the top-left corner of the compounded image. 
 void PlatformCocos2DX::drawTile(int x, int y, int tile, bool shadow)
 {
+#ifdef STC_COCOS2DX_USE_OGLES2
     if (!shadow) 
     {
         m_tiles[tile]->setPosition(ccp(x + TILE_SIZE / 2, m_yOffset - y - TILE_SIZE / 2));
@@ -275,12 +320,14 @@ void PlatformCocos2DX::drawTile(int x, int y, int tile, bool shadow)
         m_shadows[tile]->setPosition(ccp(x + TILE_SIZE / 2 - 1, m_yOffset - y - TILE_SIZE / 2));
         m_shadows[tile]->visit();
     }
+#endif
 }
 
 // Draw a number on the given position.
 // Number sprites start at the left below the sprites for tiles. 
 void PlatformCocos2DX::drawNumber(int x, int y, long number, int length, int color)
 {
+#ifdef STC_COCOS2DX_USE_OGLES2
     int pos = 0;
     do
     {
@@ -292,13 +339,16 @@ void PlatformCocos2DX::drawNumber(int x, int y, long number, int length, int col
         number /= 10;
 
     } while (++pos < length);
+#else
+
+#endif    
 }
 
 // Render the state of the game using platform functions.
 void PlatformCocos2DX::renderGame()
 {
     int i, j;
-
+#ifdef STC_COCOS2DX_USE_OGLES2
     // Check if the game state has changed, if so redraw
     if (m_game->hasChanged())
     {
@@ -389,6 +439,128 @@ void PlatformCocos2DX::renderGame()
 
         m_canvas->end();
     }
+
+#else // !STC_COCOS2DX_USE_OGLES2
+
+    // Check if the game state has changed, if so redraw
+    if (m_game->hasChanged())
+    {
+        // Draw shadow tetromino
+        if (m_game->shadowGap() >= 0)
+        {
+            for (i = 0; i < Game::TETROMINO_SIZE; i += 1)
+            {
+                for (j = 0; j < Game::TETROMINO_SIZE; j += 1)
+                {
+                    CCSprite* tile = m_shadow[i * Game::TETROMINO_SIZE + j];
+                    if (tile != NULL)
+                    {
+                        removeChild(tile, true);
+                        m_shadow[i * Game::TETROMINO_SIZE + j] = NULL;
+                    }
+                    if (m_game->showShadow() && (m_game->fallingBlock().cells[i][j] != Game::EMPTY_CELL))
+                    {
+                        tile = getTile(BOARD_X + TILE_SIZE * (m_game->fallingBlock().x + i),
+                                       BOARD_Y + TILE_SIZE * (m_game->fallingBlock().y + m_game->shadowGap() + j),
+                                       m_game->fallingBlock().cells[i][j], true);
+                        addChild(tile);
+                        m_shadow[i * Game::TETROMINO_SIZE + j] = tile;
+                    }
+                }
+            }
+        }
+
+        // Draw falling tetromino
+        for (i = 0; i < Game::TETROMINO_SIZE; i += 1)
+        {
+            for (j = 0; j < Game::TETROMINO_SIZE; j += 1)
+            {
+                CCSprite* tile = m_tetromino[i * Game::TETROMINO_SIZE + j];
+                if (tile != NULL)
+                {
+                    removeChild(tile, true);
+                    m_tetromino[i * Game::TETROMINO_SIZE + j] = NULL;
+                }
+                if (m_game->fallingBlock().cells[i][j] != Game::EMPTY_CELL)
+                {
+                    tile = getTile(BOARD_X + TILE_SIZE * (m_game->fallingBlock().x + i),
+                                   BOARD_Y + TILE_SIZE * (m_game->fallingBlock().y + j),
+                                   m_game->fallingBlock().cells[i][j], false);
+                    addChild(tile);
+                    m_tetromino[i * Game::TETROMINO_SIZE + j] = tile;
+                }
+            }
+        }
+
+        // Draw preview block
+        for (i = 0; i < Game::TETROMINO_SIZE; i += 1)
+        {
+            for (j = 0; j < Game::TETROMINO_SIZE; j += 1)
+            {
+                CCSprite* tile = m_next[i * Game::TETROMINO_SIZE + j];
+                if (tile != NULL)
+                {
+                    removeChild(tile, true);
+                    m_next[i * Game::TETROMINO_SIZE + j] = NULL;
+                }
+                if (m_game->showPreview() && (m_game->nextBlock().cells[i][j] != Game::EMPTY_CELL))
+                {
+                    tile = getTile(PREVIEW_X + (TILE_SIZE * i),
+                                   PREVIEW_Y + (TILE_SIZE * j),
+                                   m_game->nextBlock().cells[i][j], false);
+                    addChild(tile);
+                    m_next[i * Game::TETROMINO_SIZE + j] = tile;
+                }
+            }
+        }
+
+        // Draw the cells in the board
+        for (i = 0; i < Game::BOARD_TILEMAP_WIDTH; i += 1)
+        {
+            for (j = 0; j < Game::BOARD_TILEMAP_HEIGHT; j += 1)
+            {
+                int index = i + j * Game::BOARD_TILEMAP_WIDTH;
+                CCSprite* tile = m_board[index];
+                int id = m_game->getCell(i, j);
+
+                if (id == Game::EMPTY_CELL)
+                {
+                    if (tile != NULL)
+                    {
+                        removeChild(tile, true);
+                        m_board[index] = NULL;
+                    }
+                }
+                else
+                {
+                    if (tile == NULL)
+                    {
+                        tile = getTile(BOARD_X + (TILE_SIZE * i),
+                                       BOARD_Y + (TILE_SIZE * j),
+                                       id, false);
+                        addChild(tile, 0, id);
+                        m_board[index] = tile;
+                    }
+                    else
+                    {
+                        if (tile->getTag() != id)
+                        {
+                            removeChild(tile, true);
+                            tile = getTile(BOARD_X + (TILE_SIZE * i),
+                                           BOARD_Y + (TILE_SIZE * j),
+                                           id, false);
+                            addChild(tile, 0, id);
+                            m_board[index] = tile;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Inform to the game that we are done with the move.
+        m_game->onChangeProcessed();
+    }
+#endif
 }
 
 long PlatformCocos2DX::getSystemTime()

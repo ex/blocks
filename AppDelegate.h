@@ -1,7 +1,15 @@
+/* ========================================================================== */
+/*   AppDelegate.h                                                            */
+/* -------------------------------------------------------------------------- */
+/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   This code is licensed under the MIT license:                             */
+/*   http://www.opensource.org/licenses/mit-license.php                       */
+/* -------------------------------------------------------------------------- */
+
 #ifndef  _APP_DELEGATE_H_
 #define  _APP_DELEGATE_H_
 
-#include <CCApplication.h>
+#include "CCApplication.h"
 
 /**
 @brief	The cocos2d Application.

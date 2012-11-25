@@ -914,20 +914,20 @@ export class PlatformHTML5 implements Platform {
 
     // Tetromino subtotals position
     private static TETROMINO_X = 425;
-    private static TETROMINO_L_Y = 53;
-    private static TETROMINO_I_Y = 77;
-    private static TETROMINO_T_Y = 101;
-    private static TETROMINO_S_Y = 125;
-    private static TETROMINO_Z_Y = 149;
-    private static TETROMINO_O_Y = 173;
-    private static TETROMINO_J_Y = 197;
+    private static TETROMINO_L_Y = 79;
+    private static TETROMINO_I_Y = 102;
+    private static TETROMINO_T_Y = 126;
+    private static TETROMINO_S_Y = 150;
+    private static TETROMINO_Z_Y = 174;
+    private static TETROMINO_O_Y = 198;
+    private static TETROMINO_J_Y = 222;
 
     // Size of subtotals
     private static TETROMINO_LENGTH = 5;
 
     // Tetromino total position
     private static PIECES_X = 418;
-    private static PIECES_Y = 221;
+    private static PIECES_Y = 246;
     private static PIECES_LENGTH = 6;
 
     // Size of number
@@ -966,18 +966,42 @@ export class PlatformHTML5 implements Platform {
 
         this.m_image = image;
 
-        var canvas = <HTMLCanvasElement>document.getElementById('canvasBack');
+        // Create background layer.
+        var canvasBack = <HTMLCanvasElement>document.createElement("canvas");
+        canvasBack.width = 480;
+        canvasBack.height = 320;
+        canvasBack.style.position = "absolute";
+        canvasBack.style.left = "0";
+        canvasBack.style.top = "0";
+        canvasBack.style.zIndex = "0";
+        document.body.appendChild(canvasBack);
 
         // Draw background
-        var context = canvas.getContext('2d');
+        var context = canvasBack.getContext('2d');
         context.drawImage(this.m_image, 0, PlatformHTML5.TEXTURE_SIZE - PlatformHTML5.SCREEN_HEIGHT,
                           PlatformHTML5.SCREEN_WIDTH, PlatformHTML5.SCREEN_HEIGHT, 0, 0,
                           PlatformHTML5.SCREEN_WIDTH, PlatformHTML5.SCREEN_HEIGHT);
 
-        canvas = <HTMLCanvasElement>document.getElementById('canvasStats');
-        this.m_canvasStats = canvas.getContext('2d');
+        // Create stats layer.
+        var canvasStats = <HTMLCanvasElement>document.createElement("canvas");
+        canvasStats.width = 480;
+        canvasStats.height = 320;
+        canvasStats.style.position = "absolute";
+        canvasStats.style.left = "0";
+        canvasStats.style.top = "0";
+        canvasStats.style.zIndex = "1";
+        document.body.appendChild(canvasStats);
+        this.m_canvasStats = canvasStats.getContext('2d');
 
-        canvas = <HTMLCanvasElement>document.getElementById('canvas');
+        // Create game layer.
+        var canvas = <HTMLCanvasElement>document.createElement("canvas");
+        canvas.width = 480;
+        canvas.height = 320;
+        canvas.style.position = "absolute";
+        canvas.style.left = "0";
+        canvas.style.top = "0";
+        canvas.style.zIndex = "2";
+        document.body.appendChild(canvas);
         this.m_canvas = canvas.getContext('2d');
 
         // Register events.
@@ -1062,7 +1086,7 @@ export class PlatformHTML5 implements Platform {
                 this.m_game.onEventStart(Game.EVENT_SHOW_SHADOW);
             }
         }
-        //console.info("-- touchStart:" + tx + " " + ty);
+        console.info("-- touchStart:" + tx + " " + ty);
     }
 
     private onTouchEnd(event): void {
@@ -1262,7 +1286,7 @@ export class PlatformHTML5 implements Platform {
 
 window.onload = () => {
     var image = new Image();
-    image.src = "back.png"
+    image.src = "stc_sprites.png"
     image.onload = function () {
         var platform = new Stc.PlatformHTML5(image);
         var game = new Stc.Game();

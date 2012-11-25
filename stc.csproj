@@ -20,14 +20,19 @@
     <UpgradeBackupLocation />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="app.css" />
-    <Content Include="index.htm" />
     <Content Include="platform.js">
       <DependentUpon>platform.ts</DependentUpon>
     </Content>
+    <Content Include="stc.htm" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="platform.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="web.config" />
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

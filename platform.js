@@ -711,13 +711,37 @@ var Stc;
     var PlatformHTML5 = (function () {
         function PlatformHTML5(image) {
             this.m_image = image;
-            var canvas = document.getElementById('canvasBack');
+            // Create background layer.
+            var canvasBack = document.createElement("canvas");
+            canvasBack.width = 480;
+            canvasBack.height = 320;
+            canvasBack.style.position = "absolute";
+            canvasBack.style.left = "0";
+            canvasBack.style.top = "0";
+            canvasBack.style.zIndex = "0";
+            document.body.appendChild(canvasBack);
             // Draw background
-            var context = canvas.getContext('2d');
+            var context = canvasBack.getContext('2d');
             context.drawImage(this.m_image, 0, PlatformHTML5.TEXTURE_SIZE - PlatformHTML5.SCREEN_HEIGHT, PlatformHTML5.SCREEN_WIDTH, PlatformHTML5.SCREEN_HEIGHT, 0, 0, PlatformHTML5.SCREEN_WIDTH, PlatformHTML5.SCREEN_HEIGHT);
-            canvas = document.getElementById('canvasStats');
-            this.m_canvasStats = canvas.getContext('2d');
-            canvas = document.getElementById('canvas');
+            // Create stats layer.
+            var canvasStats = document.createElement("canvas");
+            canvasStats.width = 480;
+            canvasStats.height = 320;
+            canvasStats.style.position = "absolute";
+            canvasStats.style.left = "0";
+            canvasStats.style.top = "0";
+            canvasStats.style.zIndex = "1";
+            document.body.appendChild(canvasStats);
+            this.m_canvasStats = canvasStats.getContext('2d');
+            // Create game layer.
+            var canvas = document.createElement("canvas");
+            canvas.width = 480;
+            canvas.height = 320;
+            canvas.style.position = "absolute";
+            canvas.style.left = "0";
+            canvas.style.top = "0";
+            canvas.style.zIndex = "2";
+            document.body.appendChild(canvas);
             this.m_canvas = canvas.getContext('2d');
             // Register events.
             var myself = this;
@@ -755,16 +779,16 @@ function handlerTouchEnd(event) {
         PlatformHTML5.LEVEL_Y = 50;
         PlatformHTML5.LEVEL_LENGTH = 5;
         PlatformHTML5.TETROMINO_X = 425;
-        PlatformHTML5.TETROMINO_L_Y = 53;
-        PlatformHTML5.TETROMINO_I_Y = 77;
-        PlatformHTML5.TETROMINO_T_Y = 101;
-        PlatformHTML5.TETROMINO_S_Y = 125;
-        PlatformHTML5.TETROMINO_Z_Y = 149;
-        PlatformHTML5.TETROMINO_O_Y = 173;
-        PlatformHTML5.TETROMINO_J_Y = 197;
+        PlatformHTML5.TETROMINO_L_Y = 79;
+        PlatformHTML5.TETROMINO_I_Y = 102;
+        PlatformHTML5.TETROMINO_T_Y = 126;
+        PlatformHTML5.TETROMINO_S_Y = 150;
+        PlatformHTML5.TETROMINO_Z_Y = 174;
+        PlatformHTML5.TETROMINO_O_Y = 198;
+        PlatformHTML5.TETROMINO_J_Y = 222;
         PlatformHTML5.TETROMINO_LENGTH = 5;
         PlatformHTML5.PIECES_X = 418;
-        PlatformHTML5.PIECES_Y = 221;
+        PlatformHTML5.PIECES_Y = 246;
         PlatformHTML5.PIECES_LENGTH = 6;
         PlatformHTML5.NUMBER_WIDTH = 7;
         PlatformHTML5.NUMBER_HEIGHT = 9;
@@ -800,9 +824,7 @@ function handlerTouchEnd(event) {
             var ty = event.layerY;
             if(tx < PlatformHTML5.TX_1) {
                 if(ty < PlatformHTML5.TY_1) {
-                    if(this.m_game.isOver()) {
-                        this.m_game.onEventStart(Game.EVENT_RESTART);
-                    }
+                    this.m_game.onEventStart(Game.EVENT_RESTART);
                 } else {
                     if(ty < PlatformHTML5.TY_2) {
                         this.m_game.onEventStart(Game.EVENT_MOVE_LEFT);
@@ -823,14 +845,16 @@ function handlerTouchEnd(event) {
                     }
                 } else {
                     if(ty < PlatformHTML5.TY_1) {
-                        if(!this.m_game.isPaused()) {
-                            this.showOverlay("Game is paused");
-                        } else {
-                            // Force redraw.
-                            this.m_game.setChanged(true);
-                            this.renderGame();
+                        if(!this.m_game.isOver()) {
+                            if(!this.m_game.isPaused()) {
+                                this.showOverlay("Game is paused");
+                            } else {
+                                // Force redraw.
+                                this.m_game.setChanged(true);
+                                this.renderGame();
+                            }
+                            this.m_game.onEventStart(Game.EVENT_PAUSE);
                         }
-                        this.m_game.onEventStart(Game.EVENT_PAUSE);
                     } else {
                         if(ty < PlatformHTML5.TY_2) {
                             this.m_game.onEventStart(Game.EVENT_MOVE_RIGHT);
@@ -840,8 +864,8 @@ function handlerTouchEnd(event) {
                     }
                 }
             }
-            //console.info("-- touchStart:" + tx + " " + ty);
-                    };
+            console.info("-- touchStart:" + tx + " " + ty);
+        };
         PlatformHTML5.prototype.onTouchEnd = function (event) {
             this.m_game.onEventEnd(Game.EVENT_MOVE_LEFT);
             this.m_game.onEventEnd(Game.EVENT_MOVE_RIGHT);
@@ -1011,7 +1035,7 @@ function handlerTouchEnd(event) {
 })(Stc || (Stc = {}));
 window.onload = function () {
     var image = new Image();
-    image.src = "back.png";
+    image.src = "stc_sprites.png";
     image.onload = function () {
         var platform = new Stc.PlatformHTML5(image);
         var game = new Stc.Game();

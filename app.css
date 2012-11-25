@@ -1,0 +1,13 @@
+﻿
+body {
+    background-color: white;
+}
+
+html, body {
+    width: 480px;
+    height: 272px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+}

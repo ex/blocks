@@ -964,6 +964,9 @@ export class PlatformHTML5 implements Platform {
 
     constructor (image: HTMLImageElement) {
 
+        // http://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+        this.m_isIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false );
+
         this.m_image = image;
 
         // Create background layer.
@@ -1019,14 +1022,22 @@ export class PlatformHTML5 implements Platform {
         function handlerTouchDown(event) {
             myself.onTouchStart(event);
         }
-        canvas.onmousedown = handlerTouchDown;
-        canvas.ontouchstart = handlerTouchDown;
+        if (this.m_isIOS) {
+            canvas.ontouchstart = handlerTouchDown;
+        }
+        else {
+            canvas.onmousedown = handlerTouchDown;
+        }
 
         function handlerTouchEnd(event) {
             myself.onTouchEnd(event);
         }
-        canvas.onmouseup = handlerTouchEnd;
-        canvas.ontouchend = handlerTouchEnd;
+        if (this.m_isIOS) {
+            canvas.ontouchend = handlerTouchEnd;
+        }
+        else {
+            canvas.onmouseup = handlerTouchEnd;
+        }
     }
 
     private showOverlay(text: string): void {
@@ -1282,6 +1293,8 @@ export class PlatformHTML5 implements Platform {
     private m_canvasStats: any;
     private m_canvas: any;
     private m_image: HTMLImageElement;
+
+    private m_isIOS: bool;
 }
 }
 

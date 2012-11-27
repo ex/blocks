@@ -710,6 +710,8 @@ var Stc;
     Stc.Game = Game;    
     var PlatformHTML5 = (function () {
         function PlatformHTML5(image) {
+            // http://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+            this.m_isIOS = (navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false);
             this.m_image = image;
             // Create background layer.
             var canvasBack = document.createElement("canvas");
@@ -756,13 +758,19 @@ function handlerKeyUp(event) {
 function handlerTouchDown(event) {
                 myself.onTouchStart(event);
             }
-            canvas.onmousedown = handlerTouchDown;
-            canvas.ontouchstart = handlerTouchDown;
+            if(this.m_isIOS) {
+                canvas.ontouchstart = handlerTouchDown;
+            } else {
+                canvas.onmousedown = handlerTouchDown;
+            }
 function handlerTouchEnd(event) {
                 myself.onTouchEnd(event);
             }
-            canvas.onmouseup = handlerTouchEnd;
-            canvas.ontouchend = handlerTouchEnd;
+            if(this.m_isIOS) {
+                canvas.ontouchend = handlerTouchEnd;
+            } else {
+                canvas.onmouseup = handlerTouchEnd;
+            }
         }
         PlatformHTML5.SCREEN_WIDTH = 480;
         PlatformHTML5.SCREEN_HEIGHT = 320;

@@ -3,19 +3,24 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>Simple Tetris Clone: TypeScript + HTML5</title>
+    <title>Simple Tetris Clone: TypeScript</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" /
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png/"/> 
     <style type="text/css">
         body {
             background-color: black;
         }
 
         html, body {
-            width: 480px;
-            height: 272px;
             margin: 0;
             padding: 0;
             border: 0;
             outline: 0;
+        }
+
+        canvas { 
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
         }
     </style>
     <script src="platform.js"></script>

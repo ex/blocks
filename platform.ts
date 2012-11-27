@@ -1020,11 +1020,13 @@ export class PlatformHTML5 implements Platform {
             myself.onTouchStart(event);
         }
         canvas.onmousedown = handlerTouchDown;
+        canvas.ontouchstart = handlerTouchDown;
 
         function handlerTouchEnd(event) {
             myself.onTouchEnd(event);
         }
         canvas.onmouseup = handlerTouchEnd;
+        canvas.ontouchend = handlerTouchEnd;
     }
 
     private showOverlay(text: string): void {
@@ -1285,8 +1287,15 @@ export class PlatformHTML5 implements Platform {
 
 
 window.onload = () => {
+    // [iPhone] hiding Safari user interface components
+    // http://stackoverflow.com/questions/273671/hiding-safari-user-interface-components-on-iphone
+    setTimeout(function() { window.scrollTo(0, 1); }, 0);
+
+    // Start loading the image with all game elements.
     var image = new Image();
     image.src = "stc_sprites.png"
+
+    // Start game after image has loaded.
     image.onload = function () {
         var platform = new Stc.PlatformHTML5(image);
         var game = new Stc.Game();

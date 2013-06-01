@@ -23,10 +23,10 @@ int PlatformSdl::init(Game *game)
     // Initialize the random number generator
     srand((unsigned int)(time(NULL)));
 
-    // Start video system
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    // Start video and audio system
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
-        return Game::ERROR_NO_VIDEO;
+        return Game::ERROR_PLATFORM;
     }
 
     // Create game video surface
@@ -50,6 +50,26 @@ int PlatformSdl::init(Game *game)
     {
         return Game::ERROR_NO_IMAGES;
     }
+
+	// Setup audio
+	int audioRate = 44100;
+	Uint16 audioFormat = AUDIO_S16; // 16-bit stereo
+	int audioChannels = 2;
+	int audioBuffers = 4096;
+
+	// Open SDL_mixer
+	if (Mix_OpenAudio(audioRate, audioFormat, audioChannels, audioBuffers))
+	{
+        return Game::ERROR_PLATFORM;
+	}
+
+	// Load the music file and sound effects
+	mMusic = Mix_LoadMUS(STC_SND_MUSIC);
+	mSoundLine = Mix_LoadWAV(STC_SND_LINE);
+	mSoundDrop = Mix_LoadWAV(STC_SND_DROP);
+
+	// Play the music in a loop
+	Mix_PlayMusic(mMusic, -1);
 
     mGame = game;
     return Game::ERROR_NONE;
@@ -294,6 +314,16 @@ int PlatformSdl::random()
     return rand();
 }
 
+void PlatformSdl::onLineCompleted()
+{
+	Mix_PlayChannel(-1, mSoundLine, 0);
+}
+
+void PlatformSdl::onPieceDrop()
+{
+	Mix_PlayChannel(-1, mSoundDrop, 0);
+}
+
 // Release platform allocated resources
 void PlatformSdl::end()
 {
@@ -302,6 +332,9 @@ void PlatformSdl::end()
     SDL_FreeSurface(mBmpBack);
     SDL_FreeSurface(mBmpNumbers);
     SDL_FreeSurface(mScreen);
+
+	// Close SDL_mixer
+	Mix_CloseAudio();
 
     // Shut down SDL
     SDL_Quit();

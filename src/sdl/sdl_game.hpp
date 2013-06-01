@@ -14,14 +14,18 @@
 #define STC_SDL_GAME_HPP_
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 namespace stc
 {
 
 // Image files
-#define STC_BMP_TILE_BLOCKS     "sdl/blocks.png"
-#define STC_BMP_BACKGROUND      "sdl/back.png"
-#define STC_BMP_NUMBERS         "sdl/numbers.png"
+#define STC_BMP_TILE_BLOCKS     "assets/blocks.png"
+#define STC_BMP_BACKGROUND      "assets/back.png"
+#define STC_BMP_NUMBERS         "assets/numbers.png"
+#define STC_SND_MUSIC			"assets/stc_theme_loop.ogg"
+#define STC_SND_LINE			"assets/fx_line.wav"
+#define STC_SND_DROP			"assets/fx_drop.wav"
 
 // SDL platform implementation
 class PlatformSdl : public Platform
@@ -109,12 +113,20 @@ public:
     // Return a random positive integer number
     virtual int random();
 
+    // Events
+    virtual void onLineCompleted();
+    virtual void onPieceDrop();
+
 private:
 
     SDL_Surface* mScreen;
     SDL_Surface* mBmpTiles;
     SDL_Surface* mBmpBack;
     SDL_Surface* mBmpNumbers;
+
+    Mix_Music* mMusic;
+	Mix_Chunk *mSoundLine;
+	Mix_Chunk *mSoundDrop;
 
     Game* mGame;
 

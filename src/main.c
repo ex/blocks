@@ -15,7 +15,7 @@
 /*                              the falling piece.                            */
 /*                                                                            */
 /* -------------------------------------------------------------------------- */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /*                                                                            */
 /*   Permission is hereby granted, free of charge, to any person              */
 /*   obtaining a copy of this software and associated documentation           */
@@ -41,7 +41,7 @@
 
 #include "game.h"
 
-int main(int argc, char *argv[]) {
+int main(void) {
     /* Game object */
     StcGame game;
 

@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Constants and definitions for simple pure SDL implementation.            */
 /*                                                                            */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -18,9 +18,9 @@
 /*
  * Image files
  */
-#define STC_BMP_TILE_BLOCKS     "sdl/blocks.bmp"
-#define STC_BMP_BACKGROUND      "sdl/back.bmp"
-#define STC_BMP_NUMBERS         "sdl/numbers.bmp"
+#define STC_BMP_TILE_BLOCKS     "assets/blocks.bmp"
+#define STC_BMP_BACKGROUND      "assets/back.bmp"
+#define STC_BMP_NUMBERS         "assets/numbers.bmp"
 
 /*
  * UI layout (quantities are expressed in pixels)

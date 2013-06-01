@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Game logic implementation.                                               */
 /*                                                                            */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -354,6 +354,8 @@ void Game::onFilledRows(int filledRows)
         mFallingDelay = (int)(DELAY_FACTOR_FOR_LEVEL_UP * mFallingDelay 
                               / DELAY_DIVISOR_FOR_LEVEL_UP);
     }
+
+	mPlatform->onLineCompleted();
 }
 
 // Move tetromino in the direction specified by (x, y) (in tile units)
@@ -491,6 +493,8 @@ void Game::dropTetromino()
     mStats.score += (long)(SCORE_2_FILLED_ROW * (mStats.level + 1) 
                            / SCORE_DROP_DIVISOR);
 #endif
+
+	mPlatform->onPieceDrop();
 }
 
 // Main function game called every frame

@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   Platform interface definition.                                           */
 /*                                                                            */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
@@ -37,6 +37,10 @@ public:
 
     // Return a random positive integer number
     virtual int random() = 0;
+
+    // Events
+    virtual void onLineCompleted() = 0;
+    virtual void onPieceDrop() = 0;
 };
 }
 

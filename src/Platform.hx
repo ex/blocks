@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Platform.hx                                                              */
 /*   This class contains NME especific code.                                  */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
@@ -16,6 +16,7 @@ import nme.display.BitmapData;
 import nme.display.Sprite;
 import nme.display.StageAlign;
 import nme.display.StageScaleMode;
+import nme.display.Tilesheet;
 import nme.geom.Rectangle;
 import nme.geom.Point;
 import nme.Lib;
@@ -29,9 +30,9 @@ import nme.text.TextFormat;
 import nme.text.TextFieldType;
 import nme.ui.Keyboard;
 
-
-// Flash platform implementation for tetris game
-class Platform extends PlatformBase {
+// NME implementation for tetris game
+class Platform extends PlatformBase
+{
     // -------------------------------------------------------------------------
     // UI layout (quantities are expressed in pixels)
     // -------------------------------------------------------------------------
@@ -108,8 +109,10 @@ class Platform extends PlatformBase {
     private var mPopUpCredits:TextField;
     private var mBmpCanvas:BitmapData;
     private var mBmpTextCanvas:BitmapData;
-    private var mBmpBlocks:BitmapData;
-    private var mBmpNumbers:BitmapData;
+    private var mCanvasBlocks:Sprite;
+    private var mCanvasNumbers:Sprite;
+    private var mTilesBlocks:Tilesheet;
+    private var mTilesNumbers:Tilesheet;
 
     private var mMusicSound:Sound;
     private var mRowSound:Sound;
@@ -134,7 +137,9 @@ class Platform extends PlatformBase {
     private var mPadMute:Sprite;
     private var mPadMaster:Sprite;
 
-    public function new() {
+    //--------------------------------------------------------------------------
+    public function new()
+    {
         super();
         init();
 #if (android || ios || blackberry)
@@ -143,8 +148,8 @@ class Platform extends PlatformBase {
     }
 
     // Initializes platform.
-    public function init():Void {
-
+    public function init():Void
+    {
 		Lib.current.stage.align = StageAlign.TOP_LEFT;
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
@@ -156,7 +161,7 @@ class Platform extends PlatformBase {
         mYOffset = Std.int((SCREEN_HEIGHT - BACKGROUND_HEIGHT) / 2);
 
         // Load background and add it to scene
-        addChild(new Bitmap(Assets.getBitmapData("assets/images/back.png")));
+        addChild(new Bitmap(Assets.getBitmapData("assets/images/back.png", false)));
 
         // Create canvas for drawing tiles
         mBmpCanvas = new BitmapData(SCREEN_WIDTH, SCREEN_HEIGHT, true, 0);
@@ -166,11 +171,37 @@ class Platform extends PlatformBase {
         mBmpTextCanvas = new BitmapData(SCREEN_WIDTH, SCREEN_HEIGHT, true, 0);
         addChild(new Bitmap(mBmpTextCanvas));
 
-        // Load tile images
-        mBmpBlocks = Assets.getBitmapData("assets/images/blocks.png");
+        // Load tile images.
+        // The tiles are stored in 2 rows of 8 cells, second row are the shadow cells.
+        mTilesBlocks = new Tilesheet(Assets.getBitmapData("assets/images/blocks.png", false));
+        for (k in  0 ... 16)
+        {
+            var shadow:Int = (k < 8)? 0 : 1;
+            var recSource:Rectangle = new Rectangle();
+            recSource.x = TILE_SIZE * (k % 8);
+            recSource.y = (TILE_SIZE + 1) * shadow;
+            recSource.width = TILE_SIZE + 1;
+            recSource.height = TILE_SIZE + 1 - shadow;
+            mTilesBlocks.addTileRect(recSource);
+        }
+        mCanvasBlocks = new Sprite();
+        addChild(mCanvasBlocks);
 
-        // Load number images
-        mBmpNumbers = Assets.getBitmapData("assets/images/numbers.png");
+        // Load number images.
+        // The tiles are stored in 8 rows of 10 cells.
+        mTilesNumbers = new Tilesheet(Assets.getBitmapData("assets/images/numbers.png", false));
+        for (k in  0 ... 80)
+        {
+            var row:Int = Std.int(k / 10);
+            var recSource:Rectangle = new Rectangle();
+            recSource.x = NUMBER_WIDTH * (k % 10);
+            recSource.y = NUMBER_HEIGHT * row;
+            recSource.width = NUMBER_WIDTH;
+            recSource.height = NUMBER_HEIGHT;
+            mTilesNumbers.addTileRect(recSource);
+        }
+        mCanvasNumbers = new Sprite();
+        addChild(mCanvasNumbers);
 
         // Create popup
         var width:Int = Lib.current.stage.stageWidth;
@@ -220,7 +251,6 @@ class Platform extends PlatformBase {
         mPopUpCredits.x = SCREEN_WIDTH / 2 - 140;
         mPopUpCredits.y = SCREEN_HEIGHT / 2 + 65;
         mPopUp.addChild(mPopUpCredits);
-
         mPopUp.visible = false;
         addChild(mPopUp);
 
@@ -329,52 +359,60 @@ class Platform extends PlatformBase {
         mPadPause.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDownPads);
     }
 
-    public function onMouseDownPads(event:MouseEvent):Void {
-        switch (event.target) {
-        case mPadLeft:
-            mGame.onEventStart(Game.EVENT_MOVE_LEFT);
-        case mPadRight:
-            mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
-        case mPadRotate:
-            mGame.onEventStart(Game.EVENT_ROTATE_CW);
-        case mPadDrop:
-            mGame.onEventStart(Game.EVENT_DROP);
-        case mPadDown:
-            mGame.onEventStart(Game.EVENT_MOVE_DOWN);
-        case mPadNext:
-            mGame.onEventStart(Game.EVENT_SHOW_NEXT);
-        case mPadRestart:
-            if (!mGame.isOver) {
-                mGame.isOver = true;
-                onGameOver(mGame.isOver);
-            }
-            else {
-                onRestart();
-            }
-        case mPadShadow:
-            mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
-        case mPadPause:
-            mGame.onEventStart(Game.EVENT_PAUSE);
-        case mPadMute:
-            onMute();
-        case mPadMaster:
-            onMasterMode();
+    public function onMouseDownPads(event:MouseEvent):Void
+    {
+        switch (event.target)
+        {
+            case mPadLeft:
+                mGame.onEventStart(Game.EVENT_MOVE_LEFT);
+            case mPadRight:
+                mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
+            case mPadRotate:
+                mGame.onEventStart(Game.EVENT_ROTATE_CW);
+            case mPadDrop:
+                mGame.onEventStart(Game.EVENT_DROP);
+            case mPadDown:
+                mGame.onEventStart(Game.EVENT_MOVE_DOWN);
+            case mPadNext:
+                mGame.onEventStart(Game.EVENT_SHOW_NEXT);
+            case mPadRestart:
+                if (!mGame.isOver)
+                {
+                    mGame.isOver = true;
+                    onGameOver(mGame.isOver);
+                }
+                else
+                {
+                    onRestart();
+                }
+            case mPadShadow:
+                mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
+            case mPadPause:
+                mGame.onEventStart(Game.EVENT_PAUSE);
+            case mPadMute:
+                onMute();
+            case mPadMaster:
+                onMasterMode();
         }
     }
 
     // Called if it's necessary to redraw the board.
-    override public function onTetrominoLand():Void {
+    override public function onTetrominoLand():Void
+    {
         mRefreshBoard = true;
     }
 
     // Called when a row is filled.
-    override public function onFilledRows():Void {
+    override public function onFilledRows():Void
+    {
         mRowSound.play(0, 0, new SoundTransform(MUSIC_VOLUME));
     }
 
     // Makes the background music to loop in section
-    public function onSoundComplete(event:Event):Void {
-        if (mMusicChannel != null) {
+    public function onSoundComplete(event:Event):Void
+    {
+        if (mMusicChannel != null)
+        {
             mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             mMusicChannel = mMusicSound.play(MUSIC_LOOP_START, 0, new SoundTransform(MUSIC_VOLUME));
             mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
@@ -382,11 +420,13 @@ class Platform extends PlatformBase {
     }
 
     // Called every frame
-    public function onEnterFrame(event:Event):Void {
+    public function onEnterFrame(event:Event):Void
+    {
         mGame.update();
     }
 
-    public function onEvent(event:Event):Void {
+    public function onEvent(event:Event):Void
+    {
         // Just cancel any continuos action by now
         mGame.onEventEnd(Game.EVENT_MOVE_LEFT);
         mGame.onEventEnd(Game.EVENT_MOVE_RIGHT);
@@ -394,42 +434,54 @@ class Platform extends PlatformBase {
         mGame.onEventEnd(Game.EVENT_ROTATE_CW);
     }
 
-    public function onClosePopUp(event:Event):Void {
-        if (mGame.isPaused) {
+    public function onClosePopUp(event:Event):Void
+    {
+        if (mGame.isPaused)
+        {
             mGame.onEventStart(Game.EVENT_PAUSE);
         }
-        else if (mGame.isOver) {
+        else if (mGame.isOver)
+        {
             mGame.onEventStart(Game.EVENT_RESTART);
         }
     }
 
-    private function onMasterMode():Void {
-        if (!mGame.isOver) {
+    private function onMasterMode():Void
+    {
+        if (!mGame.isOver)
+        {
             mGame.setMasterMode(!mGame.getMasterMode());
         }
     }
 
-    private function onMute():Void {
-        if (!mGame.isOver && !mGame.isPaused) {
+    private function onMute():Void
+    {
+        if (!mGame.isOver && !mGame.isPaused)
+        {
             mIsMuted = !mIsMuted;
 
-            if (mMusicChannel != null) {
+            if (mMusicChannel != null)
+            {
                 mMusicPosition = mMusicChannel.position;
                 mMusicChannel.stop();
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
-            else {
+            else
+            {
                 mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
                 mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             }
         }
     }
 
-    private function onRestart():Void {
-        if (!mIsMuted && mGame.isOver) {
+    private function onRestart():Void
+    {
+        if (!mIsMuted && mGame.isOver)
+        {
             // Restart music if the game was over.
-            if (mMusicChannel != null) {
+            if (mMusicChannel != null)
+            {
                 mMusicChannel.stop();
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             }
@@ -439,56 +491,64 @@ class Platform extends PlatformBase {
         mGame.onEventStart(Game.EVENT_RESTART);
     }
 
-    public function onKeyDown(event:KeyboardEvent):Void {
+    public function onKeyDown(event:KeyboardEvent):Void
+    {
 #if android
-		if (event.keyCode == 27) {
+		if (event.keyCode == 27)
+        {
 			event.stopImmediatePropagation();
 			Lib.exit();
 		}
 #end
         // On key pressed
-        switch (event.keyCode) {
-        // On quit game
-        case Keyboard.ESCAPE:
-            mGame.isOver = true;
-            onGameOver(mGame.isOver);
-        case KEY_S, Keyboard.DOWN:
-            mGame.onEventStart(Game.EVENT_MOVE_DOWN);
-        case KEY_W, Keyboard.UP:
-            mGame.onEventStart(Game.EVENT_ROTATE_CW);
-        case KEY_A, Keyboard.LEFT:
-            mGame.onEventStart(Game.EVENT_MOVE_LEFT);
-        case KEY_D, Keyboard.RIGHT:
-            mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
-        case Keyboard.SPACE:
-            mGame.onEventStart(Game.EVENT_DROP);
-        case Keyboard.F5:
-            onRestart();
-        case Keyboard.F1:
-            mGame.onEventStart(Game.EVENT_PAUSE);
-        case Keyboard.F2:
-            mGame.onEventStart(Game.EVENT_SHOW_NEXT);
-        case Keyboard.F3:
-            mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
-        case Keyboard.F4:
-            onMute();
-        case Keyboard.ENTER, Keyboard.NUMPAD_ENTER, 10:
-            onMasterMode();
+        switch (event.keyCode)
+        {
+            // On quit game
+            case Keyboard.ESCAPE:
+                mGame.isOver = true;
+                onGameOver(mGame.isOver);
+            case KEY_S, Keyboard.DOWN:
+                mGame.onEventStart(Game.EVENT_MOVE_DOWN);
+            case KEY_W, Keyboard.UP:
+                mGame.onEventStart(Game.EVENT_ROTATE_CW);
+            case KEY_A, Keyboard.LEFT:
+                mGame.onEventStart(Game.EVENT_MOVE_LEFT);
+            case KEY_D, Keyboard.RIGHT:
+                mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
+            case Keyboard.SPACE:
+                mGame.onEventStart(Game.EVENT_DROP);
+            case Keyboard.F5:
+                onRestart();
+            case Keyboard.F1:
+                mGame.onEventStart(Game.EVENT_PAUSE);
+            case Keyboard.F2:
+                mGame.onEventStart(Game.EVENT_SHOW_NEXT);
+            case Keyboard.F3:
+                mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
+            case Keyboard.F4:
+                onMute();
+            case Keyboard.ENTER, Keyboard.NUMPAD_ENTER, 10:
+                onMasterMode();
         }
     }
 
     // Called when game is finished/restarted.
-    override public function onGameOver(isOver:Bool):Void {
-        if (isOver) {
-            if (mMusicChannel != null) {
+    override public function onGameOver(isOver:Bool):Void
+    {
+        if (isOver)
+        {
+            if (mMusicChannel != null)
+            {
                 mMusicChannel.stop();
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
             mPopUpLabel.text = "GAME OVER";
+
             Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
-        else {
+        else
+        {
             Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
         mPopUp.visible = isOver;
@@ -496,19 +556,25 @@ class Platform extends PlatformBase {
     }
 
     // Called when game is paused/resumed.
-    override public function onGamePaused(isPaused:Bool):Void {
-        if (isPaused) {
-            if (mMusicChannel != null) {
+    override public function onGamePaused(isPaused:Bool):Void
+    {
+        if (isPaused)
+        {
+            if (mMusicChannel != null)
+            {
                 mMusicPosition = mMusicChannel.position;
                 mMusicChannel.stop();
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
             mPopUpLabel.text = "GAME PAUSED";
+
             Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
-        else {
-            if (!mIsMuted) {
+        else
+        {
+            if (!mIsMuted)
+            {
                 mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
                 mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             }
@@ -518,63 +584,69 @@ class Platform extends PlatformBase {
     }
 
     // Draw a tile from a tetromino
-    private function drawTile(x:Int, y:Int, tile:Int, shadow:Int = 0):Void {
-        var recSource:Rectangle = new Rectangle();
-        recSource.x = TILE_SIZE * tile;
-        recSource.y = (TILE_SIZE + 1) * shadow;
-        recSource.width = TILE_SIZE + 1;
-        recSource.height = TILE_SIZE + 1 - shadow;
-        mBmpCanvas.copyPixels(mBmpBlocks, recSource, new Point(x, mYOffset + y));
+    private function drawTile(x:Int, y:Int, tile:Int, shadow:Int = 0):Void
+    {
+        var data:Array<Float> = [x, mYOffset + y, tile + shadow * 8];
+        mTilesBlocks.drawTiles(mCanvasBlocks.graphics, data, false, 0);
     }
 
     // Draw a number on the given position
-    private function drawNumber(x:Int, y:Int, number:Int, length:Int, color:Int):Void {
-        var recSource:Rectangle = new Rectangle();
-        recSource.y = NUMBER_HEIGHT * color;
-        recSource.width = NUMBER_WIDTH;
-        recSource.height = NUMBER_HEIGHT;
-
+    private function drawNumber(x:Int, y:Int, number:Int, length:Int, color:Int):Void
+    {
         var pos:Int = 0;
-        do {
-            recSource.x = NUMBER_WIDTH * (number % 10);
-            mBmpTextCanvas.copyPixels(mBmpNumbers, recSource,
-                                      new Point(x + NUMBER_WIDTH * (length - pos), mYOffset + y));
+        do
+        {
+            var data:Array<Float> = [x + NUMBER_WIDTH * (length - pos), mYOffset + y, (number % 10) + 10 * color];
+            mTilesNumbers.drawTiles(mCanvasNumbers.graphics, data, false, 0);
+
             number = Std.int(number / 10);
         } while (++pos < length);
     }
 
     // Render the state of the game using platform functions
-    override public function renderGame():Void {
-
-        if (mRefreshFrames > 0) {
-            if (--mRefreshFrames == 0) {
+    override public function renderGame():Void
+    {
+        if (mRefreshFrames > 0)
+        {
+            if (--mRefreshFrames == 0)
+            {
                 mGame.stateChanged = true;
             }
         }
 
         // Don't draw if it's not necessary
-        if (mGame.stateChanged) {
+        if (mGame.stateChanged)
+        {
             var i:Int, j:Int;
 
             // Clear background
-            mBmpCanvas.fillRect(new Rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+            mCanvasBlocks.graphics.clear();
 
             // Draw preview block
-            if (mGame.showPreview) {
-                for (i in 0 ... 4) {
-                    for (j in 0 ... 4) {
-                        if (mGame.nextBlock.cells[i][j] != Game.EMPTY_CELL) {
+            if (mGame.showPreview)
+            {
+                for (i in 0 ... 4)
+                {
+                    for (j in 0 ... 4)
+                    {
+                        if (mGame.nextBlock.cells[i][j] != Game.EMPTY_CELL)
+                        {
                             drawTile(PREVIEW_X + (TILE_SIZE * i),
                                     PREVIEW_Y + (TILE_SIZE * j), mGame.nextBlock.cells[i][j]);
                         }
                     }
                 }
             }
+
             // Draw shadow tetromino
-            if (mGame.showShadow && mGame.shadowGap > 0) {
-                for (i in 0 ... 4) {
-                    for (j in 0 ... 4) {
-                        if (mGame.fallingBlock.cells[i][j] != Game.EMPTY_CELL) {
+            if (mGame.showShadow && mGame.shadowGap > 0)
+            {
+                for (i in 0 ... 4)
+                {
+                    for (j in 0 ... 4)
+                    {
+                        if (mGame.fallingBlock.cells[i][j] != Game.EMPTY_CELL)
+                        {
                             drawTile(BOARD_X + (TILE_SIZE * (mGame.fallingBlock.x + i)),
                                     BOARD_Y + (TILE_SIZE * (mGame.fallingBlock.y + mGame.shadowGap + j)),
                                     mGame.fallingBlock.cells[i][j], 1);
@@ -582,12 +654,18 @@ class Platform extends PlatformBase {
                     }
                 }
             }
+
             // Draw the cells in the board
-            if (mGame.getMasterMode()) {
-                if (mRefreshBoard) {
-                    for (i in 0 ... Game.BOARD_WIDTH) {
-                        for (j in 0 ... Game.BOARD_HEIGHT) {
-                            if (mGame.map[i][j] != Game.EMPTY_CELL) {
+            if (mGame.getMasterMode())
+            {
+                if (mRefreshBoard)
+                {
+                    for (i in 0 ... Game.BOARD_WIDTH)
+                    {
+                        for (j in 0 ... Game.BOARD_HEIGHT)
+                        {
+                            if (mGame.map[i][j] != Game.EMPTY_CELL)
+                            {
                                 drawTile(BOARD_X + (TILE_SIZE * i),
                                         BOARD_Y + (TILE_SIZE * j), mGame.map[i][j]);
                             }
@@ -597,20 +675,29 @@ class Platform extends PlatformBase {
                     mRefreshFrames = 10;
                 }
             }
-            else {
-                for (i in 0 ... Game.BOARD_WIDTH) {
-                    for (j in 0 ... Game.BOARD_HEIGHT) {
-                        if (mGame.map[i][j] != Game.EMPTY_CELL) {
+            else
+            {
+                for (i in 0 ... Game.BOARD_WIDTH)
+                {
+                    for (j in 0 ... Game.BOARD_HEIGHT)
+
+                    {
+                        if (mGame.map[i][j] != Game.EMPTY_CELL)
+                        {
                             drawTile(BOARD_X + (TILE_SIZE * i),
                                     BOARD_Y + (TILE_SIZE * j), mGame.map[i][j]);
                         }
                     }
                 }
             }
+
             // Draw falling tetromino
-            for (i in 0 ... 4) {
-                for (j in 0 ... 4) {
-                    if (mGame.fallingBlock.cells[i][j] != Game.EMPTY_CELL) {
+            for (i in 0 ... 4)
+            {
+                for (j in 0 ... 4)
+                {
+                    if (mGame.fallingBlock.cells[i][j] != Game.EMPTY_CELL)
+                    {
                         drawTile(BOARD_X + (TILE_SIZE * (mGame.fallingBlock.x + i)),
                                 BOARD_Y + (TILE_SIZE * (mGame.fallingBlock.y + j)),
                                 mGame.fallingBlock.cells[i][j]);
@@ -619,8 +706,11 @@ class Platform extends PlatformBase {
             }
             mGame.stateChanged = false;
         }
+
         // Update game statistic data
-        if (mGame.scoreChanged) {
+        if (mGame.scoreChanged)
+        {
+            mCanvasNumbers.graphics.clear();
 
             drawNumber(LEVEL_X, LEVEL_Y, mGame.stats.level, LEVEL_LENGTH, Game.COLOR_WHITE);
             drawNumber(LINES_X, LINES_Y, mGame.stats.lines, LINES_LENGTH, Game.COLOR_WHITE);
@@ -639,14 +729,17 @@ class Platform extends PlatformBase {
         }
     }
 
-	private function resize(event:Event):Void {
+	private function resize(event:Event):Void
+    {
         var sx:Float = Lib.current.stage.stageWidth / SCREEN_WIDTH;
         var sy:Float = Lib.current.stage.stageHeight / SCREEN_HEIGHT;
-        if (sx > sy) {
+        if (sx > sy)
+        {
             this.scaleX = this.scaleY = sy;
             this.x = (Lib.current.stage.stageWidth - sy * SCREEN_WIDTH) / 2;
         }
-        else {
+        else
+        {
             this.scaleX = this.scaleY = sx;
         }
 	}
@@ -660,8 +753,8 @@ class Platform extends PlatformBase {
                                    alphaBody:Float = 1.0,
                                    borderSize:Float = 0,
                                    colorBorder:Int = 0,
-                                   borderAlpha:Float = 0):Void {
-
+                                   borderAlpha:Float = 0):Void
+    {
         canvas.graphics.lineStyle(borderSize, colorBorder, borderAlpha);
         canvas.graphics.beginFill(colorBody, alphaBody);
         canvas.graphics.moveTo(iniX, iniY);
@@ -672,7 +765,8 @@ class Platform extends PlatformBase {
     }
 
 	// Entry point
-	public static function main() {
+	public static function main()
+    {
 #if (flash9 || flash10)
         haxe.Log.trace = function(v,?pos) { untyped __global__["trace"](pos.className+"#"+pos.methodName+"("+pos.lineNumber+"):",v); }
 #elseif flash

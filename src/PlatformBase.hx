@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Platform.as                                                              */
 /*   Platform interface.                                                      */
-/*   Copyright (c) 2012 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
@@ -10,8 +10,8 @@
 import nme.display.Sprite;
 import nme.Lib;
 
-class PlatformBase extends Sprite {
-
+class PlatformBase extends Sprite
+{
     // The game object.
     private var mGame:Game;
 
@@ -22,7 +22,8 @@ class PlatformBase extends Sprite {
     public function onTetrominoLand():Void { }
 
     // Return the current system time in milliseconds
-    public function getSystemTime():Float {
+    public function getSystemTime():Float
+    {
         return Lib.getTimer();
     }
 
@@ -35,4 +36,3 @@ class PlatformBase extends Sprite {
     // Render the state of the game using platform functions
     public function renderGame():Void { }
 }
-

@@ -7,28 +7,28 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-import nme.Assets;
-import nme.events.Event;
-import nme.events.KeyboardEvent;
-import nme.events.MouseEvent;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.Sprite;
-import nme.display.StageAlign;
-import nme.display.StageScaleMode;
-import nme.display.Tilesheet;
-import nme.geom.Rectangle;
-import nme.geom.Point;
-import nme.Lib;
-import nme.media.Sound;
-import nme.media.SoundChannel;
-import nme.media.SoundTransform;
-import nme.text.TextField;
-import nme.text.Font;
-import nme.text.TextFieldAutoSize;
-import nme.text.TextFormat;
-import nme.text.TextFieldType;
-import nme.ui.Keyboard;
+import flash.events.Event;
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.display.StageAlign;
+import flash.display.StageScaleMode;
+import flash.geom.Rectangle;
+import flash.geom.Point;
+import flash.Lib.current;
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundTransform;
+import flash.text.TextField;
+import flash.text.Font;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.text.TextFieldType;
+import flash.ui.Keyboard;
+import openfl.Assets;
+import openfl.display.Tilesheet;
 
 // NME implementation for tetris game
 class Platform extends PlatformBase
@@ -150,8 +150,8 @@ class Platform extends PlatformBase
     // Initializes platform.
     public function init():Void
     {
-		Lib.current.stage.align = StageAlign.TOP_LEFT;
-		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
+		current.stage.align = StageAlign.TOP_LEFT;
+		current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
         // Create game
         mGame = new Game(this);
@@ -204,8 +204,8 @@ class Platform extends PlatformBase
         addChild(mCanvasNumbers);
 
         // Create popup
-        var width:Int = Lib.current.stage.stageWidth;
-        var height:Int = Lib.current.stage.stageHeight;
+        var width:Int = current.stage.stageWidth;
+        var height:Int = current.stage.stageHeight;
         trace("width: " + width + " height:" +height);
 
         mPopUp = new Sprite();
@@ -255,11 +255,11 @@ class Platform extends PlatformBase
         addChild(mPopUp);
 
         // Registering events
-        Lib.current.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-        Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onEvent);
-        Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onEvent);
-        Lib.current.stage.addEventListener(Event.RESIZE, resize);
+        current.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        current.stage.addEventListener(KeyboardEvent.KEY_UP, onEvent);
+        current.stage.addEventListener(MouseEvent.MOUSE_UP, onEvent);
+        current.stage.addEventListener(Event.RESIZE, resize);
 
         // Play music background
         mMusicSound = Assets.getSound("stc_theme_loop");
@@ -361,38 +361,57 @@ class Platform extends PlatformBase
 
     public function onMouseDownPads(event:MouseEvent):Void
     {
-        switch (event.target)
+        if (event.target == mPadLeft)
         {
-            case mPadLeft:
-                mGame.onEventStart(Game.EVENT_MOVE_LEFT);
-            case mPadRight:
-                mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
-            case mPadRotate:
-                mGame.onEventStart(Game.EVENT_ROTATE_CW);
-            case mPadDrop:
-                mGame.onEventStart(Game.EVENT_DROP);
-            case mPadDown:
-                mGame.onEventStart(Game.EVENT_MOVE_DOWN);
-            case mPadNext:
-                mGame.onEventStart(Game.EVENT_SHOW_NEXT);
-            case mPadRestart:
-                if (!mGame.isOver)
-                {
-                    mGame.isOver = true;
-                    onGameOver(mGame.isOver);
-                }
-                else
-                {
-                    onRestart();
-                }
-            case mPadShadow:
-                mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
-            case mPadPause:
-                mGame.onEventStart(Game.EVENT_PAUSE);
-            case mPadMute:
-                onMute();
-            case mPadMaster:
-                onMasterMode();
+            mGame.onEventStart(Game.EVENT_MOVE_LEFT);
+        }
+        else if (event.target == mPadRight)
+        {
+            mGame.onEventStart(Game.EVENT_MOVE_RIGHT);
+        }
+        else if (event.target == mPadRotate)
+        {
+            mGame.onEventStart(Game.EVENT_ROTATE_CW);
+        }
+        else if (event.target == mPadDrop)
+        {
+            mGame.onEventStart(Game.EVENT_DROP);
+        }
+        else if (event.target == mPadDown)
+        {
+            mGame.onEventStart(Game.EVENT_MOVE_DOWN);
+        }
+        else if (event.target == mPadNext)
+        {
+            mGame.onEventStart(Game.EVENT_SHOW_NEXT);
+        }
+        else if (event.target == mPadRestart)
+        {
+            if (!mGame.isOver)
+            {
+                mGame.isOver = true;
+                onGameOver(mGame.isOver);
+            }
+            else
+            {
+                onRestart();
+            }
+        }
+        else if (event.target == mPadShadow)
+        {
+            mGame.onEventStart(Game.EVENT_SHOW_SHADOW);
+        }
+        else if (event.target == mPadPause)
+        {
+            mGame.onEventStart(Game.EVENT_PAUSE);
+        }
+        else if (event.target == mPadMute)
+        {
+            onMute();
+        }
+        else if (event.target == mPadMaster)
+        {
+            onMasterMode();
         }
     }
 
@@ -545,11 +564,11 @@ class Platform extends PlatformBase
             }
             mPopUpLabel.text = "GAME OVER";
 
-            Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
+            current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
         else
         {
-            Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
+            current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
         mPopUp.visible = isOver;
         mGame.setMasterMode(false);
@@ -569,7 +588,7 @@ class Platform extends PlatformBase
             }
             mPopUpLabel.text = "GAME PAUSED";
 
-            Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
+            current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
         else
         {
@@ -578,7 +597,7 @@ class Platform extends PlatformBase
                 mMusicChannel = mMusicSound.play(mMusicPosition, 0, new SoundTransform(MUSIC_VOLUME));
                 mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             }
-            Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
+            current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
         mPopUp.visible = isPaused;
     }
@@ -731,12 +750,12 @@ class Platform extends PlatformBase
 
 	private function resize(event:Event):Void
     {
-        var sx:Float = Lib.current.stage.stageWidth / SCREEN_WIDTH;
-        var sy:Float = Lib.current.stage.stageHeight / SCREEN_HEIGHT;
+        var sx:Float = current.stage.stageWidth / SCREEN_WIDTH;
+        var sy:Float = current.stage.stageHeight / SCREEN_HEIGHT;
         if (sx > sy)
         {
             this.scaleX = this.scaleY = sy;
-            this.x = (Lib.current.stage.stageWidth - sy * SCREEN_WIDTH) / 2;
+            this.x = (current.stage.stageWidth - sy * SCREEN_WIDTH) / 2;
         }
         else
         {
@@ -772,6 +791,6 @@ class Platform extends PlatformBase
 #elseif flash
         haxe.Log.trace = function(v,?pos) { flash.Lib.trace(pos.className+"#"+pos.methodName+"("+pos.lineNumber+"): "+v); }
 #end
-		Lib.current.addChild(new Platform());
+		current.addChild(new Platform());
 	}
 }

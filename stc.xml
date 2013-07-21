@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<!-- metadata, make sure 'package' is at least 2 segments (ie. com.myproject) -->
-	<app file="stcnme" title="stc-nme" main="Platform" package="com.ex.stcnme" version="1.0.0" company="" />
+	<app file="stc" title="stc-openfl" main="Platform" package="com.ex.stcnme" version="1.0.0" company="" />
 		
 	<!-- output -->
     <window width="480" height="320" if="desktop" />
@@ -13,7 +13,7 @@
 	
 	<!-- classpath, haxe libs -->
 	<classpath name="src" />
-	<haxelib name="nme" />
+	<haxelib name="openfl" />
 	
 	<!-- assets -->
 	<icon name="assets/nme.svg" />
@@ -31,9 +31,4 @@
 		<music path="stc_theme_loop.ogg" id="stc_theme_loop" />
 	</assets>
 
-	<!-- DLLs -->
-	<ndll name="std" />
-	<ndll name="regexp" />
-	<ndll name="zlib" />
-	<ndll name="nme" haxelib="nme" />
 </project>

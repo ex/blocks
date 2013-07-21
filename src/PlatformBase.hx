@@ -7,8 +7,8 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-import nme.display.Sprite;
-import nme.Lib;
+import flash.display.Sprite;
+import flash.Lib.getTimer;
 
 class PlatformBase extends Sprite
 {
@@ -24,7 +24,7 @@ class PlatformBase extends Sprite
     // Return the current system time in milliseconds
     public function getSystemTime():Float
     {
-        return Lib.getTimer();
+        return getTimer();
     }
 
     // Called when game is finished/restarted.

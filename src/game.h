@@ -206,7 +206,7 @@ typedef struct StcGamePrivate StcGamePrivate;
  * C++ version shows using inline accessors and constant references).
  * For simplicity (and speed), I'm leaving it like this.
  */
-typedef struct StcGame {
+struct StcGame {
 
     /* Statistic data */
     struct {
@@ -235,7 +235,7 @@ typedef struct StcGame {
     StcPlatform      *platform; /* platform hidden implementation */
     StcGamePrivate   *data;     /* hidden game properties         */
 
-} StcGame;
+};
 
 
 /*

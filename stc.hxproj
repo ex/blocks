@@ -11,22 +11,20 @@
     <movie version="3" />
     <movie minorVersion="0" />
     <movie platform="NME" />
-    <movie background="FFFFFF" />
-    <movie preferredSDK="Haxe 3.0.0;3.0.0;" />
+    <movie background="#FFFFFF" />
+    <movie preferredSDK=";3;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="C:\HaxeToolkit\haxe/lib\openfl/1,0,4/" />
-    <class path="bin/flash/haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="tools=1&#xA;openfl_ver=1.0.4&#xA;openfl&#xA;display&#xA;web" />
+    <option directives="" />
     <option flashStrict="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="True" />
-    <option additional="--no-output&#xA;-swf-version 11&#xA;#--remap nme:flash" />
+    <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

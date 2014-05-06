@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Platform.hx                                                              */
 /*   This class contains NME especific code.                                  */
-/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2014 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
@@ -17,13 +17,16 @@ import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.geom.Rectangle;
 import flash.geom.Point;
+#if android
+import flash.Lib;
+#end
 import flash.Lib.current;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.text.TextField;
 import flash.text.Font;
-import flash.text.TextFieldAutoSize;
+import flash.text.TextFormatAlign;
 import flash.text.TextFormat;
 import flash.text.TextFieldType;
 import flash.ui.Keyboard;
@@ -103,6 +106,10 @@ class Platform extends PlatformBase
     private static inline var MUSIC_VOLUME:Float = 0.4;
     private static inline var MUSIC_LOOP_START:Int = 3693;
 
+    private static inline var STR_PAUSE:String = "GAME PAUSED";
+    private static inline var STR_END:String = "GAME OVER";
+    private static inline var STR_CREDITS:String = "Programming: Laurens Rodriguez\n" +
+                                                   "      Music: Jarno Alanko";
     // Platform data
     private var mPopUp:Sprite;
     private var mPopUpLabel:TextField;
@@ -210,8 +217,8 @@ class Platform extends PlatformBase
 
         mPopUp = new Sprite();
         var popupBack:Sprite = new Sprite();
-        popupBack.graphics.beginFill(0x000000);
-        popupBack.graphics.drawRect(-30, -30, SCREEN_WIDTH + 60, SCREEN_HEIGHT + 60);
+        popupBack.graphics.beginFill(0x111133);
+        popupBack.graphics.drawRect(-50, -50, SCREEN_WIDTH + 100, SCREEN_HEIGHT + 100);
         popupBack.graphics.endFill();
         popupBack.alpha = 0.6;
         mPopUp.addChild(popupBack);
@@ -223,14 +230,13 @@ class Platform extends PlatformBase
         textFormat.size = 28;
         textFormat.letterSpacing = 3;
         textFormat.color = 0xBBBBBB;
+        textFormat.align = TextFormatAlign.LEFT;
 
         mPopUpLabel = new TextField();
         mPopUpLabel.embedFonts = true;
         mPopUpLabel.selectable = false;
-        mPopUpLabel.autoSize = TextFieldAutoSize.CENTER;
         mPopUpLabel.defaultTextFormat = textFormat;
         mPopUpLabel.width = SCREEN_WIDTH;
-        mPopUpLabel.x = SCREEN_WIDTH / 2;
         mPopUpLabel.y = SCREEN_HEIGHT / 2 - 20;
         mPopUp.addChild(mPopUpLabel);
 
@@ -239,16 +245,15 @@ class Platform extends PlatformBase
         creditFormat.size = 13;
         creditFormat.letterSpacing = 1;
         creditFormat.color = 0xFFFFFF;
+        creditFormat.align = TextFormatAlign.LEFT;
 
         mPopUpCredits = new TextField();
         mPopUpCredits.embedFonts = true;
         mPopUpCredits.selectable = false;
-        mPopUpCredits.autoSize = TextFieldAutoSize.CENTER;
         mPopUpCredits.defaultTextFormat = creditFormat;
         mPopUpCredits.width = SCREEN_WIDTH;
-        mPopUpCredits.text = "Programming: Laurens Rodriguez\n"
-                            +"      Music: Jarno Alanko";
-        mPopUpCredits.x = SCREEN_WIDTH / 2 - 140;
+        mPopUpCredits.text = STR_CREDITS;
+        mPopUpCredits.x = SCREEN_WIDTH / 2 - mPopUpCredits.textWidth / 2;
         mPopUpCredits.y = SCREEN_HEIGHT / 2 + 65;
         mPopUp.addChild(mPopUpCredits);
         mPopUp.visible = false;
@@ -278,7 +283,7 @@ class Platform extends PlatformBase
 #if debug
         var alphaPad:Float = 0.10;
 #else
-        var alphaPad:Float = 0.01;
+        var alphaPad:Float = 0;
 #end
 
         mPadLeft = new Sprite();
@@ -562,7 +567,8 @@ class Platform extends PlatformBase
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
-            mPopUpLabel.text = "GAME OVER";
+            mPopUpLabel.text = STR_END;
+            mPopUpLabel.x = SCREEN_WIDTH / 2 - mPopUpLabel.textWidth / 2;
 
             current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }
@@ -586,7 +592,8 @@ class Platform extends PlatformBase
                 mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
                 mMusicChannel = null;
             }
-            mPopUpLabel.text = "GAME PAUSED";
+            mPopUpLabel.text = STR_PAUSE;
+            mPopUpLabel.x = SCREEN_WIDTH / 2 - mPopUpLabel.textWidth / 2;
 
             current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onClosePopUp);
         }

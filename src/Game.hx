@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 /*   A simple tetris clone.                                                   */
 /*                                                                            */
-/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2014 Laurens Rodriguez Oscanoa.                            */
 /*                                                                            */
 /*   Permission is hereby granted, free of charge, to any person              */
 /*   obtaining a copy of this software and associated documentation           */

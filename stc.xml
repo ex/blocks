@@ -21,13 +21,18 @@
 	<assets path="assets/fonts" include="*.ttf" />
 	<assets path="assets/images" include="*" />
 
-	<assets path="assets/sounds" if="web">
+	<assets path="assets/sounds" if="flash">
 		<sound path="fx_line.mp3" id="fx_line" />
 		<music path="stc_theme_loop.mp3" id="stc_theme_loop" />
 	</assets>
 	
-	<assets path="assets/sounds" unless="web">
+	<assets path="assets/sounds" if="cpp">
 		<sound path="fx_line.wav" id="fx_line" />
+		<music path="stc_theme_loop.ogg" id="stc_theme_loop" />
+	</assets>
+
+	<assets path="assets/sounds" if="html5">
+		<sound path="fx_line.ogg" id="fx_line" />
 		<music path="stc_theme_loop.ogg" id="stc_theme_loop" />
 	</assets>
 

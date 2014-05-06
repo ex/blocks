@@ -1,7 +1,7 @@
 ﻿/* ========================================================================== */
 /*   Platform.as                                                              */
 /*   Platform interface.                                                      */
-/*   Copyright (c) 2013 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2014 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */

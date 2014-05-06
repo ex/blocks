@@ -1,6 +1,7 @@
 -- ========================================================================== --
 --   Platform implementation.                                                 --
 --   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            --
+--   This code is released under the MIT license.                             --
 -- -------------------------------------------------------------------------- --
 
 -- Screen size 

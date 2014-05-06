@@ -1,6 +1,7 @@
 -- ========================================================================== --
 --   Game logic implementation.                                               --
 --   Copyright (c) 2011 Laurens Rodriguez Oscanoa.                            --
+--   This code is released under the MIT license.                             --
 -- -------------------------------------------------------------------------- --
 
 -- Initial time delay (in milliseconds) between falling moves.

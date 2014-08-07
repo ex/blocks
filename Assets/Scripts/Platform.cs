@@ -6,7 +6,7 @@
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
-
+#if STC_USE_DLL
 using System;
 using UnityEngine;
 
@@ -325,3 +325,4 @@ public class Platform
     private GameObject[]  m_background;
 }
 }
+#endif

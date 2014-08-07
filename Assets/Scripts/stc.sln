@@ -1,23 +1,20 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stc", "stc.csproj", "{76C86B88-A40A-459A-AC72-FFD859DBC9A6}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual C# Express 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stc", "stc.csproj", "{C1EB5932-3161-4E31-903D-8C6B7D8E0252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{76C86B88-A40A-459A-AC72-FFD859DBC9A6}.Debug|x86.ActiveCfg = Debug|x86
-		{76C86B88-A40A-459A-AC72-FFD859DBC9A6}.Debug|x86.Build.0 = Debug|x86
-		{76C86B88-A40A-459A-AC72-FFD859DBC9A6}.Release|x86.ActiveCfg = Release|x86
-		{76C86B88-A40A-459A-AC72-FFD859DBC9A6}.Release|x86.Build.0 = Release|x86
+		{C1EB5932-3161-4E31-903D-8C6B7D8E0252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EB5932-3161-4E31-903D-8C6B7D8E0252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EB5932-3161-4E31-903D-8C6B7D8E0252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EB5932-3161-4E31-903D-8C6B7D8E0252}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = simple.csproj
 	EndGlobalSection
 EndGlobal

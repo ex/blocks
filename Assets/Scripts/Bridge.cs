@@ -6,7 +6,7 @@
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
-
+#if STC_USE_DLL
 using UnityEngine;
 using System;
 using Stc;
@@ -44,3 +44,4 @@ public class Bridge : MonoBehaviour
 
     private Game m_game = null;
 }
+#endif

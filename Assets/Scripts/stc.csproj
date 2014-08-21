@@ -43,4 +43,7 @@
     <Compile Include="Platform.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rmdir /S /Q obj</PostBuildEvent>
+  </PropertyGroup>
 </Project>

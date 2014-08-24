@@ -1,4 +1,4 @@
-_Everything should be made as simple as possible, but no simpler._
+_Everything should be made as simple as possible, but no simpler._<br/>
 _Albert Einstein_
 
 ## Introduction
@@ -6,7 +6,7 @@ _Albert Einstein_
 There must be a gazillion Tetris clones out there. Why another one?.
 Because I couldn't find a clone like this: with a _liberal_ open source license and programmed with code legibility in mind. There are many little projects like this but most of them have restrictive GPL licenses or are very difficult to read and change. This one is released under the permissive MIT license and hopefully it's easier to understand and modify.
 
-!(http://planetadev.googlepages.com/stc.png)
+![alt text](http://planetadev.googlepages.com/stc.png)
 
 ## Objectives
 
@@ -41,43 +41,39 @@ This is the list of currently implemented and possible future branches:
 
   * [TypeScript](http://www.typescriptlang.org/) using HTML5 canvas. You can see the generated code [here](http://jsfiddle.net/exdev/sxGN3/) and [play it here](http://www.xprezion.com/ex/stc/stc.htm).
 
-  !(http://sites.google.com/site/exeqtor/ts01.png)
+  ![alt text](http://sites.google.com/site/exeqtor/ts01.png)
 
   * [Killa](http://github.com/ex/killa) for [Love 0.8 with Killa support](https://bitbucket.org/ex/love) and [with Killa support](https://github.com/ex/cocos2d-x cocos2d-x)
 
-  !(http://sites.google.com/site/exeqtor/stc_killa.png)
+  ![alt text](http://sites.google.com/site/exeqtor/stc_killa.png)
 
   * Haxe For [NME](http://www.haxenme.org/)
 
   * cocos2d-x for [cocos2d-x 0.11.0](https://github.com/cocos2d/cocos2d-x)
 
-  !(http://sites.google.com/site/exeqtor/stc-cocos2dx.png)
+  ![alt text](http://sites.google.com/site/exeqtor/stc-cocos2dx.png)
 
   * Lua for [Love 0.8](http://bitbucket.org/rude/love/)
 
-  !(http://sites.google.com/site/exeqtor/stc-love.png)
+  ![alt text](http://sites.google.com/site/exeqtor/stc-love.png)
 
   * Unity (programmed in C#). You can play it online [here.](http://elrinconde-ex.blogspot.com/2011/10/tetris-clone-in-unity.html)
 
-  !(http://sites.google.com/site/exeqtor/stc_unity.png)
+  ![alt text](http://sites.google.com/site/exeqtor/stc_unity.png)
 
   * iPhone and iPod Touch (using OpenGL ES 1.1 and an Objective-C bridge between iOS and the C++ game logic object) 
 
-  !(http://sites.google.com/site/exeqtor/stc_iphone.png)
+  ![alt text](http://sites.google.com/site/exeqtor/stc_iphone.png)
 
   * OpenGL for graphics cards that support OpenGL 1.1 (Windows)
 
   * J2ME for cellphones with CLDC 1.1 and MIDP 2.0.
 
-  !(http://planetadev.googlepages.com/stc_j2me.jpg)
+  ![alt text](http://planetadev.googlepages.com/stc_j2me.jpg)
 
   * AS3 This version doesn't need the Flash IDE to build only the Flex SDK. You can play it online [here.](http://elrinconde-ex.blogspot.com/2010/02/simple-tetris-clone-flex-version.html)
 
-  !(http://simple-tetris-clone.googlecode.com/files/fstc.png)
-
-  * PIC
-  * OCaml
-  * Clojure
+  ![alt text](http://simple-tetris-clone.googlecode.com/files/fstc.png)
 
 ## References
 
@@ -86,13 +82,10 @@ http://tetris.wikia.com/wiki/Gameplay_overview<br>
 The original Tetris can be found here:
 http://vadim.oversigma.com/Tetris.htm
 
-  !(http://vadim.oversigma.com/Tet312-Game.gif)
+  ![alt text](http://vadim.oversigma.com/Tet312-Game.gif)
 
 ## Credits
 
   * Programming by Laurens Rodriguez
 
   * Music by Jarno Alanko
-
-----
-

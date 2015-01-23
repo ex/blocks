@@ -20,8 +20,10 @@ PlatformObjC::PlatformObjC(id controller) {
 }
 
 void PlatformObjC::processEvents() {
+}
+
+void PlatformObjC::onTouchStart(id event) {
     
-    UIEvent *event = [mController performSelector:@selector(getEventsTouchStart)];
     if (event != nil) {
 
         for (int i = 0; i < [[event allTouches] count]; i++) {
@@ -81,12 +83,14 @@ void PlatformObjC::processEvents() {
                 }
             }
             NSLog(@"-- touchStart: %d %d", int(tx), int(ty));
-            [mController performSelector:@selector(clearEventsTouchStart)];
         }
     }
+}
     
-    event = [mController performSelector:@selector(getEventsTouchEnd)];
+void PlatformObjC::onTouchEnd(id event) {
+        
     if (event != nil) {
+        
         UITouch *touch = [[event allTouches] anyObject];
         float tx = [touch locationInView:touch.view].x;
         float ty = [touch locationInView:touch.view].y; 
@@ -99,8 +103,7 @@ void PlatformObjC::processEvents() {
 #ifdef STC_AUTO_ROTATION
         mGame->onEventEnd(Game::EVENT_ROTATE_CW);
 #endif    
-        [mController performSelector:@selector(clearEventsTouchEnd)];
-    }    
+    }
 }
 
 int PlatformObjC::init(Game *game) {
@@ -180,7 +183,9 @@ int PlatformObjC::init(Game *game) {
 
     // Initialize indexes used for drawing sprites
     mTextureIndexes = new GLubyte[4];
-    for (int k = 0; k < 4; mTextureIndexes[k++] = k);
+    for (int k = 0; k < 4; k++) {
+        mTextureIndexes[k] = k;
+    }
 
     // Create arrays for drawing the sprites
     mSpriteTexCoord = new GLfloat[8];

@@ -18,9 +18,6 @@
     stc::Game *mGame; 
     stc::PlatformObjC *mPlatformObjC;
     
-    UIEvent *mEventTouchStart;
-    UIEvent *mEventTouchEnd;
-
 	UIAlertView *mAlertPaused;
 	UIAlertView *mAlertRestart;	
     
@@ -32,12 +29,6 @@
 
 - (void) startAnimation;
 - (void) stopAnimation;
-
-- (UIEvent *) getEventsTouchStart;
-- (void) clearEventsTouchStart;
-
-- (UIEvent *) getEventsTouchEnd;
-- (void) clearEventsTouchEnd;
 
 - (UIAlertView *) alertPaused;
 - (void) setAlertPaused:(UIAlertView *)alertPaused;

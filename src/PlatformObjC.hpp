@@ -97,6 +97,8 @@ class PlatformObjC : public Platform
 public:
     
     PlatformObjC(id controller);
+    void onTouchEnd(id event);
+    void onTouchStart(id event);
 
     virtual int init(Game *game);
     virtual void end();

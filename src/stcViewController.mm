@@ -35,8 +35,6 @@
     self.displayLink = nil;
     
     self.view.multipleTouchEnabled = TRUE;
-    mEventTouchStart = nil;
-    mEventTouchEnd = nil;
 	mAlertPaused = nil;
 	mAlertRestart = nil;
     mRotateAlertView = FALSE;
@@ -135,28 +133,12 @@
     NSLog(@"-- Memory warning");
 }
 
-- (UIEvent *) getEventsTouchStart {
-    return mEventTouchStart;
-}
-
-- (void) clearEventsTouchStart {
-    mEventTouchStart = nil;
-}
-
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    mEventTouchStart = event;
-}
-
-- (UIEvent *) getEventsTouchEnd {
-    return mEventTouchEnd;
-}
-
-- (void) clearEventsTouchEnd {
-    mEventTouchEnd = nil;
+    mPlatformObjC->onTouchStart(event);
 }
 
 - (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    mEventTouchEnd = event;
+    mPlatformObjC->onTouchEnd(event);
 }
 
 - (UIAlertView *) alertPaused {

@@ -12,8 +12,8 @@
 
 #import <OpenGLES/ES1/gl.h>
 
-#include "../../../trunk/src/game.hpp"
-#include "../../OpenGL/src/targa/TargaImage.h"
+#include "../stc/game.hpp"
+#include "../targa/TargaImage.h"
 
 namespace stc
 {

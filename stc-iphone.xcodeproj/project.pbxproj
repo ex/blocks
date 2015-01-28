@@ -44,9 +44,9 @@
 		B909CD1A13201AD500F8BECF /* stcAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stcAppDelegate.mm; sourceTree = "<group>"; };
 		B909CD1B13201AD500F8BECF /* stcViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stcViewController.h; sourceTree = "<group>"; };
 		B909CD1C13201AD500F8BECF /* stcViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stcViewController.mm; sourceTree = "<group>"; };
-		B91AD319132027460045DE81 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ../../trunk/src/game.cpp; sourceTree = SOURCE_ROOT; };
-		B91AD31A132027460045DE81 /* game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = game.hpp; path = ../../trunk/src/game.hpp; sourceTree = SOURCE_ROOT; };
-		B91AD31B132027460045DE81 /* platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = platform.hpp; path = ../../trunk/src/platform.hpp; sourceTree = SOURCE_ROOT; };
+		B91AD319132027460045DE81 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
+		B91AD31A132027460045DE81 /* game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = game.hpp; sourceTree = "<group>"; };
+		B91AD31B132027460045DE81 /* platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform.hpp; sourceTree = "<group>"; };
 		B91AD31D13205B460045DE81 /* PlatformObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformObjC.mm; sourceTree = "<group>"; };
 		B91AD32013205D280045DE81 /* PlatformObjC.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlatformObjC.hpp; sourceTree = "<group>"; };
 		B91AD32313205F830045DE81 /* TargaImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TargaImage.cpp; sourceTree = "<group>"; };
@@ -147,8 +147,8 @@
 				B91AD31A132027460045DE81 /* game.hpp */,
 				B91AD31B132027460045DE81 /* platform.hpp */,
 			);
-			name = stc;
-			sourceTree = "<group>";
+			path = stc;
+			sourceTree = SOURCE_ROOT;
 		};
 		B91AD32213205F830045DE81 /* targa */ = {
 			isa = PBXGroup;
@@ -156,8 +156,7 @@
 				B91AD32313205F830045DE81 /* TargaImage.cpp */,
 				B91AD32413205F830045DE81 /* TargaImage.h */,
 			);
-			name = targa;
-			path = ../OpenGL/src/targa;
+			path = targa;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -185,6 +184,8 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "stc-iphone" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;

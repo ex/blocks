@@ -1,15 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Web
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stc", "stc.csproj", "{FBCA7D7D-9CF3-4E86-9820-A2D274BDA52E}"
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blocks", "stc.csproj", "{A5A688B7-7934-4C1D-A8C0-6E6AFB065116}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FBCA7D7D-9CF3-4E86-9820-A2D274BDA52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBCA7D7D-9CF3-4E86-9820-A2D274BDA52E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5A688B7-7934-4C1D-A8C0-6E6AFB065116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5A688B7-7934-4C1D-A8C0-6E6AFB065116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5A688B7-7934-4C1D-A8C0-6E6AFB065116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5A688B7-7934-4C1D-A8C0-6E6AFB065116}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

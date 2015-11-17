@@ -1,37 +1,33 @@
 ﻿/* ========================================================================== */
 /*   Platform.hx                                                              */
 /*   This class contains NME especific code.                                  */
-/*   Copyright (c) 2014 Laurens Rodriguez Oscanoa.                            */
+/*   Copyright (c) 2015 Laurens Rodriguez Oscanoa.                            */
 /* -------------------------------------------------------------------------- */
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 
-import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.Sprite;
-import flash.display.StageAlign;
-import flash.display.StageScaleMode;
-import flash.geom.Rectangle;
-import flash.geom.Point;
-#if android
-import flash.Lib;
-#end
-import flash.Lib.current;
-import flash.media.Sound;
-import flash.media.SoundChannel;
-import flash.media.SoundTransform;
-import flash.text.TextField;
-import flash.text.Font;
-import flash.text.TextFormatAlign;
-import flash.text.TextFormat;
-import flash.text.TextFieldType;
-import flash.ui.Keyboard;
 import openfl.Assets;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.display.Sprite;
+import openfl.display.StageAlign;
+import openfl.display.StageScaleMode;
 import openfl.display.Tilesheet;
+import openfl.events.Event;
+import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
+import openfl.geom.Rectangle;
+import openfl.Lib;
+import openfl.Lib.current;
+import openfl.media.Sound;
+import openfl.media.SoundChannel;
+import openfl.media.SoundTransform;
+import openfl.text.Font;
+import openfl.text.TextField;
+import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
+import openfl.ui.Keyboard;
 
 // NME implementation for tetris game
 class Platform extends PlatformBase
@@ -268,7 +264,11 @@ class Platform extends PlatformBase
 
         // Play music background
         mMusicSound = Assets.getSound("stc_theme_loop");
+#if openfl_legacy
         mMusicChannel = mMusicSound.play(MUSIC_LOOP_START, 0, new SoundTransform(MUSIC_VOLUME));
+#else
+        mMusicChannel = mMusicSound.play();
+#end
         mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
         mMusicPosition = 0;
         mIsMuted = false;
@@ -435,12 +435,18 @@ class Platform extends PlatformBase
     // Makes the background music to loop in section
     public function onSoundComplete(event:Event):Void
     {
+#if openfl_legacy
         if (mMusicChannel != null)
         {
             mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
             mMusicChannel = mMusicSound.play(MUSIC_LOOP_START, 0, new SoundTransform(MUSIC_VOLUME));
             mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
         }
+#else
+            mMusicChannel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+            mMusicChannel = mMusicSound.play();
+            mMusicChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+#end
     }
 
     // Called every frame

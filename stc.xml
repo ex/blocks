@@ -2,7 +2,7 @@
 <project>
 	<!-- metadata, make sure 'package' is at least 2 segments (ie. com.myproject) -->
 	<app file="stc" title="stc-openfl" main="Platform" package="com.ex.stcnme" version="1.0.0" company="" />
-		
+
 	<!-- output -->
     <window width="480" height="320" if="desktop" />
     <window width="480" height="320" if="flash" />
@@ -10,11 +10,14 @@
 	<window orientation="landscape" />
 
 	<set name="BUILD_DIR" value="bin" />
-	
+
+    <!-- Uncomment below to use openfl 2 (legacy) -->
+    <!--<set name="legacy"/>-->
+
 	<!-- classpath, haxe libs -->
 	<classpath name="src" />
 	<haxelib name="openfl" />
-	
+
 	<!-- assets -->
 	<icon name="assets/nme.svg" />
 
@@ -25,9 +28,9 @@
 		<sound path="fx_line.mp3" id="fx_line" />
 		<music path="stc_theme_loop.mp3" id="stc_theme_loop" />
 	</assets>
-	
+
 	<assets path="assets/sounds" if="cpp">
-		<sound path="fx_line.wav" id="fx_line" />
+		<sound path="fx_line.ogg" id="fx_line" />
 		<music path="stc_theme_loop.ogg" id="stc_theme_loop" />
 	</assets>
 

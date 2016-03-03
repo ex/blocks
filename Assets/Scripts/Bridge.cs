@@ -6,7 +6,7 @@
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
-#if STC_USE_DLL
+#if DEBUG || STC_USE_DLL
 using UnityEngine;
 using System;
 using Stc;
@@ -17,6 +17,7 @@ public class Bridge : MonoBehaviour
     {
         try
         {
+            ////Debug.LogWarning( "Instantiate[" + resourceName + "]" );
             return (GameObject)Instantiate(Resources.Load(resourceName), position, Quaternion.identity);
         }
         catch (Exception error)

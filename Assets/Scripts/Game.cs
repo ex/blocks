@@ -7,7 +7,7 @@
 /*   This code is licensed under the MIT license:                             */
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
-#if STC_USE_DLL
+#if DEBUG || STC_USE_DLL
 #define STC_AUTO_ROTATION
 #define STC_WALL_KICK_ENABLED
 

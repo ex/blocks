@@ -37,7 +37,7 @@ var Stc;
             }
         }
         return StcTetromino;
-    })();
+    }());
     Stc.StcTetromino = StcTetromino;
     // Datas structure for statistical data
     var StcStatics = (function () {
@@ -45,7 +45,7 @@ var Stc;
             this.pieces = [];
         }
         return StcStatics;
-    })();
+    }());
     Stc.StcStatics = StcStatics;
     var Game = (function () {
         function Game() {
@@ -705,7 +705,7 @@ var Stc;
         // This value used for empty tiles
         Game.EMPTY_CELL = -1;
         return Game;
-    })();
+    }());
     Stc.Game = Game;
     var PlatformHTML5 = (function () {
         function PlatformHTML5(image) {
@@ -1039,7 +1039,7 @@ var Stc;
         PlatformHTML5.KEY_UP = 38;
         PlatformHTML5.KEY_DOWN = 40;
         return PlatformHTML5;
-    })();
+    }());
     Stc.PlatformHTML5 = PlatformHTML5;
 })(Stc || (Stc = {}));
 window.onload = function () {

@@ -40,9 +40,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bridge.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="Platform.cs" />
+    <Compile Include="src\Bridge.cs" />
+    <Compile Include="src\Game.cs" />
+    <Compile Include="src\Platform.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

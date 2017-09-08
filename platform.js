@@ -575,137 +575,137 @@ var Stc;
             this.m_shadowGap = y - 1;
             this.m_stateChanged = true;
         };
-        //--------------------------------------------------------------------------
-        // Game configuration.
-        // Edit this section to change the sizes, scores or pace of the game.
-        // Playfield size (in tiles)
-        Game.BOARD_TILEMAP_WIDTH = 10;
-        Game.BOARD_TILEMAP_HEIGHT = 22;
-        // Initial time delay (in milliseconds) between falling moves.
-        Game.INIT_DELAY_FALL = 1000;
-        // Score points given by filled rows (we use the original NES * 10)
-        // http://tetris.wikia.com/wiki/Scoring
-        Game.SCORE_1_FILLED_ROW = 400;
-        Game.SCORE_2_FILLED_ROW = 1000;
-        Game.SCORE_3_FILLED_ROW = 3000;
-        Game.SCORE_4_FILLED_ROW = 12000;
-        // The player gets points every time he accelerates downfall.
-        // The added points are equal to SCORE_2_FILLED_ROW divided by this value.
-        Game.SCORE_MOVE_DOWN_DIVISOR = 1000;
-        // The player gets points every time he does a hard drop.
-        // The added points are equal to SCORE_2_FILLED_ROW divided by these
-        // values. If the player is not using the shadow he gets more points.
-        Game.SCORE_DROP_DIVISOR = 20;
-        Game.SCORE_DROP_WITH_SHADOW_DIVISOR = 100;
-        // Number of filled rows required to increase the game level.
-        Game.FILLED_ROWS_FOR_LEVEL_UP = 10;
-        // The falling delay is multiplied and divided by
-        // these factors with every level up.
-        Game.DELAY_FACTOR_FOR_LEVEL_UP = 9;
-        Game.DELAY_DIVISOR_FOR_LEVEL_UP = 10;
-        // Delayed autoshift initial delay.
-        Game.DAS_DELAY_TIMER = 200;
-        // Delayed autoshift timer for left and right moves.
-        Game.DAS_MOVE_TIMER = 40;
-        // Rotation auto-repeat delay.
-        Game.ROTATION_AUTOREPEAT_DELAY = 375;
-        // Rotation autorepeat timer.
-        Game.ROTATION_AUTOREPEAT_TIMER = 200;
-        //--------------------------------------------------------------------------
-        // Game constants. You likely don't need to change this section unless
-        // you're changing the gameplay.
-        // Error codes
-        Game.ERROR_NONE = 0; // Everything is OK, oh wonders!
-        Game.ERROR_PLAYER_QUITS = 1; // The user quits, our fail
-        Game.ERROR_NO_MEMORY = -1; // Not enough memory
-        Game.ERROR_NO_VIDEO = -2; // Video system was not initialized
-        Game.ERROR_NO_IMAGES = -3; // Problem loading the image files
-        Game.ERROR_PLATFORM = -4; // Problem creating platform
-        Game.ERROR_ASSERT = -100; // Something went very very wrong...
-        // Game events
-        Game.EVENT_NONE = 0;
-        Game.EVENT_MOVE_DOWN = 1;
-        Game.EVENT_MOVE_LEFT = 1 << 1;
-        Game.EVENT_MOVE_RIGHT = 1 << 2;
-        Game.EVENT_ROTATE_CW = 1 << 3; // rotate clockwise
-        Game.EVENT_ROTATE_CCW = 1 << 4; // rotate counter-clockwise
-        Game.EVENT_DROP = 1 << 5;
-        Game.EVENT_PAUSE = 1 << 6;
-        Game.EVENT_RESTART = 1 << 7;
-        Game.EVENT_SHOW_NEXT = 1 << 8; // toggle show next tetromino
-        Game.EVENT_SHOW_SHADOW = 1 << 9; // toggle show shadow
-        Game.EVENT_QUIT = 1 << 10; // finish the game
-        // We are going to store the tetromino cells in a square matrix
-        // of this size (this is the size of the biggest tetromino)
-        Game.TETROMINO_SIZE = 4;
-        // Number of tetromino types.
-        Game.TETROMINO_TYPES = 7;
-        // Tetromino definitions.
-        // They are indexes and must be between:0 - [TETROMINO_TYPES - 1]
-        // http://tetris.wikia.com/wiki/Tetromino
-        // Initial cell disposition is commented below.
-        //
-        //              ....
-        //              ####
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_I = 0;
-        //
-        //              ##..
-        //              ##..
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_O = 1;
-        //
-        //              .#..
-        //              ###.
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_T = 2;
-        //
-        //              .##.
-        //              ##..
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_S = 3;
-        //
-        //              ##..
-        //              .##.
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_Z = 4;
-        //
-        //              #...
-        //              ###.
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_J = 5;
-        //
-        //              ..#.
-        //              ###.
-        //              ....
-        //              ....
-        //
-        Game.TETROMINO_L = 6;
-        // Color indexes
-        Game.COLOR_CYAN = 1;
-        Game.COLOR_RED = 2;
-        Game.COLOR_BLUE = 3;
-        Game.COLOR_ORANGE = 4;
-        Game.COLOR_GREEN = 5;
-        Game.COLOR_YELLOW = 6;
-        Game.COLOR_PURPLE = 7;
-        Game.COLOR_WHITE = 0; // Used for effects (if any)
-        // This value used for empty tiles
-        Game.EMPTY_CELL = -1;
         return Game;
     }());
+    //--------------------------------------------------------------------------
+    // Game configuration.
+    // Edit this section to change the sizes, scores or pace of the game.
+    // Playfield size (in tiles)
+    Game.BOARD_TILEMAP_WIDTH = 10;
+    Game.BOARD_TILEMAP_HEIGHT = 22;
+    // Initial time delay (in milliseconds) between falling moves.
+    Game.INIT_DELAY_FALL = 1000;
+    // Score points given by filled rows (we use the original NES * 10)
+    // http://tetris.wikia.com/wiki/Scoring
+    Game.SCORE_1_FILLED_ROW = 400;
+    Game.SCORE_2_FILLED_ROW = 1000;
+    Game.SCORE_3_FILLED_ROW = 3000;
+    Game.SCORE_4_FILLED_ROW = 12000;
+    // The player gets points every time he accelerates downfall.
+    // The added points are equal to SCORE_2_FILLED_ROW divided by this value.
+    Game.SCORE_MOVE_DOWN_DIVISOR = 1000;
+    // The player gets points every time he does a hard drop.
+    // The added points are equal to SCORE_2_FILLED_ROW divided by these
+    // values. If the player is not using the shadow he gets more points.
+    Game.SCORE_DROP_DIVISOR = 20;
+    Game.SCORE_DROP_WITH_SHADOW_DIVISOR = 100;
+    // Number of filled rows required to increase the game level.
+    Game.FILLED_ROWS_FOR_LEVEL_UP = 10;
+    // The falling delay is multiplied and divided by
+    // these factors with every level up.
+    Game.DELAY_FACTOR_FOR_LEVEL_UP = 9;
+    Game.DELAY_DIVISOR_FOR_LEVEL_UP = 10;
+    // Delayed autoshift initial delay.
+    Game.DAS_DELAY_TIMER = 200;
+    // Delayed autoshift timer for left and right moves.
+    Game.DAS_MOVE_TIMER = 40;
+    // Rotation auto-repeat delay.
+    Game.ROTATION_AUTOREPEAT_DELAY = 375;
+    // Rotation autorepeat timer.
+    Game.ROTATION_AUTOREPEAT_TIMER = 200;
+    //--------------------------------------------------------------------------
+    // Game constants. You likely don't need to change this section unless
+    // you're changing the gameplay.
+    // Error codes
+    Game.ERROR_NONE = 0; // Everything is OK, oh wonders!
+    Game.ERROR_PLAYER_QUITS = 1; // The user quits, our fail
+    Game.ERROR_NO_MEMORY = -1; // Not enough memory
+    Game.ERROR_NO_VIDEO = -2; // Video system was not initialized
+    Game.ERROR_NO_IMAGES = -3; // Problem loading the image files
+    Game.ERROR_PLATFORM = -4; // Problem creating platform
+    Game.ERROR_ASSERT = -100; // Something went very very wrong...
+    // Game events
+    Game.EVENT_NONE = 0;
+    Game.EVENT_MOVE_DOWN = 1;
+    Game.EVENT_MOVE_LEFT = 1 << 1;
+    Game.EVENT_MOVE_RIGHT = 1 << 2;
+    Game.EVENT_ROTATE_CW = 1 << 3; // rotate clockwise
+    Game.EVENT_ROTATE_CCW = 1 << 4; // rotate counter-clockwise
+    Game.EVENT_DROP = 1 << 5;
+    Game.EVENT_PAUSE = 1 << 6;
+    Game.EVENT_RESTART = 1 << 7;
+    Game.EVENT_SHOW_NEXT = 1 << 8; // toggle show next tetromino
+    Game.EVENT_SHOW_SHADOW = 1 << 9; // toggle show shadow
+    Game.EVENT_QUIT = 1 << 10; // finish the game
+    // We are going to store the tetromino cells in a square matrix
+    // of this size (this is the size of the biggest tetromino)
+    Game.TETROMINO_SIZE = 4;
+    // Number of tetromino types.
+    Game.TETROMINO_TYPES = 7;
+    // Tetromino definitions.
+    // They are indexes and must be between:0 - [TETROMINO_TYPES - 1]
+    // http://tetris.wikia.com/wiki/Tetromino
+    // Initial cell disposition is commented below.
+    //
+    //              ....
+    //              ####
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_I = 0;
+    //
+    //              ##..
+    //              ##..
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_O = 1;
+    //
+    //              .#..
+    //              ###.
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_T = 2;
+    //
+    //              .##.
+    //              ##..
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_S = 3;
+    //
+    //              ##..
+    //              .##.
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_Z = 4;
+    //
+    //              #...
+    //              ###.
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_J = 5;
+    //
+    //              ..#.
+    //              ###.
+    //              ....
+    //              ....
+    //
+    Game.TETROMINO_L = 6;
+    // Color indexes
+    Game.COLOR_CYAN = 1;
+    Game.COLOR_RED = 2;
+    Game.COLOR_BLUE = 3;
+    Game.COLOR_ORANGE = 4;
+    Game.COLOR_GREEN = 5;
+    Game.COLOR_YELLOW = 6;
+    Game.COLOR_PURPLE = 7;
+    Game.COLOR_WHITE = 0; // Used for effects (if any)
+    // This value used for empty tiles
+    Game.EMPTY_CELL = -1;
     Stc.Game = Game;
     var PlatformHTML5 = (function () {
         function PlatformHTML5(image) {
@@ -976,70 +976,70 @@ var Stc;
                 value = Math.floor(value / 10);
             } while (++pos < length);
         };
-        // UI layout (quantities are expressed in pixels)
-        // Screen size
-        PlatformHTML5.SCREEN_WIDTH = 480;
-        PlatformHTML5.SCREEN_HEIGHT = 320;
-        // Size of square tile
-        PlatformHTML5.TILE_SIZE = 12;
-        // Board up-left corner coordinates
-        PlatformHTML5.BOARD_X = 180;
-        PlatformHTML5.BOARD_Y = 28;
-        // Preview tetromino position
-        PlatformHTML5.PREVIEW_X = 112;
-        PlatformHTML5.PREVIEW_Y = 232;
-        // Score position and length on screen
-        PlatformHTML5.SCORE_X = 72;
-        PlatformHTML5.SCORE_Y = 86;
-        PlatformHTML5.SCORE_LENGTH = 10;
-        // Lines position and length on screen
-        PlatformHTML5.LINES_X = 108;
-        PlatformHTML5.LINES_Y = 68;
-        PlatformHTML5.LINES_LENGTH = 5;
-        // Level position and length on screen
-        PlatformHTML5.LEVEL_X = 108;
-        PlatformHTML5.LEVEL_Y = 50;
-        PlatformHTML5.LEVEL_LENGTH = 5;
-        // Tetromino subtotals position
-        PlatformHTML5.TETROMINO_X = 425;
-        PlatformHTML5.TETROMINO_L_Y = 79;
-        PlatformHTML5.TETROMINO_I_Y = 102;
-        PlatformHTML5.TETROMINO_T_Y = 126;
-        PlatformHTML5.TETROMINO_S_Y = 150;
-        PlatformHTML5.TETROMINO_Z_Y = 174;
-        PlatformHTML5.TETROMINO_O_Y = 198;
-        PlatformHTML5.TETROMINO_J_Y = 222;
-        // Size of subtotals
-        PlatformHTML5.TETROMINO_LENGTH = 5;
-        // Tetromino total position
-        PlatformHTML5.PIECES_X = 418;
-        PlatformHTML5.PIECES_Y = 246;
-        PlatformHTML5.PIECES_LENGTH = 6;
-        // Size of number
-        PlatformHTML5.NUMBER_WIDTH = 7;
-        PlatformHTML5.NUMBER_HEIGHT = 9;
-        // Texture size of compounded images
-        PlatformHTML5.TEXTURE_SIZE = 512;
-        // Frames per seconds
-        PlatformHTML5.FPS = 35;
-        // Touch zones limits
-        PlatformHTML5.TY_1 = 50;
-        PlatformHTML5.TY_2 = 270;
-        PlatformHTML5.TY_DOWN = 70;
-        PlatformHTML5.TY_DROP = 250;
-        PlatformHTML5.TX_1 = 160;
-        PlatformHTML5.TX_2 = 320;
-        PlatformHTML5.KEY_A = 65;
-        PlatformHTML5.KEY_W = 87;
-        PlatformHTML5.KEY_S = 83;
-        PlatformHTML5.KEY_D = 68;
-        PlatformHTML5.KEY_SPACE = 32;
-        PlatformHTML5.KEY_LEFT = 37;
-        PlatformHTML5.KEY_RIGHT = 39;
-        PlatformHTML5.KEY_UP = 38;
-        PlatformHTML5.KEY_DOWN = 40;
         return PlatformHTML5;
     }());
+    // UI layout (quantities are expressed in pixels)
+    // Screen size
+    PlatformHTML5.SCREEN_WIDTH = 480;
+    PlatformHTML5.SCREEN_HEIGHT = 320;
+    // Size of square tile
+    PlatformHTML5.TILE_SIZE = 12;
+    // Board up-left corner coordinates
+    PlatformHTML5.BOARD_X = 180;
+    PlatformHTML5.BOARD_Y = 28;
+    // Preview tetromino position
+    PlatformHTML5.PREVIEW_X = 112;
+    PlatformHTML5.PREVIEW_Y = 232;
+    // Score position and length on screen
+    PlatformHTML5.SCORE_X = 72;
+    PlatformHTML5.SCORE_Y = 86;
+    PlatformHTML5.SCORE_LENGTH = 10;
+    // Lines position and length on screen
+    PlatformHTML5.LINES_X = 108;
+    PlatformHTML5.LINES_Y = 68;
+    PlatformHTML5.LINES_LENGTH = 5;
+    // Level position and length on screen
+    PlatformHTML5.LEVEL_X = 108;
+    PlatformHTML5.LEVEL_Y = 50;
+    PlatformHTML5.LEVEL_LENGTH = 5;
+    // Tetromino subtotals position
+    PlatformHTML5.TETROMINO_X = 425;
+    PlatformHTML5.TETROMINO_L_Y = 79;
+    PlatformHTML5.TETROMINO_I_Y = 102;
+    PlatformHTML5.TETROMINO_T_Y = 126;
+    PlatformHTML5.TETROMINO_S_Y = 150;
+    PlatformHTML5.TETROMINO_Z_Y = 174;
+    PlatformHTML5.TETROMINO_O_Y = 198;
+    PlatformHTML5.TETROMINO_J_Y = 222;
+    // Size of subtotals
+    PlatformHTML5.TETROMINO_LENGTH = 5;
+    // Tetromino total position
+    PlatformHTML5.PIECES_X = 418;
+    PlatformHTML5.PIECES_Y = 246;
+    PlatformHTML5.PIECES_LENGTH = 6;
+    // Size of number
+    PlatformHTML5.NUMBER_WIDTH = 7;
+    PlatformHTML5.NUMBER_HEIGHT = 9;
+    // Texture size of compounded images
+    PlatformHTML5.TEXTURE_SIZE = 512;
+    // Frames per seconds
+    PlatformHTML5.FPS = 35;
+    // Touch zones limits
+    PlatformHTML5.TY_1 = 50;
+    PlatformHTML5.TY_2 = 270;
+    PlatformHTML5.TY_DOWN = 70;
+    PlatformHTML5.TY_DROP = 250;
+    PlatformHTML5.TX_1 = 160;
+    PlatformHTML5.TX_2 = 320;
+    PlatformHTML5.KEY_A = 65;
+    PlatformHTML5.KEY_W = 87;
+    PlatformHTML5.KEY_S = 83;
+    PlatformHTML5.KEY_D = 68;
+    PlatformHTML5.KEY_SPACE = 32;
+    PlatformHTML5.KEY_LEFT = 37;
+    PlatformHTML5.KEY_RIGHT = 39;
+    PlatformHTML5.KEY_UP = 38;
+    PlatformHTML5.KEY_DOWN = 40;
     Stc.PlatformHTML5 = PlatformHTML5;
 })(Stc || (Stc = {}));
 window.onload = function () {

@@ -1298,7 +1298,6 @@ module Stc {
     }
 }
 
-
 window.onload = () => {
     // [iPhone] hiding Safari user interface components
     // http://stackoverflow.com/questions/273671/hiding-safari-user-interface-components-on-iphone

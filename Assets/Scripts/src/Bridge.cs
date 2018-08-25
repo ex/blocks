@@ -7,42 +7,46 @@
 /*   http://www.opensource.org/licenses/mit-license.php                       */
 /* -------------------------------------------------------------------------- */
 #if DEBUG || STC_USE_DLL
+
 using UnityEngine;
 using System;
-using Stc;
 
-public class Bridge : MonoBehaviour
+namespace Stc
 {
-    public static GameObject Instantiate(string resourceName, Vector3 position)
+    public class Bridge : MonoBehaviour
     {
-        try
+        public static GameObject Instantiate( string resourceName, Vector3 position )
         {
-            ////Debug.LogWarning( "Instantiate[" + resourceName + "]" );
-            return (GameObject)Instantiate(Resources.Load(resourceName), position, Quaternion.identity);
+            try
+            {
+                ////Debug.LogWarning( "Instantiate[" + resourceName + "]" );
+                return (GameObject)Instantiate( Resources.Load( resourceName ), position, 
+                                                Quaternion.identity );
+            }
+            catch ( Exception error )
+            {
+                Debug.LogError( "Instantiate[" + resourceName + "] " + error );
+                return null;
+            }
         }
-        catch (Exception error)
+
+        public static void Destroy( GameObject clip )
         {
-            Debug.LogError("Instantiate[" + resourceName + "] " + error);
-            return null;
+            Destroy( clip, 0 );
         }
-    }
 
-    public static void Destroy(GameObject clip)
-    {
-        Destroy(clip, 0);
-    }
+        public void Start()
+        {
+            m_game = new Game();
+            m_game.Init( new Platform() );
+        }
 
-    public void Start()
-    {
-        m_game = new Game();
-        m_game.Init(new Platform());
-    }
+        void Update()
+        {
+            m_game.Update();
+        }
 
-    void Update()
-    {
-        m_game.Update();
+        private Game m_game = null;
     }
-
-    private Game m_game = null;
 }
 #endif

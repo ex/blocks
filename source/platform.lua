@@ -4,37 +4,37 @@
 --   This code is released under the MIT license.                             --
 -- -------------------------------------------------------------------------- --
 
--- Screen size 
+-- Screen size
 local SCREEN_WIDTH  = 480
 local SCREEN_HEIGHT = 272
 
--- Size of square tile 
+-- Size of square tile
 local TILE_SIZE = 12
 
--- Board up-left corner coordinates 
+-- Board up-left corner coordinates
 local BOARD_X = 180
 local BOARD_Y = 4
 
--- Preview tetromino position 
+-- Preview tetromino position
 local PREVIEW_X = 112
 local PREVIEW_Y = 210
 
--- Score position and length on screen 
+-- Score position and length on screen
 local SCORE_X      = 72
 local SCORE_Y      = 52
 local SCORE_LENGTH = 10
 
--- Lines position and length on screen 
+-- Lines position and length on screen
 local LINES_X      = 108
 local LINES_Y      = 34
 local LINES_LENGTH = 5
 
--- Level position and length on screen 
+-- Level position and length on screen
 local LEVEL_X      = 108
 local LEVEL_Y      = 16
 local LEVEL_LENGTH = 5
 
--- Tetromino subtotals position 
+-- Tetromino subtotals position
 local TETROMINO_X   = 425
 local TETROMINO_L_Y = 53
 local TETROMINO_I_Y = 77
@@ -44,23 +44,23 @@ local TETROMINO_Z_Y = 149
 local TETROMINO_O_Y = 173
 local TETROMINO_J_Y = 197
 
--- Size of subtotals 
+-- Size of subtotals
 local TETROMINO_LENGTH = 5
 
--- Tetromino total position 
+-- Tetromino total position
 local PIECES_X      = 418
 local PIECES_Y      = 221
 local PIECES_LENGTH = 6
 
--- Size of number 
+-- Size of number
 local NUMBER_WIDTH  = 7
 local NUMBER_HEIGHT = 9
-    
-Platform = { 
+
+Platform = {
     m_bmpBackground = nil;
     m_bmpBlocks = nil;
-    m_bmpNumbers = nil;    
-    
+    m_bmpNumbers = nil;
+
     m_blocks = nil;
     m_numbers = nil;
 
@@ -68,7 +68,7 @@ Platform = {
     m_musicIntro = nil;
     m_musicMute = nil;
 }
-    
+
 -- Initializes platform.
 function Platform:init()
     -- Initialize random generator
@@ -76,14 +76,14 @@ function Platform:init()
 
     -- Load images.
     self.m_bmpBackground = love.graphics.newImage("back.png")
-    
+
     self.m_bmpBlocks = love.graphics.newImage("blocks.png")
     self.m_bmpBlocks:setFilter("nearest", "nearest")
     local w = self.m_bmpBlocks:getWidth()
     local h = self.m_bmpBlocks:getHeight()
 
     -- Load music.
-	self.m_musicIntro = love.audio.newSource("stc_theme_intro.ogg")
+	self.m_musicIntro = love.audio.newSource("stc_theme_intro.ogg", "stream")
 	self.m_musicIntro:setVolume(0.5)
 	self.m_musicIntro:play()
 	self.m_musicLoop = love.audio.newSource("stc_theme_loop.ogg", "stream")
@@ -100,12 +100,12 @@ function Platform:init()
                                                                  TILE_SIZE + 1, TILE_SIZE + 1, w, h)
         end
     end
-    
+
     self.m_bmpNumbers = love.graphics.newImage("numbers.png")
     self.m_bmpNumbers:setFilter("nearest", "nearest")
     w = self.m_bmpNumbers:getWidth()
     h = self.m_bmpNumbers:getHeight()
-    
+
     -- Create quads for numbers
     self.m_numbers = {}
     for color = 0, Game.COLORS - 1 do
@@ -134,7 +134,7 @@ function Platform:onKeyDown(key)
     if ((key == "up") or (key == "w")) then
         Game:onEventStart(Game.Event.ROTATE_CW)
     end
-    if (key == " ") then
+    if (key == "space") then
         Game:onEventStart(Game.Event.DROP)
     end
     if (key == "f5") then
@@ -184,14 +184,14 @@ end
 
 -- Draw a tile from a tetromino
 function Platform:drawTile(x, y, tile, shadow)
-    love.graphics.drawq(self.m_bmpBlocks, self.m_blocks[shadow][tile], x, y)
+    love.graphics.draw(self.m_bmpBlocks, self.m_blocks[shadow][tile], x, y)
 end
 
 -- Draw a number on the given position
 function Platform:drawNumber(x, y, number, length, color)
     local pos = 0
     repeat
-        love.graphics.drawq(self.m_bmpNumbers, self.m_numbers[color][number % 10],
+        love.graphics.draw(self.m_bmpNumbers, self.m_numbers[color][number % 10],
                             x + NUMBER_WIDTH * (length - pos), y)
         number = math.floor(number / 10)
         pos = pos + 1
@@ -250,7 +250,7 @@ function Platform:renderGame()
             end
         end
     end
-    
+
     -- Draw game statistic data
     if (not Game:isPaused()) then
         Platform:drawNumber(LEVEL_X, LEVEL_Y, Game:stats().level, LEVEL_LENGTH, Game.Cell.WHITE)
@@ -270,7 +270,7 @@ function Platform:renderGame()
 
 	-- Adding music loop check here for convenience.
 	if (self.m_musicIntro) then
-		if (self.m_musicIntro:isStopped()) then
+		if (not self.m_musicIntro:isPlaying()) then
 			self.m_musicIntro = nil
 			self.m_musicLoop:play()
 		end

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 public class BlocksEditorTarget : TargetRules
 {
-	public BlocksEditorTarget( TargetInfo Target) : base(Target)
+    public BlocksEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-		ExtraModuleNames.AddRange( new string[] { "Blocks" } );
+		ExtraModuleNames.Add("Blocks");
 	}
 }

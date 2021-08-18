@@ -37,25 +37,21 @@ Branches could implement the missing parts or create gameplay variations.
 
 ## Branches
 
-This is the list of currently implemented and possible future branches:
+This is the list of some of the implemented branches:
 
   * [TypeScript](http://www.typescriptlang.org/) using HTML5 canvas. You can [play it here](http://ex.github.io/js/src/stc/).
 
-  * [Killa](http://github.com/ex/killa) for cocos2d-x [with Killa support](https://github.com/ex/cocos2d-x cocos2d-x)
-
-  * cocos2d-x for [cocos2d-x 0.11.0](https://github.com/cocos2d/cocos2d-x)
+  * [Killa](http://github.com/ex/killa) for cocos2d-x [with Killa support](https://github.com/ex/cocos2d-x)
 
   * Lua for [Love 2d](https://github.com/love2d/love)
 
   * Unity (programmed in C#). You can play it online [here.](http://elrinconde-ex.blogspot.com/2011/10/tetris-clone-in-unity.html)
 
-  * iPhone and iPod Touch (using OpenGL ES 1.1 and an Objective-C bridge between iOS and the C++ game logic object) 
-
   * OpenGL for graphics cards that support OpenGL 1.1 (Windows)
 
   * J2ME for cellphones with CLDC 1.1 and MIDP 2.0.
 
-  ![J2ME ancient image](http://planetadev.googlepages.com/stc_j2me.jpg)
+  ![J2ME ancient pic of my missing phone](http://planetadev.googlepages.com/stc_j2me.jpg)
 
   * AS3 This version doesn't need the Flash IDE to build only the Flex SDK. You can play it online [here.](http://elrinconde-ex.blogspot.com/2010/02/simple-tetris-clone-flex-version.html)
 

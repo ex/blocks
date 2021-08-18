@@ -39,37 +39,23 @@ Branches could implement the missing parts or create gameplay variations.
 
 This is the list of currently implemented and possible future branches:
 
-  * [TypeScript](http://www.typescriptlang.org/) using HTML5 canvas. You can see the generated code [here](http://jsfiddle.net/exdev/sxGN3/) and [play it here](http://www.xprezion.com/ex/stc/stc.htm).
+  * [TypeScript](http://www.typescriptlang.org/) using HTML5 canvas. You can [play it here](http://ex.github.io/js/src/stc/).
 
-  ![alt text](http://sites.google.com/site/exeqtor/ts01.png)
-
-  * [Killa](http://github.com/ex/killa) for [Love 0.8 with Killa support](https://bitbucket.org/ex/love) and [with Killa support](https://github.com/ex/cocos2d-x cocos2d-x)
-
-  ![alt text](http://sites.google.com/site/exeqtor/stc_killa.png)
-
-  * Haxe For [NME](http://www.haxenme.org/)
+  * [Killa](http://github.com/ex/killa) for cocos2d-x [with Killa support](https://github.com/ex/cocos2d-x cocos2d-x)
 
   * cocos2d-x for [cocos2d-x 0.11.0](https://github.com/cocos2d/cocos2d-x)
 
-  ![alt text](http://sites.google.com/site/exeqtor/stc-cocos2dx.png)
-
-  * Lua for [Love 0.8](http://bitbucket.org/rude/love/)
-
-  ![alt text](http://sites.google.com/site/exeqtor/stc-love.png)
+  * Lua for [Love 2d](https://github.com/love2d/love)
 
   * Unity (programmed in C#). You can play it online [here.](http://elrinconde-ex.blogspot.com/2011/10/tetris-clone-in-unity.html)
 
-  ![alt text](http://sites.google.com/site/exeqtor/stc_unity.png)
-
   * iPhone and iPod Touch (using OpenGL ES 1.1 and an Objective-C bridge between iOS and the C++ game logic object) 
-
-  ![alt text](http://sites.google.com/site/exeqtor/stc_iphone.png)
 
   * OpenGL for graphics cards that support OpenGL 1.1 (Windows)
 
   * J2ME for cellphones with CLDC 1.1 and MIDP 2.0.
 
-  ![alt text](http://planetadev.googlepages.com/stc_j2me.jpg)
+  ![J2ME ancient image](http://planetadev.googlepages.com/stc_j2me.jpg)
 
   * AS3 This version doesn't need the Flash IDE to build only the Flex SDK. You can play it online [here.](http://elrinconde-ex.blogspot.com/2010/02/simple-tetris-clone-flex-version.html)
 

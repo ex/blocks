@@ -73,6 +73,7 @@ This is the list of currently implemented and possible future branches:
 
   * AS3 This version doesn't need the Flash IDE to build only the Flex SDK. You can play it online [here.](http://elrinconde-ex.blogspot.com/2010/02/simple-tetris-clone-flex-version.html)
 
+  ![alt text](http://simple-tetris-clone.googlecode.com/files/fstc.png)
 
 ## References
 

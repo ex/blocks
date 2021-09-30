@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Blocks.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{7931587D-2230-4F1C-8F8C-1FD0C66539E4}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Blocks.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\BlocksEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\README.md" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{A650841F-9BB0-4AFC-9CCD-910959EF2F5C}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\Blocks">
+      <UniqueIdentifier>{3B516E26-CF8F-41D4-82D9-A3D515EA849D}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Blocks\Blocks.Build.cs">
+      <Filter>Source\Blocks</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\Blocks\Blocks.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\Blocks.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Blocks\BlocksBlock.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\BlocksBlock.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Blocks\BlocksBlockGrid.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\BlocksBlockGrid.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Blocks\BlocksGameMode.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\BlocksGameMode.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Blocks\BlocksPawn.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\BlocksPawn.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Blocks\BlocksPlayerController.cpp">
+      <Filter>Source\Blocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Blocks\BlocksPlayerController.h">
+      <Filter>Source\Blocks</Filter>
+    </ClInclude>
+    <Filter Include="Source\Blocks\stc">
+      <UniqueIdentifier>{D2373C1B-5592-4C14-BCD8-6699EF312416}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Blocks\stc\game.cpp">
+      <Filter>Source\Blocks\stc</Filter>
+    </ClCompile>
+    <None Include="..\..\Source\Blocks\stc\game.hpp">
+      <Filter>Source\Blocks\stc</Filter>
+    </None>
+    <None Include="..\..\Source\Blocks\stc\platform.hpp">
+      <Filter>Source\Blocks\stc</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -3,7 +3,6 @@
 #include "BlocksPawn.h"
 #include "BlocksBlock.h"
 #include "BlocksBlockGrid.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"

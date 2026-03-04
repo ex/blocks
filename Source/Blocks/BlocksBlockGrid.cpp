@@ -63,7 +63,10 @@ void ABlocksBlockGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-    ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}\nLines: {1}\nLevel: {2}"), pGame->stats().score, pGame->stats().lines, pGame->stats().level));
+    ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}\nLines: {1}\nLevel: {2}"),
+                                             FText::AsNumber((int64)pGame->stats().score),
+                                             FText::AsNumber((int32)pGame->stats().lines),
+                                             FText::AsNumber((int32)pGame->stats().level)));
 
     check(mTetromino.Num() == 0);
     for (int i = 0; i < stc::Game::TETROMINO_SIZE; ++i)
@@ -118,7 +121,10 @@ void ABlocksBlockGrid::processEvents()
 
 void ABlocksBlockGrid::onLineCompleted()
 {
-    ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}\nLines: {1}\nLevel: {2}"), pGame->stats().score, pGame->stats().lines, pGame->stats().level));
+    ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}\nLines: {1}\nLevel: {2}"),
+                                             FText::AsNumber((int64)pGame->stats().score),
+                                             FText::AsNumber((int32)pGame->stats().lines),
+                                             FText::AsNumber((int32)pGame->stats().level)));
 
     if (LineAudioComponent && LineSoundCue)
     {

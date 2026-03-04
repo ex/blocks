@@ -8,6 +8,8 @@
 #include "BlocksBlock.h"
 #include "Components/Audiocomponent.h"
 #include "Sound/SoundCue.h"
+#include "BlocksGameOverWidget.h"
+#include "Engine/GameViewportClient.h"
 #include "BlocksBlockGrid.generated.h"
 
 /** Class used to spawn blocks and manage score */
@@ -52,6 +54,8 @@ protected:
 	UAudioComponent* DropAudioComponent;
 	UAudioComponent* LineAudioComponent;
 
+	FBlocksGameOverOverlay GameOverOverlay;
+
 	stc::Game* pGame;
 	TArray<ABlocksBlock*> mTetromino;
 	TArray<ABlocksBlock*> mShadow;
@@ -92,6 +96,7 @@ public:
 	virtual void onLineCompleted() override;
 	virtual void onPieceDrop() override;
 	virtual void onTetrominoMoved() override;
+	virtual void onGameOver() override;
 
 	stc::Game* getGame() { return pGame; }
 };

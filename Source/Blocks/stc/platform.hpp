@@ -42,6 +42,7 @@ public:
     virtual void onLineCompleted() = 0;
     virtual void onPieceDrop() = 0;
     virtual void onTetrominoMoved() = 0;
+    virtual void onGameOver() = 0;
 };
 }
 

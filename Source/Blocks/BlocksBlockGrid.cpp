@@ -140,6 +140,11 @@ void ABlocksBlockGrid::onPieceDrop()
     }
 }
 
+void ABlocksBlockGrid::onGameOver()
+{
+    GameOverOverlay.Show(GetWorld()->GetGameViewport());
+}
+
 void ABlocksBlockGrid::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
@@ -247,6 +252,11 @@ ABlocksBlock* ABlocksBlockGrid::getBlock(int x, int y, int idTile, bool shadow)
 
 void ABlocksBlockGrid::renderGame()
 {
+    if (!pGame->isOver())
+    {
+        GameOverOverlay.Hide(GetWorld()->GetGameViewport());
+    }
+
     const int BOARD_X = 0;
     const int BOARD_Y = 13;
     const int PREVIEW_X = 16;

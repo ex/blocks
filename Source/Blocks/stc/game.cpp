@@ -380,6 +380,7 @@ void Game::moveTetromino(int x, int y)
             if (mFallingBlock.y <= 1)
             {
                 mIsOver = true; // if this happens the game is over
+                mPlatform->onGameOver();
             }
             else
             {
